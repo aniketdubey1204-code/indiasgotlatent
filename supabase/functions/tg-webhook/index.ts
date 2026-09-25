@@ -16,6 +16,7 @@ Deno.serve(async (req) => {
     if (!text.startsWith("/start")) return new Response("ok");
     const token = text.split(/\s+/)[1] || "";
     const sb = createClient(Deno.env.get("SUPABASE_URL"), Deno.env.get("SUPABASE_SERVICE_ROLE_KEY"));
+    console.error("tg-start", JSON.stringify({ hasPayload: !!token, len: token.length, chat: msg?.chat?.type || "?" }));
     if (!token) {
       // Payload lost (typed /start, logged in after opening link, old chat) —
       // claim the newest pending session from last 3 minutes.
@@ -35,7 +36,8 @@ Deno.serve(async (req) => {
       await sendMsg(from.id, `Welcome ${from.first_name || "friend"}! Go back to the site — you are logged in.`);
       return new Response("ok");
     }
-    const { data } = await sb.from("tg_logins").select("token,status").eq("token", token).single();
+    const { data, error: selErr } = await sb.from("tg_logins").select("token,status").eq("token", token).single();
+    console.error("tg-lookup", JSON.stringify({ found: !!data, selErr: selErr?.message || null }));
     if (!data) {
       await sendMsg(from.id, "Session expired. Generate a fresh login on the site.");
       return new Response("ok");
