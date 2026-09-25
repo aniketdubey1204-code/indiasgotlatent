@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Admin - Add Video by URL</title>
+<link rel="stylesheet" href="css/styles.css"/>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/config.js"></script>
+</head>
+<body>
+<header><strong>Admin - Add Episode</strong><a href="index.html" style="color:#fff">Home</a></header>
+<div class="admin-wrap">
+<p style="color:#aaa;font-size:14px">Paste cloud/direct URL. It saves to Supabase and appears on homepage automatically.</p>
+<label>Title</label><input id="t" placeholder="Episode 2"/>
+<label>Episode number</label><input id="n" type="number" value="2"/>
+<label>Video URL (mp4/m3u8 or /videos/ep2.mp4)</label><input id="u" placeholder="https://.../ep2.mp4"/>
+<label>Thumbnail URL (optional)</label><input id="th" placeholder="https://.../thumb.jpg"/>
+<label>Description</label><input id="d" placeholder="Description"/>
+<button class="btn" onclick="save()">Save Video</button>
+<p id="msg"></p>
+<hr/>
+<h4>Quick convert: Google Drive share link → direct link</h4>
+<input id="g" placeholder="Paste drive share link"/>
+<button class="btn secondary" onclick="convert()">Convert</button>
+<p id="gout" style="word-break:break-all"></p>
+</div>
+<script>
+const sb = window.supabase.createClient(APP_CONFIG.SUPABASE_URL, APP_CONFIG.SUPABASE_ANON_KEY);
+async function save(){
+  const body={title:document.getElementById('t').value,episode_number:parseInt(document.getElementById('n').value||0),video_url:document.getElementById('u').value.trim(),thumbnail_url:document.getElementById('th').value.trim(),description:document.getElementById('d').value};
+  if(!body.title||!body.video_url){document.getElementById('msg').textContent='Title + URL required';return;}
+  const {error}=await sb.from('videos').insert(body);
+  document.getElementById('msg').textContent=error?error.message:'Saved. It will show on homepage.';
+}
+function convert(){
+  const v=document.getElementById('g').value;const m=v.match(/\/d\/([^/]+)/)||v.match(/[?&]id=([^&]+)/);
+  document.getElementById('gout').textContent=m?`https://drive.google.com/uc?export=download&id=${m[1]}`:'Invalid drive link';
+}
+</script>
+</body>
+</html>

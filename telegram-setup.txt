@@ -1,0 +1,19 @@
+Real Telegram login (5 min, one time):
+
+1. Telegram > search @BotFather > /newbot
+   - Name: LatentAuth, Username: YOUR_unique_bot (ends with bot)
+   - Copy HTTP API token (keep private) + username WITHOUT @
+
+2. Supabase not needed for Telegram. In this project js/config.js:
+   TELEGRAM_BOT_NAME: "YOUR_unique_bot"
+   ADMIN_TELEGRAM_USERNAMES: ["YOUR_personal_telegram_username_without_@"]
+
+3. @BotFather > /setdomain > choose your bot > send your site domain:
+   - Local test: localhost (Telegram requires https exception: use https deploy for real test)
+   - Production: your-vercel-url.vercel.app (no https://, no path)
+
+4. Deploy site to https (Vercel/Netlify). Open https URL > Telegram tab shows real blue Login button (not demo input).
+   Click > authorize via Telegram app > auto enters site. Admin button appears only for ADMIN_TELEGRAM_USERNAMES.
+
+Note: file:// and http://localhost do not show real widget. Test on https deploy.
+Demo input shows only while TELEGRAM_BOT_NAME is still YOUR_.

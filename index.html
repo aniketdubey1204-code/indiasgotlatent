@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>India's Got Latent — Free Fan Vault</title>
+<link rel="stylesheet" href="css/styles.css"/>
+<link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css"/>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.plyr.io/3.7.8/plyr.js"></script>
+<script src="js/config.js"></script>
+<script src="js/videos.js"></script>
+</head>
+<body>
+<div class="ambient"></div>
+
+<nav class="nav-dock">
+  <span class="brand">IGL ◈ FAN VAULT</span>
+  <a href="#" class="active" onclick="filterRail('All',this);return false">Home</a>
+  <a href="#rail" onclick="filterRail('Season 1',this);return false">Season 1</a>
+  <a href="#rail" onclick="filterRail('Season 2',this);return false">Season 2</a>
+  <a href="#rail" onclick="filterRail('Bonus',this);return false">Bonus & BTS</a>
+  <span class="search-glow" onclick="document.getElementById('rail').scrollIntoView({behavior:'smooth'});setTimeout(()=>document.getElementById('rail-search').focus(),400)">⌕</span>
+</nav>
+
+<!-- Auth gate -->
+<div id="auth-overlay" class="overlay">
+  <div class="modal">
+    <div class="kicker">Members Vault</div>
+    <h2 style="font-family:'Syne';margin:8px 0">Login to Watch</h2>
+    <p style="color:#C8BDB6;font-size:14px">Authentication required to enter</p>
+    <div class="tabs">
+      <button id="tab-telegram" class="active" onclick="switchTab('telegram')">Telegram</button>
+      <button id="tab-email" onclick="switchTab('email')">Email</button>
+    </div>
+    <div id="pane-telegram">
+      <div id="telegram-widget"></div>
+      <p style="color:#666;font-size:12px">1-click login with Telegram</p>
+    </div>
+    <div id="pane-email" class="hidden">
+      <input id="email" type="email" placeholder="you@example.com"/>
+      <button class="btn secondary" onclick="sendEmailOtp()">Send Login Email</button>
+      <p style="color:#aaa;font-size:13px;margin:8px 0">Click <b>Sign in</b> link in email to enter.</p>
+      <input id="otp" placeholder="6-digit code (if in email)"/>
+      <button class="btn" onclick="verifyEmailOtp()">Verify Code & Enter</button>
+    </div>
+  </div>
+</div>
+
+<!-- Main app -->
+<div id="app" class="hidden">
+  <section class="hero" id="hero">
+    <div class="hero-bg" id="hero-bg"></div>
+    <div class="hero-glow"></div>
+    <div class="hero-shade"></div>
+    <div class="hero-inner">
+      <div class="kicker" id="hero-kicker">Created by Samay Raina • Comedy • Reality • Talent</div>
+      <div class="floor-title" id="hero-title">India's Got Latent</div>
+      <div class="hero-meta"><span class="badge live">● Fan Archive</span><span id="hero-meta">S1 • S2 • Bonus • BTS • Specials</span></div>
+      <p class="synopsis" id="hero-desc">Contestants perform raw, unusual talents in front of Samay Raina and celebrity guest judges, predict their own scores, and get hilariously critiqued. Browse Season 1, Season 2, bonus segments, BTS and specials — free, in one vault.</p>
+      <div class="action-dock">
+        <button class="pill solid" onclick="playFeatured()">▶ Watch Latest Episode</button>
+        <button class="pill glass" onclick="toggleWatchlist()">+ Add to Watchlist</button>
+      </div>
+    </div>
+  </section>
+
+  <div class="filters">
+    <button class="fpill active" onclick="filterRail('All',this)">All Episodes</button>
+    <button class="fpill" onclick="filterRail('Season 1',this)">Season 1</button>
+    <button class="fpill" onclick="filterRail('Season 2',this)">Season 2</button>
+    <button class="fpill" onclick="filterRail('Bonus',this)">Bonus & BTS</button>
+    <input id="rail-search" placeholder="Search IGL episodes, guests..." oninput="filterRail('All',null,true)" style="max-width:240px"/>
+  </div>
+
+  <section class="rail" id="rail">
+    <h2>India's Got Latent — All Episodes</h2>
+    <p style="color:#C8BDB6;font-size:13px;margin:-8px 0 14px">Unofficial community fan archive. Not affiliated with Samay Raina. Streams load from public third-party links.</p>
+    <div id="video-grid" class="grid"></div>
+  </section>
+</div>
+
+<!-- Player HUD -->
+<div id="player-wrap" class="player hidden">
+  <button class="close" onclick="closePlayer()">×</button>
+  <div class="player-inner">
+    <div class="kicker">Now Screening</div>
+    <h3 id="player-title"></h3>
+    <div class="hud-badges"><span class="mini">English 5.1</span><span class="mini">Dolby Atmos</span><span class="mini">4K HDR</span></div>
+    <div style="position:relative"><video id="player" controls playsinline class="hidden"></video><div id="yt-holder" class="hidden" style="width:100%;aspect-ratio:16/9;border-radius:18px;overflow:hidden;background:#000"></div><div class="vignette"></div></div>
+    <iframe id="embed" class="hidden" style="width:100%;aspect-ratio:16/9;border:0;border-radius:18px;background:#000" allowfullscreen allow="autoplay; encrypted-media; fullscreen"></iframe>
+  </div>
+</div>
+
+<!-- Admin panel -->
+<div id="admin-wrap" class="player hidden">
+  <button class="close" onclick="closeAdmin()">×</button>
+  <div class="admin-wrap admin-modal" style="width:min(640px,100%)">
+    <div class="kicker">Control Room</div>
+    <h3 style="font-family:'Syne';margin:6px 0">Manage Vault</h3>
+    <div class="tabs">
+      <button id="atab-add" class="active" onclick="adminTab('add')">Add Episode</button>
+      <button id="atab-remove" onclick="adminTab('remove')">Remove Videos</button>
+    </div>
+    <div id="a-tab-add">
+    <label>Player URL</label><input id="a-url" placeholder="https://iglll1.freeforall.dev/player?id=bonus-06"/>
+    <button class="btn secondary" onclick="adminFetchMeta()">Fetch Details</button>
+    <label>Title</label><input id="a-title"/>
+    <label>Category (auto)</label><select id="a-cat" style="width:100%;padding:12px;margin:6px 0;border-radius:12px;border:1px solid #333;background:#0f0f12;color:#fff"><option value="season1">Season 1 Episodes</option><option value="s1bonus" selected>S1 Bonus</option><option value="s1bts">S1 BTS</option><option value="season2">Season 2 Episodes</option><option value="s2bonus">S2 Bonus</option><option value="s2bts">S2 BTS</option><option value="special">Special</option></select>
+    <label>Episode number</label><input id="a-num" type="number"/>
+    <label>Thumbnail URL</label><input id="a-thumb"/>
+    <label>Description</label><input id="a-desc"/>
+    <button class="btn" onclick="adminSave()">Save Video</button>
+    </div>
+    <div id="a-tab-remove" class="hidden">
+    <button class="btn secondary" onclick="adminLoadList()">Load List</button>
+    <div id="a-list" style="max-height:38vh;overflow:auto;margin-top:8px;text-align:left"></div>
+    <button class="btn" style="background:#c0392b;position:sticky;bottom:0" onclick="adminDeleteSelected()">Delete Selected</button>
+    </div>
+    <p id="a-msg" style="color:#aaa;font-size:13px"></p>
+  </div>
+</div>
+
+<header style="position:fixed;bottom:14px;right:14px;z-index:45;background:none;border:0;box-shadow:none;position:fixed">
+  <span><button id="admin-btn" class="btn secondary hidden" style="width:auto;padding:8px 14px;margin-right:8px" onclick="openAdmin()">Admin</button><button class="btn secondary" style="width:auto;padding:8px 14px" onclick="logout()">Logout</button></span>
+</header>
+
+<script src="js/auth.js"></script>
+<script src="js/app.js"></script>
+<script src="js/admin.js"></script>
+</body>
+</html>

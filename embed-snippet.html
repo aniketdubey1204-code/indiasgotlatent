@@ -1,0 +1,13 @@
+<!-- Add to your source site player.html <head><style> + <script> to support ?embed=1 -->
+<style>
+body.embed-mode header, body.embed-mode .back-link, body.embed-mode .sidebar,
+body.embed-mode footer, body.embed-mode .desc-box, body.embed-mode .community-bar,
+body.embed-mode .actions-row { display: none !important; }
+body.embed-mode .page { padding: 0 !important; margin: 0 !important; max-width: none !important; }
+body.embed-mode .player-layout { display: block !important; }
+body.embed-mode .player-col { grid-column: 1 !important; }
+body.embed-mode .player-box { border: 0 !important; border-radius: 0 !important; }
+</style>
+<script>
+(function(){ try { const p = new URLSearchParams(location.search); if (p.get('embed') === '1') document.body.classList.add('embed-mode'); } catch(e){} })();
+</script>

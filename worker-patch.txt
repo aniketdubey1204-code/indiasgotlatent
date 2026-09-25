@@ -1,0 +1,17 @@
+Cloudflare Worker okcdn.uppcldirect.workers.dev - allow new site in 1 edit:
+
+1. Cloudflare Dashboard > Workers & Pages > okcdn.uppcldirect > Edit code
+2. Find referer check, e.g.:
+   const ref = request.headers.get("Referer") || "";
+   if (!ref.includes("iglll1.freeforall.dev")) return 403 ...
+
+   Change to also allow your new site domain + localhost:
+   const ALLOWED = ["iglll1.freeforall.dev", "localhost", "YOUR-NEW-SITE.vercel.app"];
+   if (!ALLOWED.some(d => ref.includes(d))) return 403 ...
+
+3. Find CORS header, e.g. "Access-Control-Allow-Origin": "https://iglll1.freeforall.dev"
+   Change to "*" for testing, or add new domain. Deploy.
+
+4. Test in new site: click episode -> plays inside <video>, no redirect.
+
+If you paste your worker.js here I will patch exact lines.
