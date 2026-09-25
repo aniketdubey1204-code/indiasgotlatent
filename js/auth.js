@@ -76,7 +76,7 @@ async function startTelegramBotLogin() {
   const { error } = await supabaseClient.from("tg_logins").insert({ token });
   if (error) { st.textContent = "Error: " + error.message; return; }
   window.open("https://t.me/" + TELEGRAM_BOT_NAME + "?start=" + token, "_blank", "noopener");
-  st.textContent = "Waiting… press START in the bot.";
+  st.innerHTML = "Waiting… press START in the bot.<br/><a id='tg-open' href='https://t.me/" + TELEGRAM_BOT_NAME + "?start=" + token + "' target='_blank' rel='noopener' style='color:#fff;font-weight:700'>Tap here to open bot if it did not open ↑</a>";
   tgPoll = setInterval(async () => {
     const { data } = await supabaseClient.from("tg_logins").select("status,telegram_username").eq("token", token).single();
     if (data && data.status === "claimed") {
