@@ -54,14 +54,38 @@ function mountTelegramWidget() {
       + "<button class='btn' onclick='demoTelegramLogin()'>Continue with Telegram</button>";
     return;
   }
-  const s = document.createElement("script");
-  s.src = "https://telegram.org/js/telegram-widget.js?22";
-  s.async = true;
-  s.setAttribute("data-telegram-login", TELEGRAM_BOT_NAME);
-  s.setAttribute("data-size", "large");
-  s.setAttribute("data-onauth", "onTelegramAuth(user)");
-  s.setAttribute("data-request-access", "write");
-  wrap.appendChild(s);
+  // Bot-start flow: tap -> bot opens with /start <token> -> site auto-logs in on claim.
+  wrap.innerHTML = "<p style='color:#aaa;font-size:13px'>Tap below, press START in @" + TELEGRAM_BOT_NAME + ", come back — auto login.</p>"
+    + "<button class='btn' onclick='startTelegramBotLogin()'>Login with Telegram</button>"
+    + "<p id='tg-status' style='color:#C8BDB6;font-size:13px'></p>";
+}
+
+function rndToken() {
+  const a = new Uint8Array(16);
+  crypto.getRandomValues(a);
+  return [...a].map(b => b.toString(16).padStart(2, "0")).join("");
+}
+
+let tgPoll = null;
+async function startTelegramBotLogin() {
+  const st = document.getElementById("tg-status");
+  if (!supabaseClient) { demoTelegramLogin(); return; }
+  if (tgPoll) clearInterval(tgPoll);
+  const token = rndToken();
+  st.textContent = "Creating session...";
+  const { error } = await supabaseClient.from("tg_logins").insert({ token });
+  if (error) { st.textContent = "Error: " + error.message; return; }
+  window.open("https://t.me/" + TELEGRAM_BOT_NAME + "?start=" + token, "_blank", "noopener");
+  st.textContent = "Waiting… press START in the bot.";
+  tgPoll = setInterval(async () => {
+    const { data } = await supabaseClient.from("tg_logins").select("status,telegram_username").eq("token", token).single();
+    if (data && data.status === "claimed") {
+      clearInterval(tgPoll);
+      localStorage.setItem("tgl_auth", "1");
+      localStorage.setItem("tgl_user", JSON.stringify({ username: data.telegram_username || "telegram_user" }));
+      showApp();
+    }
+  }, 2000);
 }
 
 // Called by Telegram widget
