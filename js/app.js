@@ -183,6 +183,19 @@ async function playYouTubeInSite(videoId, title) {
   });
 }
 
+function openInfo() {
+  document.getElementById("info-wrap").classList.remove("hidden");
+}
+function closeInfo() {
+  document.getElementById("info-wrap").classList.add("hidden");
+}
+function infoTab(which) {
+  ["about", "faq", "contact", "dmca"].forEach(t => {
+    document.getElementById("itab-" + t).classList.toggle("active", t === which);
+    document.getElementById("ipane-" + t).classList.toggle("hidden", t !== which);
+  });
+}
+
 async function openPlayer(v) {
   // Direct YouTube links play in-site via YouTube player (fallback button if blocked).
   const directYt = youtubeIdFromUrl(v.video_url);

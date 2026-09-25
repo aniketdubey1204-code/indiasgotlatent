@@ -25,6 +25,7 @@ body{background:radial-gradient(1200px 600px at 70% -10%, rgba(255,188,149,.12),
 .nav-dock a{color:var(--peach-slate);text-decoration:none;font-size:13px;font-weight:600;letter-spacing:.12em;text-transform:uppercase}
 .nav-dock a.active,.nav-dock a:hover{color:#fff}
 .search-glow{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.06);box-shadow:0 0 18px rgba(38,109,249,.55);cursor:pointer}
+.talk-pill{font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;background:linear-gradient(135deg,#7c5cfc,#e040fb);padding:9px 18px;border-radius:999px;cursor:pointer;white-space:nowrap}
 
 /* hero */
 .hero{position:relative;min-height:86vh;display:flex;align-items:flex-end;overflow:hidden;border-bottom:1px solid var(--line)}
