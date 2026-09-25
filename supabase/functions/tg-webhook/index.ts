@@ -15,11 +15,26 @@ Deno.serve(async (req) => {
     const from = msg?.from || {};
     if (!text.startsWith("/start")) return new Response("ok");
     const token = text.split(/\s+/)[1] || "";
+    const sb = createClient(Deno.env.get("SUPABASE_URL"), Deno.env.get("SUPABASE_SERVICE_ROLE_KEY"));
     if (!token) {
-      await sendMsg(from.id, "Open the vault site first and tap Login with Telegram, then come back here.");
+      // Payload lost (typed /start, logged in after opening link, old chat) —
+      // claim the newest pending session from last 3 minutes.
+      const since = new Date(Date.now() - 3 * 60 * 1000).toISOString();
+      const { data: recent } = await sb.from("tg_logins")
+        .select("token,created_at").eq("status", "pending")
+        .gte("created_at", since).order("created_at", { ascending: false }).limit(1).single();
+      if (!recent) {
+        await sendMsg(from.id, "Session expired. Tap Login with Telegram on the site first, then press START here.");
+        return new Response("ok");
+      }
+      await sb.from("tg_logins").update({
+        status: "claimed",
+        telegram_id: from.id,
+        telegram_username: from.username || "",
+      }).eq("token", recent.token);
+      await sendMsg(from.id, `Welcome ${from.first_name || "friend"}! Go back to the site — you are logged in.`);
       return new Response("ok");
     }
-    const sb = createClient(Deno.env.get("SUPABASE_URL"), Deno.env.get("SUPABASE_SERVICE_ROLE_KEY"));
     const { data } = await sb.from("tg_logins").select("token,status").eq("token", token).single();
     if (!data) {
       await sendMsg(from.id, "Session expired. Generate a fresh login on the site.");
