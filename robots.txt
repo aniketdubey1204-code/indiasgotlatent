@@ -1,10 +1,16 @@
 User-agent: *
 Allow: /
+Disallow: /admin.html
+Disallow: /embed-snippet.html
 
 User-agent: Googlebot
 Allow: /
+Disallow: /admin.html
+Disallow: /embed-snippet.html
 
 User-agent: Bingbot
 Allow: /
+Disallow: /admin.html
+Disallow: /embed-snippet.html
 
 Sitemap: https://indiasgotlatent-opal.vercel.app/sitemap.xml
