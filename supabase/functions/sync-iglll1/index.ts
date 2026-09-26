@@ -3,8 +3,8 @@
 // Deploy: Edge Functions > New "sync-iglll1" > paste > Deploy (Enforce JWT OFF, only cron secret can trigger)
 // Schedule via sql/auto_sync.sql
 
-const OKCDN_JSON = "https://iglll1.freeforall.dev/okcdn.json";
-const PLAYER_BASE = "https://iglll1.freeforall.dev/player";
+const OKCDN_JSON = "https://igltalent.freeforall.dev/okcdn.json";
+const PLAYER_BASE = "https://igltalent.freeforall.dev/player";
 
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 

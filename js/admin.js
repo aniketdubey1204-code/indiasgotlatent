@@ -47,14 +47,14 @@ async function adminFetchMeta() {
     return;
   }
   const dataId = parseDataId(url);
-  if (!dataId) { msg.textContent = "Invalid URL. Paste like https://iglll1.freeforall.dev/player?id=bonus-06"; return; }
+  if (!dataId) { msg.textContent = "Invalid URL. Paste like https://igltalent.freeforall.dev/player?id=bonus-06"; return; }
   msg.textContent = "Fetching details...";
   try {
     const eps = await (await fetch(APP_CONFIG.OKCDN_JSON)).json();
     const ep = eps.find(e => e.dataId === dataId);
     if (!ep) { msg.textContent = "ID " + dataId + " not found in okcdn.json"; return; }
     document.getElementById("a-title").value = ep.title || dataId;
-    // Thumbnails: okcdn.json `thumbnail` may point to dead mirror domain — prefer iglll1 /img/<localImage>, else YouTube.
+    // Thumbnails: okcdn.json `thumbnail` may point to dead mirror domain — prefer /img/<localImage>, else YouTube.
     document.getElementById("a-thumb").value = resolveThumb(ep);
     document.getElementById("a-desc").value = ep.description || "";
     // Auto-sort category from okcdn season + id/title keywords

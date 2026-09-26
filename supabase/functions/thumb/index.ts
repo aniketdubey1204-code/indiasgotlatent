@@ -1,7 +1,7 @@
-// Supabase Edge Function: thumb — image proxy so iglll1 hotlink/referer blocks don't break cards.
+// Supabase Edge Function: thumb — image proxy so hotlink/referer blocks don't break cards.
 // Deploy: Edge Functions > New "thumb" > paste > Deploy (Enforce JWT OFF)
-const OKCDN_JSON = "https://iglll1.freeforall.dev/okcdn.json";
-const REFERER = "https://iglll1.freeforall.dev/";
+const OKCDN_JSON = "https://igltalent.freeforall.dev/okcdn.json";
+const REFERER = "https://igltalent.freeforall.dev/";
 
 Deno.serve(async (req) => {
   const cors = {

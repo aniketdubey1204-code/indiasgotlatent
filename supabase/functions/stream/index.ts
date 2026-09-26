@@ -3,9 +3,9 @@
 // Then video src = https://jybncrrkygihsiyeepzq.supabase.co/functions/v1/stream?dataId=bonus-06
 // Browser only sees your Supabase URL, original worker + mp4 stay server-side.
 
-const OKCDN_JSON = "https://iglll1.freeforall.dev/okcdn.json";
+const OKCDN_JSON = "https://igltalent.freeforall.dev/okcdn.json";
 const WORKER = "https://okcdn.uppcldirect.workers.dev";
-const ALLOWED_REFERER = "https://iglll1.freeforall.dev/player";
+const ALLOWED_REFERER = "https://igltalent.freeforall.dev/player";
 
 Deno.serve(async (req) => {
   const cors = {

@@ -1,13 +1,13 @@
--- Auto-category trigger: every insert/update of an iglll1 link gets the
+-- Auto-category trigger: every insert/update of a player link gets the
 -- correct category from its dataId. Stops old code from reverting to 'bonus'.
--- Run once. Manual dropdown still applies to non-iglll1 (YouTube/custom) links.
+-- Run once. Manual dropdown still applies to non-player (YouTube/custom) links.
 
 create or replace function public.auto_category()
 returns trigger as $$
 declare
   did text;
 begin
-  if NEW.video_url like '%iglll1.freeforall.dev/player?id=%' then
+  if NEW.video_url like '%freeforall.dev/player?id=%' then
     did := substring(NEW.video_url from 'id=([^&]+)');
     NEW.category := case
       when did like '%bts%' then 's2bts'
