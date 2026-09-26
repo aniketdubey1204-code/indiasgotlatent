@@ -34,11 +34,10 @@
 {
   "@context": "https://schema.org",
   "@type": "WebSite",
-  "name": "IGL Fan Vault — India's Got Latent Episodes",
-  "alternateName": ["India's Got Latent Fan Archive", "IGL Fan Vault"],
+  "name": "India's Got Latent Fan Vault",
+  "alternateName": "IGL Fan Vault",
   "url": "https://indiasgotlatent-opal.vercel.app/",
-  "description": "Free community fan vault for India's Got Latent — browse and watch every Season 1, Season 2, bonus, BTS and special episode by Samay Raina.",
-  "inLanguage": "en",
+  "description": "Free fan directory and archive for India's Got Latent episodes created by Samay Raina.",
   "potentialAction": {
     "@type": "SearchAction",
     "target": {
@@ -52,31 +51,37 @@
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
-  "@type": "CollectionPage",
-  "name": "India's Got Latent — All Episodes",
-  "description": "Complete episode directory for India's Got Latent by Samay Raina — Season 1, Season 2, bonus segments, BTS and specials.",
-  "url": "https://indiasgotlatent-opal.vercel.app/",
-  "isPartOf": {
-    "@type": "WebSite",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Home",
+      "item": "https://indiasgotlatent-opal.vercel.app/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "VideoObject",
+  "name": "India's Got Latent - Season 2 & 1 Episodes",
+  "description": "Contestants perform raw, unusual talents in front of Samay Raina and celebrity guest judges on India's Got Latent.",
+  "thumbnailUrl": [
+    "https://indiasgotlatent-opal.vercel.app/assets/og-cover.png"
+  ],
+  "uploadDate": "2026-06-20T08:00:00+05:30",
+  "contentUrl": "https://indiasgotlatent-opal.vercel.app/",
+  "embedUrl": "https://indiasgotlatent-opal.vercel.app/",
+  "inLanguage": "hi",
+  "publisher": {
+    "@type": "Organization",
     "name": "IGL Fan Vault",
-    "url": "https://indiasgotlatent-opal.vercel.app/"
-  },
-  "about": {
-    "@type": "TVSeries",
-    "name": "India's Got Latent",
-    "alternateName": "IGL",
-    "description": "Comedy talent show where contestants perform raw, unusual talents in front of Samay Raina and celebrity guest judges, predict their own scores, and get hilariously critiqued.",
-    "genre": ["Comedy", "Reality", "Talent Show"],
-    "creator": {
-      "@type": "Person",
-      "name": "Samay Raina"
-    },
-    "numberOfSeasons": 2,
-    "countryOfOrigin": {
-      "@type": "Country",
-      "name": "India"
-    },
-    "inLanguage": "hi"
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://indiasgotlatent-opal.vercel.app/assets/brand.svg"
+    }
   }
 }
 </script>
@@ -90,7 +95,7 @@
       "name": "Is the IGL Fan Vault official?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "No — it is a community-run fan project for ease of access. Not affiliated with, authorized, or endorsed by Samay Raina."
+        "text": "No — community-run fan project for ease of access. Not affiliated with, authorized, or endorsed by Samay Raina."
       }
     },
     {
@@ -98,7 +103,7 @@
       "name": "Where can I watch India's Got Latent episodes for free?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "You can browse all India's Got Latent episodes — Season 1, Season 2, bonus segments, BTS and specials — for free on the IGL Fan Vault."
+        "text": "You can browse all India's Got Latent episodes — Season 1, Season 2, bonus segments, BTS and specials — on the IGL Fan Vault."
       }
     },
     {
@@ -114,30 +119,8 @@
       "name": "What is India's Got Latent?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "India's Got Latent is a comedy talent show created by Samay Raina where contestants perform raw, unusual talents in front of celebrity guest judges, predict their own scores, and get hilariously critiqued."
+        "text": "India's Got Latent is a comedy talent show created by Samay Raina where contestants perform unusual talents in front of celebrity guest judges."
       }
-    },
-    {
-      "@type": "Question",
-      "name": "How many seasons does India's Got Latent have?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "India's Got Latent has 2 seasons. Season 1 launched in June 2024 and Season 2 premiered in June 2026 on both Netflix and YouTube."
-      }
-    }
-  ]
-}
-</script>
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "BreadcrumbList",
-  "itemListElement": [
-    {
-      "@type": "ListItem",
-      "position": 1,
-      "name": "Home",
-      "item": "https://indiasgotlatent-opal.vercel.app/"
     }
   ]
 }
