@@ -108,8 +108,14 @@ function getCurrentUser() {
 
 function isAdmin() {
   const u = getCurrentUser();
-  if (!u || u.type !== "telegram") return false;
-  return (APP_CONFIG.ADMIN_TELEGRAM_USERNAMES || []).map(e=>e.toLowerCase().replace(/^@/,"")).includes((u.username || "").toLowerCase());
+  if (!u) return false;
+  if (u.type === "telegram") {
+    return (APP_CONFIG.ADMIN_TELEGRAM_USERNAMES || []).map(e=>e.toLowerCase().replace(/^@/,"")).includes((u.username || "").toLowerCase());
+  }
+  if (u.type === "email" && u.email) {
+    return (APP_CONFIG.ADMIN_EMAILS || []).map(e=>e.toLowerCase()).includes(u.email.toLowerCase());
+  }
+  return false;
 }
 
 function updateAdminUI() {
@@ -120,9 +126,9 @@ window.updateAdminUI = updateAdminUI;
 
 function switchTab(which) {
   document.getElementById("tab-telegram").classList.toggle("active", which === "telegram");
-  document.getElementById("tab-email").classList.toggle("active", which === "email");
+  document.getElementById("tab-google").classList.toggle("active", which === "google");
   document.getElementById("pane-telegram").classList.toggle("hidden", which !== "telegram");
-  document.getElementById("pane-email").classList.toggle("hidden", which !== "email");
+  document.getElementById("pane-google").classList.toggle("hidden", which !== "google");
 }
 
 function demoTelegramLogin() {
@@ -130,6 +136,15 @@ function demoTelegramLogin() {
   localStorage.setItem("tgl_auth", "1");
   localStorage.setItem("tgl_user", JSON.stringify({ username: v }));
   showApp();
+}
+
+async function signInWithGoogle() {
+  const st = document.getElementById("google-status");
+  if (!supabaseClient) { if (st) st.textContent = "Supabase not configured."; return; }
+  if (st) st.textContent = "Opening Google...";
+  const redirectTo = window.location.href.split("?")[0].split("#")[0];
+  const { error } = await supabaseClient.auth.signInWithOAuth({ provider: "google", options: { redirectTo } });
+  if (error && st) st.textContent = "Error: " + error.message;
 }
 
 async function sendEmailOtp() {
