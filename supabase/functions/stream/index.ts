@@ -32,14 +32,9 @@ Deno.serve(async (req) => {
       if (ep.type === "youtube") return new Response(JSON.stringify({ type: "youtube", youtubeId: ep.youtubeId }), { headers: { ...cors, "Content-Type": "application/json" } });
       if (ep.type === "mp4" && ep.url) epId = null;
       if (ep.type === "mp4" && ep.url) {
-        // Proxy direct mp4 too so source stays hidden
-        const up = await fetch(ep.url, { headers: { Referer: ALLOWED_REFERER, Range: req.headers.get("Range") || "" } });
-        const h = new Headers(cors);
-        h.set("Content-Type", up.headers.get("Content-Type") || "video/mp4");
-        if (up.headers.get("Content-Range")) h.set("Content-Range", up.headers.get("Content-Range"));
-        if (up.headers.get("Content-Length")) h.set("Content-Length", up.headers.get("Content-Length"));
-        h.set("Accept-Ranges", "bytes");
-        return new Response(up.body, { status: up.status, headers: h });
+        // Redirect straight to file — piping bytes through here burns Supabase egress quota.
+        // URLs are signed + expiring, so exposing them is low-risk.
+        return Response.redirect(ep.url, 302);
       }
       epId = ep.id;
       epType = ep.type;
@@ -69,15 +64,9 @@ Deno.serve(async (req) => {
       if (q) pick = q;
     }
 
-    // Proxy mp4 bytes (supports seeking via Range)
-    const range = req.headers.get("Range");
-    const up = await fetch(pick.url, { headers: { Referer: ALLOWED_REFERER, ...(range ? { Range: range } : {}) } });
-    const h = new Headers(cors);
-    h.set("Content-Type", up.headers.get("Content-Type") || "video/mp4");
-    h.set("Accept-Ranges", "bytes");
-    if (up.headers.get("Content-Range")) h.set("Content-Range", up.headers.get("Content-Range")!);
-    if (up.headers.get("Content-Length")) h.set("Content-Length", up.headers.get("Content-Length")!);
-    return new Response(up.body, { status: up.status, headers: h });
+    // Redirect to CDN — never pipe video bytes (each piped GB counts as Supabase egress;
+    // that is what blew the 5GB free quota). Signed URLs expire, seeking still works.
+    return Response.redirect(pick.url, 302);
   } catch (e) {
     return new Response(JSON.stringify({ error: String(e) }), { status: 500, headers: { "Access-Control-Allow-Origin": "*", "Content-Type": "application/json" } });
   }
