@@ -32,9 +32,15 @@ Deno.serve(async (req) => {
       if (ep.type === "youtube") return new Response(JSON.stringify({ type: "youtube", youtubeId: ep.youtubeId }), { headers: { ...cors, "Content-Type": "application/json" } });
       if (ep.type === "mp4" && ep.url) epId = null;
       if (ep.type === "mp4" && ep.url) {
-        // Redirect straight to file — piping bytes through here burns Supabase egress quota.
-        // URLs are signed + expiring, so exposing them is low-risk.
-        return Response.redirect(ep.url, 302);
+        // INTERIM: pipe bytes so playback works. Burns egress quota —
+        // permanent fix is vps-proxy/ (cheap VPS), then point STREAM_PROXY there.
+        const up = await fetch(ep.url, { headers: { "User-Agent": "Lavf/59.27.100", Range: req.headers.get("Range") || "" } });
+        const h = new Headers(cors);
+        h.set("Content-Type", up.headers.get("Content-Type") || "video/mp4");
+        if (up.headers.get("Content-Range")) h.set("Content-Range", up.headers.get("Content-Range"));
+        if (up.headers.get("Content-Length")) h.set("Content-Length", up.headers.get("Content-Length"));
+        h.set("Accept-Ranges", "bytes");
+        return new Response(up.body, { status: up.status, headers: h });
       }
       epId = ep.id;
       epType = ep.type;
@@ -64,9 +70,16 @@ Deno.serve(async (req) => {
       if (q) pick = q;
     }
 
-    // Redirect to CDN — never pipe video bytes (each piped GB counts as Supabase egress;
-    // that is what blew the 5GB free quota). Signed URLs expire, seeking still works.
-    return Response.redirect(pick.url, 302);
+    // INTERIM: pipe bytes (works, but burns egress). Permanent: vps-proxy/ on a cheap
+    // VPS, then set STREAM_PROXY to it. Do NOT redirect: okcdn.ru 400s all browser UAs.
+    const range = req.headers.get("Range");
+    const up = await fetch(pick.url, { headers: { "User-Agent": "Lavf/59.27.100", ...(range ? { Range: range } : {}) } });
+    const h = new Headers(cors);
+    h.set("Content-Type", up.headers.get("Content-Type") || "video/mp4");
+    h.set("Accept-Ranges", "bytes");
+    if (up.headers.get("Content-Range")) h.set("Content-Range", up.headers.get("Content-Range")!);
+    if (up.headers.get("Content-Length")) h.set("Content-Length", up.headers.get("Content-Length")!);
+    return new Response(up.body, { status: up.status, headers: h });
   } catch (e) {
     return new Response(JSON.stringify({ error: String(e) }), { status: 500, headers: { "Access-Control-Allow-Origin": "*", "Content-Type": "application/json" } });
   }
