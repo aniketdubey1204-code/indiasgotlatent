@@ -14,9 +14,8 @@ async function loadVideos() {
   if (!videos.length && typeof LOCAL_VIDEOS !== "undefined") videos = LOCAL_VIDEOS;
   window._videos = videos;
   if (!videos.length) { grid.innerHTML = "<p>No videos yet. Open Admin to add.</p>"; return; }
-  // Hero = latest main episode (newest season episode), grid stays chronological
-  const mains = videos.filter(v => ["season1", "season2"].includes((v.category || "").toLowerCase()));
-  setHero(mains.length ? mains[mains.length - 1] : videos[videos.length - 1]);
+  // Hero = newest synced video overall (any category), grid stays chronological
+  setHero(videos[videos.length - 1]);
   renderRail(videos);
 }
 
@@ -97,15 +96,12 @@ function guessCategory(v) {
 }
 function playFeatured() {
   const list = window._videos || [];
-  const mains = list.filter(v => ["season1", "season2"].includes((v.category || "").toLowerCase()));
-  if (mains.length) openPlayer(mains[mains.length - 1]);
-  else if (list.length) openPlayer(list[list.length - 1]);
+  if (list.length) openPlayer(list[list.length - 1]);
 }
 function toggleWatchlist() {
   const l = JSON.parse(localStorage.getItem("watchlist") || "[]");
   const list = window._videos || [];
-  const mains = list.filter(v => ["season1", "season2"].includes((v.category || "").toLowerCase()));
-  const f = mains.length ? mains[mains.length - 1] : list[list.length - 1];
+  const f = list[list.length - 1];
   if (f && !l.includes(f.title)) { l.push(f.title); localStorage.setItem("watchlist", JSON.stringify(l)); }
   alert(l.length ? "Watchlist: " + l.join(", ") : "Watchlist empty");
 }
