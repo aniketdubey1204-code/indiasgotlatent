@@ -15,6 +15,7 @@ OKCDN_JSON = "https://igltalent.freeforall.dev/okcdn.json"
 WORKER = "https://okcdn.uppcldirect.workers.dev"
 REFERER = "https://igltalent.freeforall.dev/player"
 UA = "Lavf/59.27.100"
+BROWSER_UA = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0 Safari/537.36"
 MAX_PER_RUN = 8
 MAX_BYTES = 1800 * 1024 * 1024  # Telegram 2GB cap, safety margin
 
@@ -43,10 +44,28 @@ def sb_patch_match(video_url, tg_path):
     r.raise_for_status()
 
 
+def worker_json(ep):
+    # Cloudflare challenges datacenter UAs intermittently: browser UA + retries.
+    last = ""
+    for i in range(4):
+        try:
+            r = requests.get(
+                f"{WORKER}/?id={ep['id']}",
+                headers={"Referer": REFERER, "User-Agent": BROWSER_UA},
+                timeout=60,
+            )
+            return r.json()
+        except Exception as e:
+            last = f"try{i + 1}: {str(e)[:80]} | body={r.text[:80] if 'r' in locals() else '?'}"
+            import time
+            time.sleep(10)
+    raise RuntimeError("worker unreachable: " + last)
+
+
 def resolve_url(ep):
     if ep.get("type") == "mp4" and ep.get("url"):
         return ep["url"]
-    wj = requests.get(f"{WORKER}/?id={ep['id']}", headers={"Referer": REFERER}, timeout=60).json()
+    wj = worker_json(ep)
     if wj.get("status") != "success" or not wj.get("streams"):
         raise RuntimeError("worker: " + str(wj.get("message", "no streams")))
     streams = sorted(wj["streams"], key=lambda s: int((str(s.get("type") or "0p").split("p")[0] or 0)), reverse=True)
@@ -111,7 +130,7 @@ async def main():
         idx[did] = r
         if r.get("tg_path"):
             have_tg.add(did)
-    todo = [e for e in eps if e.get("dataId") not in have_tg and (e.get("id") or e.get("url"))]
+    todo = [e for e in eps if e.get("dataId") not in have_tg and e.get("type") != "youtube" and (e.get("id") or e.get("url"))]
     # newest source entries first
     todo.sort(key=lambda e: idx.get(e["dataId"], {}).get("source_index") or 0, reverse=True)
     todo = todo[:MAX_PER_RUN]
