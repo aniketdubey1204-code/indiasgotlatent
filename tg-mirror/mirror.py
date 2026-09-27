@@ -33,6 +33,10 @@ BOT_TOKEN = os.environ["TG_BOT_TOKEN"]
 API_ID = int(os.environ["TG_API_ID"])
 API_HASH = os.environ["TG_API_HASH"]
 CHANNEL_ID = os.environ["TG_CHANNEL_ID"]  # e.g. -1001234567890
+try:
+    CHANNEL = int(str(CHANNEL_ID).strip())
+except ValueError:
+    CHANNEL = str(CHANNEL_ID).strip()
 CRON_SECRET = os.environ["CRON_SECRET"]  # same value as Supabase CRON_SECRET
 SB_URL = os.environ["SUPABASE_URL"]
 SB_KEY = os.environ["SUPABASE_SERVICE_KEY"]
@@ -106,7 +110,7 @@ async def mirror_one(app, ep, rows_by_id):
                     raise RuntimeError("exceeds cap during download")
                 f.write(chunk)
     print(f"downloaded {data_id}: {total / 1e6:.0f}MB")
-    msg = await app.send_video(CHANNEL_ID, tmp, supports_streaming=True, caption=data_id)
+    msg = await app.send_video(CHANNEL, tmp, supports_streaming=True, caption=data_id)
     file_id = msg.video.file_id
     gf = requests.get(
         f"https://api.telegram.org/bot{BOT_TOKEN}/getFile",
@@ -148,6 +152,12 @@ async def main():
         return
     print(f"mirroring {len(todo)}: {[e['dataId'] for e in todo]}")
     async with Client("mirror", api_id=API_ID, api_hash=API_HASH, bot_token=BOT_TOKEN, in_memory=True) as app:
+        # Warm up channel peer; clear error if bot isn't actually in the channel.
+        try:
+            await app.get_chat(CHANNEL)
+        except Exception as e:
+            print(f"CHANNEL PROBLEM: bot cannot see {CHANNEL}: {str(e)[:150]} — make the bot admin of the channel, then re-run.")
+            return
         for ep in todo:
             try:
                 await mirror_one(app, ep, idx)
