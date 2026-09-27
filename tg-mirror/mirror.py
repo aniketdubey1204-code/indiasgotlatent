@@ -23,6 +23,7 @@ BOT_TOKEN = os.environ["TG_BOT_TOKEN"]
 API_ID = int(os.environ["TG_API_ID"])
 API_HASH = os.environ["TG_API_HASH"]
 CHANNEL_ID = os.environ["TG_CHANNEL_ID"]  # e.g. -1001234567890
+CRON_SECRET = os.environ["CRON_SECRET"]  # same value as Supabase CRON_SECRET
 SB_URL = os.environ["SUPABASE_URL"]
 SB_KEY = os.environ["SUPABASE_SERVICE_KEY"]
 H = {"apikey": SB_KEY, "Authorization": "Bearer " + SB_KEY, "Content-Type": "application/json"}
@@ -44,32 +45,30 @@ def sb_patch_match(video_url, tg_path):
     r.raise_for_status()
 
 
-def worker_json(ep):
-    # Cloudflare challenges datacenter UAs intermittently: browser UA + retries.
-    last = ""
-    for i in range(4):
-        try:
-            r = requests.get(
-                f"{WORKER}/?id={ep['id']}",
-                headers={"Referer": REFERER, "User-Agent": BROWSER_UA},
-                timeout=60,
-            )
-            return r.json()
-        except Exception as e:
-            last = f"try{i + 1}: {str(e)[:80]} | body={r.text[:80] if 'r' in locals() else '?'}"
-            import time
-            time.sleep(10)
-    raise RuntimeError("worker unreachable: " + last)
-
-
 def resolve_url(ep):
+    # Worker Cloudflare-blocks GitHub IPs -> resolve via our own Supabase fn
+    # (worker allows Supabase). Returns direct CDN URL; bytes download straight
+    # from CDN to runner, Supabase only sends tiny JSON.
     if ep.get("type") == "mp4" and ep.get("url"):
         return ep["url"]
-    wj = worker_json(ep)
-    if wj.get("status") != "success" or not wj.get("streams"):
-        raise RuntimeError("worker: " + str(wj.get("message", "no streams")))
-    streams = sorted(wj["streams"], key=lambda s: int((str(s.get("type") or "0p").split("p")[0] or 0)), reverse=True)
-    return streams[0]["url"]
+    last = ""
+    for i in range(3):
+        try:
+            r = requests.get(
+                f"{SB_URL}/functions/v1/resolve",
+                params={"dataId": ep["dataId"]},
+                headers={"x-cron-secret": CRON_SECRET},
+                timeout=120,
+            )
+            j = r.json()
+            if j.get("url"):
+                return j["url"]
+            last = f"try{i + 1}: {str(j)[:100]}"
+        except Exception as e:
+            last = f"try{i + 1}: {str(e)[:100]}"
+            import time
+            time.sleep(10)
+    raise RuntimeError("resolve failed: " + last)
 
 
 async def mirror_one(app, ep, rows_by_id):
