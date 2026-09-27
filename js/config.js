@@ -7,5 +7,6 @@ const APP_CONFIG = {
   OKCDN_JSON: "https://igltalent.freeforall.dev/okcdn.json",
   OKCDN_WORKER: "https://okcdn.uppcldirect.workers.dev",
   STREAM_PROXY: "https://jybncrrkygihsiyeepzq.supabase.co/functions/v1/stream",
+  TG_PROXY: "https://jybncrrkygihsiyeepzq.supabase.co/functions/v1/tg",
   THUMB_PROXY: "https://jybncrrkygihsiyeepzq.supabase.co/functions/v1/thumb"
 };

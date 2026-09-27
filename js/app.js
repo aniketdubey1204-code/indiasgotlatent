@@ -227,6 +227,15 @@ async function openPlayer(v) {
     initPlyr(null);
     return;
   }
+  // Telegram mirror first: bytes come from Telegram (free, unlimited), Supabase untouched.
+  if (v.tg_path) {
+    const s = document.createElement("source");
+    s.src = APP_CONFIG.TG_PROXY + "?p=" + encodeURIComponent(v.tg_path);
+    s.type = "video/mp4";
+    vid.appendChild(s);
+    initPlyr(null);
+    return;
+  }
   document.getElementById("player-title").textContent = "Loading " + v.title + "...";
   try {
     const dataId = new URL(v.video_url, location.origin).searchParams.get("id");
