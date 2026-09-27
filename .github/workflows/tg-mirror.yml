@@ -13,7 +13,12 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
-      - run: pip install requests pyrogram tgcrypto
+      - run: pip install requests
+      - name: Start local Bot API server (lifts upload cap 50MB -> 2GB)
+        run: |
+          docker run -d --name tg-bot-api -p 8081:8081 aiogram/telegram-bot-api:latest \
+            --api-id=${{ secrets.TG_API_ID }} --api-hash=${{ secrets.TG_API_HASH }} --local
+          sleep 8; docker logs tg-bot-api 2>&1 | tail -3
       - run: python tg-mirror/mirror.py
         env:
           TG_BOT_TOKEN: ${{ secrets.TG_BOT_TOKEN }}
