@@ -6,8 +6,16 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const OKCDN_JSON = "https://igltalent.freeforall.dev/okcdn.json";
-const WORKER = "https://okcdn.uppcldirect.workers.dev";
+const WORKER_FALLBACK = "https://okcdn.okcdn-api.workers.dev";
 const REFERER = "https://igltalent.freeforall.dev/player";
+
+async function workerBase() {
+  try {
+    const c = await (await fetch("https://igltalent.freeforall.dev/config.json")).json();
+    if (c.OKCDN_WORKER) return c.OKCDN_WORKER;
+  } catch (e) {}
+  return WORKER_FALLBACK;
+}
 
 Deno.serve(async (req) => {
   const cors = { "Access-Control-Allow-Origin": "*", "Content-Type": "application/json" };
@@ -24,7 +32,7 @@ Deno.serve(async (req) => {
     const ep = eps.find((e) => e.dataId === dataId);
     if (!ep) return new Response(JSON.stringify({ error: "not found" }), { status: 404, headers: cors });
     if (ep.type === "mp4" && ep.url) return new Response(JSON.stringify({ url: ep.url }), { headers: cors });
-    const wj = await (await fetch(`${WORKER}/?id=${encodeURIComponent(ep.id)}`, { headers: { Referer: REFERER } })).json();
+    const wj = await (await fetch(`${await workerBase()}/?id=${encodeURIComponent(ep.id)}`, { headers: { Referer: REFERER } })).json();
     if (wj.status !== "success" || !wj.streams?.length) {
       return new Response(JSON.stringify({ error: "no streams" }), { status: 502, headers: cors });
     }

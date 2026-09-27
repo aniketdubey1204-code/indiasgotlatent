@@ -4,8 +4,17 @@
 // Browser only sees your Supabase URL, original worker + mp4 stay server-side.
 
 const OKCDN_JSON = "https://igltalent.freeforall.dev/okcdn.json";
-const WORKER = "https://okcdn.uppcldirect.workers.dev";
+const WORKER_FALLBACK = "https://okcdn.okcdn-api.workers.dev";
 const ALLOWED_REFERER = "https://igltalent.freeforall.dev/player";
+
+// Source rotates workers via /config.json — follow it, fallback hardcoded.
+async function workerBase() {
+  try {
+    const c = await (await fetch("https://igltalent.freeforall.dev/config.json")).json();
+    if (c.OKCDN_WORKER) return c.OKCDN_WORKER;
+  } catch (e) {}
+  return WORKER_FALLBACK;
+}
 
 Deno.serve(async (req) => {
   const cors = {
@@ -49,7 +58,7 @@ Deno.serve(async (req) => {
     if (!epId) return new Response(JSON.stringify({ error: "Missing id/dataId" }), { status: 400, headers: { ...cors, "Content-Type": "application/json" } });
 
     // Resolve stream list from worker with whitelisted referer
-    const w = await fetch(`${WORKER}/?id=${encodeURIComponent(epId)}`, { headers: { Referer: ALLOWED_REFERER } });
+    const w = await fetch(`${await workerBase()}/?id=${encodeURIComponent(epId)}`, { headers: { Referer: ALLOWED_REFERER } });
     const wj = await w.json();
     if (wj.status !== "success" || !wj.streams?.length) {
       return new Response(JSON.stringify({ error: wj.message || "Stream unavailable" }), { status: 502, headers: { ...cors, "Content-Type": "application/json" } });

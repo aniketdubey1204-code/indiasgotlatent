@@ -12,8 +12,18 @@ import asyncio
 from pyrogram import Client
 
 OKCDN_JSON = "https://igltalent.freeforall.dev/okcdn.json"
-WORKER = "https://okcdn.uppcldirect.workers.dev"
+WORKER_FALLBACK = "https://okcdn.okcdn-api.workers.dev"
 REFERER = "https://igltalent.freeforall.dev/player"
+
+
+def worker_base():
+    try:
+        c = requests.get("https://igltalent.freeforall.dev/config.json", timeout=30).json()
+        if c.get("OKCDN_WORKER"):
+            return c["OKCDN_WORKER"]
+    except Exception:
+        pass
+    return WORKER_FALLBACK
 UA = "Lavf/59.27.100"
 BROWSER_UA = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0 Safari/537.36"
 MAX_PER_RUN = 8

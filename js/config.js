@@ -5,7 +5,7 @@ const APP_CONFIG = {
   ADMIN_EMAILS: ["aniketdubey1204@gmail.com"],
   ADMIN_TELEGRAM_USERNAMES: ["duhitssaniket"],
   OKCDN_JSON: "https://igltalent.freeforall.dev/okcdn.json",
-  OKCDN_WORKER: "https://okcdn.uppcldirect.workers.dev",
+  OKCDN_WORKER: "https://okcdn.okcdn-api.workers.dev",
   STREAM_PROXY: "https://jybncrrkygihsiyeepzq.supabase.co/functions/v1/stream",
   TG_PROXY: "https://jybncrrkygihsiyeepzq.supabase.co/functions/v1/tg",
   THUMB_PROXY: "https://jybncrrkygihsiyeepzq.supabase.co/functions/v1/thumb"
