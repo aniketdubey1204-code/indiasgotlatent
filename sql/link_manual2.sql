@@ -1,0 +1,22 @@
+-- Link 21 manually-uploaded YouTube videos. Run once in SQL Editor.
+update public.videos set yt_mirror_id = 'KDJUely9iJs' where video_url = 'https://igltalent.freeforall.dev/player?id=bonus-01';
+update public.videos set yt_mirror_id = '8WAmbRxjRDk' where video_url = 'https://igltalent.freeforall.dev/player?id=bonus-02';
+update public.videos set yt_mirror_id = 'RV-hZOBxw9E' where video_url = 'https://igltalent.freeforall.dev/player?id=ep-09';
+update public.videos set yt_mirror_id = 'Y6nGBWnwChE' where video_url = 'https://igltalent.freeforall.dev/player?id=bonus-04';
+update public.videos set yt_mirror_id = 'YIjNafZpvOA' where video_url = 'https://igltalent.freeforall.dev/player?id=bonus-06';
+update public.videos set yt_mirror_id = '0DpGPs-a1k0' where video_url = 'https://igltalent.freeforall.dev/player?id=bonus-05';
+update public.videos set yt_mirror_id = 'rEVvI4lh5y8' where video_url = 'https://igltalent.freeforall.dev/player?id=ep-06';
+update public.videos set yt_mirror_id = 'f0s9Yc2KwLI' where video_url = 'https://igltalent.freeforall.dev/player?id=ep-07';
+update public.videos set yt_mirror_id = 'FwtHqweoJ2Q' where video_url = 'https://igltalent.freeforall.dev/player?id=ep-08';
+update public.videos set yt_mirror_id = 'ytsKBcxv_EU' where video_url = 'https://igltalent.freeforall.dev/player?id=ep-10';
+update public.videos set yt_mirror_id = 'xEYMRZfiOD4' where video_url = 'https://igltalent.freeforall.dev/player?id=ep-11';
+update public.videos set yt_mirror_id = '6tt_0mdRdx4' where video_url = 'https://igltalent.freeforall.dev/player?id=ep-12';
+update public.videos set yt_mirror_id = 'vM5K6zj4AdY' where video_url = 'https://igltalent.freeforall.dev/player?id=extra-01';
+update public.videos set yt_mirror_id = 'uUDpsAqc55I' where video_url = 'https://igltalent.freeforall.dev/player?id=extra-02';
+update public.videos set yt_mirror_id = '_gTYIQYgFvU' where video_url = 'https://igltalent.freeforall.dev/player?id=bonus-03';
+update public.videos set yt_mirror_id = 'BZS_vjbrGDA' where video_url = 'https://igltalent.freeforall.dev/player?id=s2-07';
+update public.videos set yt_mirror_id = 'ZjDMBSuLbTE' where video_url = 'https://igltalent.freeforall.dev/player?id=s2-06-rakhi';
+update public.videos set yt_mirror_id = 'ab3TRtcg0kA' where video_url = 'https://igltalent.freeforall.dev/player?id=s2-bts-01';
+update public.videos set yt_mirror_id = 'BMvDt3H7Grg' where video_url = 'https://igltalent.freeforall.dev/player?id=extra-03';
+update public.videos set yt_mirror_id = '7Oc6NWxrHvM' where video_url = 'https://igltalent.freeforall.dev/player?id=extra-04';
+update public.videos set yt_mirror_id = 'ZMjG326tv2Q' where video_url = 'https://igltalent.freeforall.dev/player?id=s2-03-bonus';
