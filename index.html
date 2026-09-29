@@ -217,12 +217,35 @@
 
 <!-- Player HUD -->
 <div id="player-wrap" class="player hidden">
-  <button class="close" onclick="closePlayer()">×</button>
-  <div class="player-inner">
-    <div class="kicker">Now Screening</div>
-    <h3 id="player-title"></h3>
-    <div class="hud-badges"><span class="mini" id="player-meta">Fan Vault</span></div>
-    <div style="position:relative"><video id="player" controls playsinline class="hidden"></video><div id="yt-holder" class="hidden" style="width:100%;aspect-ratio:16/9;border-radius:18px;overflow:hidden;background:#000"></div><div class="vignette"></div></div>
+  <div class="player-inner" id="player-box">
+    <button class="close" onclick="closePlayer()" aria-label="Close player">×</button>
+    <div class="player-head">
+      <div class="kicker">Now Screening</div>
+      <h3 id="player-title"></h3>
+      <div class="hud-badges"><span class="mini" id="player-meta">Fan Vault</span></div>
+    </div>
+    <div class="player-layout">
+      <div class="stage">
+        <div class="ambient-glow" id="ambient-glow"></div>
+        <div class="screen">
+          <video id="player" controls playsinline class="hidden"></video>
+          <div id="yt-holder" class="hidden" style="width:100%;aspect-ratio:16/9;border-radius:14px;overflow:hidden;background:#000"></div>
+          <div class="vignette"></div>
+          <div id="screen-loader" class="screen-loader hidden"><span class="spin"></span><p>Loading stream…</p></div>
+        </div>
+      </div>
+      <aside class="upnext">
+        <div class="upnext-head"><span>Up Next</span><label class="auto-toggle" title="Autoplay next episode"><input type="checkbox" id="autoplay-next" checked onchange="setAutoplay(this.checked)"/><span class="track"><span class="knob"></span></span>Autoplay</label></div>
+        <div id="upnext-list"></div>
+      </aside>
+    </div>
+    <div class="player-bar">
+      <button class="pbtn" onclick="stepEpisode(-1)" aria-label="Previous episode">⏮ Prev</button>
+      <button class="pbtn" onclick="stepEpisode(1)" aria-label="Next episode">Next ⏭</button>
+      <button class="pbtn" id="theater-btn" onclick="toggleTheater()" aria-label="Theater mode">⛶ Theater</button>
+      <button class="pbtn" onclick="shareEpisode()" aria-label="Copy link">⧉ Share</button>
+      <button class="pbtn" onclick="addCurrentToWatchlist()" aria-label="Add to watchlist">+ Watchlist</button>
+    </div>
     <iframe id="embed" class="hidden" style="width:100%;aspect-ratio:16/9;border:0;border-radius:18px;background:#000" allowfullscreen allow="autoplay; encrypted-media; fullscreen"></iframe>
   </div>
 </div>

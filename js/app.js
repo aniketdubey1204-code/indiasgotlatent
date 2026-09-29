@@ -17,6 +17,12 @@ async function loadVideos() {
   // Hero = newest synced video overall (any category), grid stays chronological
   setHero(videos[videos.length - 1]);
   renderRail(videos);
+  // Deep link: #v=<id> opens that episode directly (from Share).
+  const dm = (location.hash || "").match(/^#v=(.+)$/);
+  if (dm) {
+    const f = videos.find(x => String(x.id) === dm[1] || x.video_url === decodeURIComponent(dm[1]));
+    if (f) { history.replaceState(null, "", location.pathname); openPlayer(f); }
+  }
 }
 
 function thumbSrc(v) {
@@ -189,6 +195,12 @@ async function playYouTubeInSite(videoId, title) {
     videoId, width: "100%", height: "100%",
     playerVars: pv,
     events: {
+      onReady: () => { hideLoader(); restoreYT(); },
+      onStateChange: (ev) => {
+        if (!window.YT) return;
+        if (ev.data === YT.PlayerState.PLAYING) hideLoader();
+        if (ev.data === YT.PlayerState.ENDED) onEnded();
+      },
       onError: (e) => {
         // 101/150/153 = owner blocked embedding -> fallback button
         if ([101, 150, 153].includes(e.data)) {
@@ -235,6 +247,8 @@ function infoTab(which) {
 }
 
 async function openPlayer(v) {
+  window._current = v;
+  playerSetup(v);
   // Direct YouTube links play in-site via YouTube player (fallback button if blocked).
   const directYt = youtubeIdFromUrl(v.video_url);
   if (directYt) {
@@ -317,6 +331,9 @@ function closePlayer() {
   const vid = document.getElementById("player");
   const frame = document.getElementById("embed");
   destroyPlyr(); destroyYT();
+  if (posTimer) { clearInterval(posTimer); posTimer = null; }
+  if (nextTimer) { clearTimeout(nextTimer); nextTimer = null; }
+  window._current = null;
   const fb = document.getElementById("yt-fallback");
   if (fb) fb.remove();
   vid.pause(); vid.innerHTML = ""; vid.removeAttribute("src"); vid.load();
@@ -374,4 +391,137 @@ document.addEventListener("click", (e) => {
   const iw = document.getElementById("info-wrap");
   if (iw && !iw.classList.contains("hidden") && e.target === iw) closeInfo();
 });
+/* ---------- player engine: loader, glow, up-next, autoplay, resume, share ---------- */
+let posTimer = null;
+let nextTimer = null;
+
+function showLoader() {
+  const l = document.getElementById("screen-loader");
+  if (l) l.classList.remove("hidden");
+}
+function hideLoader() {
+  const l = document.getElementById("screen-loader");
+  if (l) l.classList.add("hidden");
+}
+function posKey(v) { return "igl_pos_" + (v.id || v.video_url); }
+function fmtTime(s) {
+  s = Math.max(0, Math.floor(s || 0));
+  const m = Math.floor(s / 60), h = Math.floor(m / 60);
+  return (h ? h + ":" + String(m % 60).padStart(2, "0") : m) + ":" + String(s % 60).padStart(2, "0");
+}
+function playerSetup(v) {
+  showLoader();
+  const g = document.getElementById("ambient-glow");
+  if (g) { g.style.backgroundImage = `url('${thumbSrc(v)}')`; g.style.opacity = thumbSrc(v) ? "" : "0"; }
+  const cb = document.getElementById("autoplay-next");
+  if (cb) cb.checked = (localStorage.getItem("igl_autoplay") ?? "1") === "1";
+  renderUpNext(v);
+  const vid = document.getElementById("player");
+  if (vid) {
+    vid._resumeDone = false;
+    vid.onplaying = () => hideLoader();
+    vid.onended = () => onEnded();
+    vid.onloadedmetadata = () => {
+      if (vid._resumeDone) return;
+      vid._resumeDone = true;
+      const saved = parseFloat(localStorage.getItem(posKey(v)) || "0");
+      if (saved > 10 && vid.duration && saved < vid.duration - 15) {
+        vid.currentTime = saved;
+        toast("Resumed from " + fmtTime(saved));
+      }
+    };
+    vid.onerror = () => hideLoader();
+  }
+  if (posTimer) clearInterval(posTimer);
+  posTimer = setInterval(() => {
+    const cur = window._current;
+    if (!cur) return;
+    try {
+      const vid2 = document.getElementById("player");
+      if (vid2 && !vid2.classList.contains("hidden") && vid2.duration) {
+        localStorage.setItem(posKey(cur), String(vid2.currentTime));
+      } else if (ytPlayer && ytPlayer.getCurrentTime) {
+        localStorage.setItem(posKey(cur), String(ytPlayer.getCurrentTime()));
+      }
+    } catch (e) {}
+  }, 5000);
+}
+function restoreYT() {
+  const cur = window._current;
+  if (!cur || !ytPlayer) return;
+  try {
+    const saved = parseFloat(localStorage.getItem(posKey(cur)) || "0");
+    const dur = ytPlayer.getDuration ? ytPlayer.getDuration() : 0;
+    if (saved > 10 && (!dur || saved < dur - 15)) {
+      ytPlayer.seekTo(saved, true);
+      toast("Resumed from " + fmtTime(saved));
+    }
+  } catch (e) {}
+}
+function idxOf(v) {
+  const list = window._videos || [];
+  return list.findIndex(x => v && (x.id === v.id || x.video_url === v.video_url));
+}
+function epLabel(v) {
+  const c = (v.category || "").toLowerCase();
+  return ({ season1: "S1", season2: "S2", s1bonus: "S1 Bonus", s1bts: "S1 BTS", s2bonus: "S2 Bonus", s2bts: "S2 BTS", special: "Special" }[c] || "EP") + (v.episode_number ? " • EP " + v.episode_number : "");
+}
+function renderUpNext(v) {
+  const box = document.getElementById("upnext-list");
+  if (!box) return;
+  const list = window._videos || [];
+  const i = idxOf(v);
+  const next = [];
+  for (let k = 1; k <= 6 && list.length > 1; k++) next.push(list[(i + k + list.length) % list.length]);
+  box.innerHTML = next.map((n, k) =>
+    `<div class="up-card" data-k="${k}"><img loading="lazy" src="${thumbSrc(n)}" onerror="this.style.visibility='hidden'" alt=""/><div><h4>${escapeHtml(n.title)}</h4><p>${epLabel(n)}</p></div></div>`
+  ).join("");
+  box.querySelectorAll(".up-card").forEach((el) => {
+    el.onclick = () => openPlayer(next[parseInt(el.dataset.k, 10)]);
+  });
+}
+function isAutoplay() { return (localStorage.getItem("igl_autoplay") ?? "1") === "1"; }
+function setAutoplay(on) {
+  localStorage.setItem("igl_autoplay", on ? "1" : "0");
+  toast(on ? "Autoplay on" : "Autoplay off");
+}
+function onEnded() {
+  hideLoader();
+  if (nextTimer) clearTimeout(nextTimer);
+  const list = window._videos || [];
+  const nxt = list[idxOf(window._current) + 1];
+  if (isAutoplay() && nxt) {
+    toast("Up next: " + nxt.title);
+    nextTimer = setTimeout(() => openPlayer(nxt), 6000);
+  }
+  try { localStorage.removeItem(posKey(window._current)); } catch (e) {}
+}
+function stepEpisode(d) {
+  const list = window._videos || [];
+  const n = list[idxOf(window._current) + d];
+  if (n) openPlayer(n);
+  else toast(d > 0 ? "This is the latest episode" : "This is the first episode");
+}
+function toggleTheater() {
+  const box = document.getElementById("player-box");
+  const btn = document.getElementById("theater-btn");
+  if (!box) return;
+  box.classList.toggle("theater");
+  if (btn) btn.classList.toggle("on", box.classList.contains("theater"));
+}
+function addCurrentToWatchlist() {
+  const f = window._current;
+  if (!f) return;
+  const l = JSON.parse(localStorage.getItem("watchlist") || "[]");
+  if (!l.includes(f.title)) { l.push(f.title); localStorage.setItem("watchlist", JSON.stringify(l)); }
+  toast("Saved to watchlist");
+}
+function shareEpisode() {
+  const f = window._current;
+  if (!f) return;
+  const url = location.origin + location.pathname + "#v=" + (f.id || encodeURIComponent(f.video_url));
+  const done = () => toast("Link copied — share it");
+  if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(url).then(done, () => toast(url));
+  else toast(url);
+}
 window.loadVideos = loadVideos;
