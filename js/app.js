@@ -26,6 +26,21 @@ function thumbSrc(v) {
   return APP_CONFIG.THUMB_PROXY + "?url=" + encodeURIComponent(t);
 }
 
+function cleanText(s) {
+  return String(s || "")
+    .replace(/[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}\u{FE0F}]/gu, "")
+    .replace(/thank you for supporting[^!]*!*/gi, "")
+    .replace(/channel members!?/gi, "")
+    .replace(/\s{2,}/g, " ")
+    .trim();
+}
+
+function splitTitle(full) {
+  const t = String(full || "").replace(/^INDIA['’]S GOT LATENT\s*/i, "").trim();
+  const m = t.split(/\s+[fF][tT]\.?\s+/);
+  return { main: (m[0] || t || "India's Got Latent").trim(), guests: (m[1] || "").trim() };
+}
+
 function setHero(v) {
   const bg = document.getElementById("hero-bg");
   const src = thumbSrc(v);
@@ -33,11 +48,21 @@ function setHero(v) {
     bg.style.backgroundImage = src ? `url('${src}')` : "none";
   }
   const t = document.getElementById("hero-title");
-  if (t) t.textContent = v.title || "India's Got Latent";
+  if (t) t.textContent = splitTitle(v.title).main;
+  const sub = document.getElementById("hero-sub");
+  const guests = splitTitle(v.title).guests;
+  if (sub) { sub.textContent = guests ? "ft. " + guests : ""; sub.style.display = guests ? "" : "none"; }
   const d = document.getElementById("hero-desc");
-  if (d) d.textContent = v.description || "Uncut studio sessions, bonus segments and member-only drops.";
+  if (d) {
+    const fullTitle = cleanText(v.title).toLowerCase();
+    let desc = cleanText(v.description).slice(0, 150);
+    if (!desc || desc.toLowerCase() === fullTitle.slice(0, 150) || fullTitle.startsWith(desc.toLowerCase()) && desc.length > 40) {
+      desc = "Uncut studio sessions, bonus segments and member-only drops — free in the vault.";
+    }
+    d.textContent = desc;
+  }
   const k = document.getElementById("hero-kicker");
-  if (k) k.textContent = "Latest Drop • " + (v.title || "India's Got Latent");
+  if (k) k.textContent = "● Latest Drop";
   const m = document.getElementById("hero-meta");
   if (m) m.textContent = heroMetaText(v);
 }
