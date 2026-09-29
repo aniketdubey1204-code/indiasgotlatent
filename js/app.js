@@ -178,7 +178,7 @@ function ensureYTApi(){
     document.head.appendChild(s);
   });
 }
-async function playYouTubeInSite(videoId, title) {
+async function playYouTubeInSite(videoId, title, v) {
   const vid = document.getElementById("player");
   const frame = document.getElementById("embed");
   destroyPlyr(); destroyYT();
@@ -202,9 +202,17 @@ async function playYouTubeInSite(videoId, title) {
         if (ev.data === YT.PlayerState.ENDED) onEnded();
       },
       onError: (e) => {
-        // 101/150/153 = owner blocked embedding -> fallback button
+        // 101/150/153 = owner blocked embedding.
         if ([101, 150, 153].includes(e.data)) {
           destroyYT();
+          // Mirror blocked? Cascade to the proxy stream so playback survives.
+          const cur = v || window._current;
+          if (cur && !cur._ytFailed && !youtubeIdFromUrl(cur.video_url || "")) {
+            cur._ytFailed = true;
+            toast("YouTube blocked this video — trying alternate stream…");
+            playViaProxy(cur);
+            return;
+          }
           const wrap = document.getElementById("player-wrap");
           let fb = document.getElementById("yt-fallback");
           if (!fb) {
@@ -258,6 +266,18 @@ async function openPlayer(v) {
     await playYouTubeInSite(directYt, v.title);
     return;
   }
+  // Our own YouTube mirror first (free forever, plays in-site).
+  if (v.yt_mirror_id) {
+    document.getElementById("player-wrap").classList.remove("hidden");
+    syncBodyLock();
+    setPlayerMeta(v);
+    await playYouTubeInSite(v.yt_mirror_id, v.title, v);
+    return;
+  }
+  await playViaProxy(v);
+}
+
+async function playViaProxy(v) {
   document.getElementById("player-wrap").classList.remove("hidden");
   syncBodyLock();
   const vid = document.getElementById("player");
@@ -271,6 +291,7 @@ async function openPlayer(v) {
   vid.poster = thumbSrc(v) || "";
   document.getElementById("player-title").textContent = v.title;
   setPlayerMeta(v);
+  showLoader();
 
   function initPlyr(qualities) {
     const opts = { speed: { selected: 1, options: [0.5, 0.75, 1, 1.25, 1.5, 2] }, fullscreen: { enabled: true, fallback: true, iosNative: true } };
@@ -287,14 +308,6 @@ async function openPlayer(v) {
     initPlyr(null);
     return;
   }
-  // Our own YouTube mirror first (free forever, plays in-site).
-  if (v.yt_mirror_id) {
-    document.getElementById("player-wrap").classList.remove("hidden");
-    syncBodyLock();
-    setPlayerMeta(v);
-    await playYouTubeInSite(v.yt_mirror_id, v.title);
-    return;
-  }
   document.getElementById("player-title").textContent = "Loading " + v.title + "...";
   try {
     const dataId = new URL(v.video_url, location.origin).searchParams.get("id");
@@ -303,8 +316,8 @@ async function openPlayer(v) {
     try {
       const eps = await (await fetch(APP_CONFIG.OKCDN_JSON)).json();
       const ep = eps.find(e => e.dataId === dataId);
-      if (ep && ep.type === "youtube") {
-        // Try in-site YouTube player; blocked ones show Watch button automatically.
+      if (ep && ep.type === "youtube" && !v._ytFailed) {
+        // Try in-site YouTube player; blocked ones cascade to proxy automatically.
         await playYouTubeInSite(ep.youtubeId, v.title);
         return;
       }
