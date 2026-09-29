@@ -126,6 +126,8 @@
 }
 </script>
 
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link rel="stylesheet" href="css/styles.css"/>
 <link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css"/>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -138,12 +140,20 @@
 
 <nav class="nav-dock">
   <span class="brand">IGL ◈ FAN VAULT</span>
-  <a href="#" class="active" onclick="filterRail('All',this);return false">Home</a>
-  <a href="#rail" onclick="filterRail('Season 1',this);return false">Season 1</a>
-  <a href="#rail" onclick="filterRail('Season 2',this);return false">Season 2</a>
-  <a href="#rail" onclick="filterRail('Bonus',this);return false">Bonus & BTS</a>
-  <a href="#" onclick="openInfo();return false">Info</a>
-  <span class="search-glow" onclick="document.getElementById('rail').scrollIntoView({behavior:'smooth'});setTimeout(()=>document.getElementById('rail-search').focus(),400)">⌕</span>
+  <a href="#" class="active nav-link" onclick="filterRail('All',this);return false">Home</a>
+  <a href="#rail" class="nav-link" onclick="filterRail('Season 1',this);return false">Season 1</a>
+  <a href="#rail" class="nav-link" onclick="filterRail('Season 2',this);return false">Season 2</a>
+  <a href="#rail" class="nav-link" onclick="filterRail('Bonus',this);return false">Bonus & BTS</a>
+  <a href="#" class="nav-link" onclick="openInfo();return false">Info</a>
+  <span class="search-glow" role="button" aria-label="Search" onclick="document.getElementById('rail').scrollIntoView({behavior:'smooth'});setTimeout(()=>document.getElementById('rail-search').focus(),400)">⌕</span>
+  <button class="menu-btn" id="menu-btn" aria-label="Menu" onclick="toggleMenu(event)">☰</button>
+  <div class="menu-panel hidden" id="menu-panel">
+    <a href="#" onclick="filterRail('All',this);return false">Home</a>
+    <a href="#rail" onclick="filterRail('Season 1',this);return false">Season 1</a>
+    <a href="#rail" onclick="filterRail('Season 2',this);return false">Season 2</a>
+    <a href="#rail" onclick="filterRail('Bonus',this);return false">Bonus & BTS</a>
+    <a href="#" onclick="openInfo();return false">Info</a>
+  </div>
 </nav>
 
 <!-- Auth gate -->
@@ -210,7 +220,7 @@
   <div class="player-inner">
     <div class="kicker">Now Screening</div>
     <h3 id="player-title"></h3>
-    <div class="hud-badges"><span class="mini">English 5.1</span><span class="mini">Dolby Atmos</span><span class="mini">4K HDR</span></div>
+    <div class="hud-badges"><span class="mini" id="player-meta">Fan Vault</span></div>
     <div style="position:relative"><video id="player" controls playsinline class="hidden"></video><div id="yt-holder" class="hidden" style="width:100%;aspect-ratio:16/9;border-radius:18px;overflow:hidden;background:#000"></div><div class="vignette"></div></div>
     <iframe id="embed" class="hidden" style="width:100%;aspect-ratio:16/9;border:0;border-radius:18px;background:#000" allowfullscreen allow="autoplay; encrypted-media; fullscreen"></iframe>
   </div>
@@ -291,12 +301,13 @@
   </div>
 </div>
 
-<footer style="position:fixed;bottom:14px;right:14px;z-index:45;background:none;border:0;box-shadow:none">
+<footer id="dock-footer" class="hidden" style="position:fixed;bottom:14px;right:14px;z-index:45;background:none;border:0;box-shadow:none">
   <span><button id="admin-btn" class="btn secondary hidden" style="width:auto;padding:8px 14px;margin-right:8px" onclick="openAdmin()">Admin</button><button class="btn secondary" style="width:auto;padding:8px 14px" onclick="logout()">Logout</button></span>
 </footer>
 
 <script src="js/auth.js"></script>
 <script src="js/app.js"></script>
 <script src="js/admin.js"></script>
+<div id="toast" class="toast hidden" role="status"></div>
 </body>
 </html>

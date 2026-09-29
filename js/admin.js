@@ -1,4 +1,4 @@
-// In-site admin (only @duhitssaniket sees panel): paste iglll1 URL -> auto-fill -> save via secret edge function.
+// In-site admin (only admin sees panel): paste player URL -> auto-fill -> save via secret edge function.
 function openAdmin() {
   if (!isAdmin()) return alert("Admin only.");
   const k = sessionStorage.getItem("admin_key") || prompt("Enter Admin Key (set in Supabase Secrets as ADMIN_KEY):");
@@ -6,9 +6,11 @@ function openAdmin() {
   sessionStorage.setItem("admin_key", k);
   sessionStorage.removeItem("edit_id");
   document.getElementById("admin-wrap").classList.remove("hidden");
+  if (typeof syncBodyLock === "function") syncBodyLock();
 }
 function closeAdmin() {
   document.getElementById("admin-wrap").classList.add("hidden");
+  if (typeof syncBodyLock === "function") syncBodyLock();
 }
 
 function parseDataId(url) {

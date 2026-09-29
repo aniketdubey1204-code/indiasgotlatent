@@ -2,7 +2,7 @@ let plyr = null;
 
 async function loadVideos() {
   const grid = document.getElementById("video-grid");
-  grid.innerHTML = "<p style='color:#aaa'>Loading...</p>";
+  grid.innerHTML = Array.from({ length: 8 }, () => `<div class="skel"><div class="sk-thumb"></div><div class="sk-line"></div><div class="sk-line short"></div></div>`).join("");
   let videos = [];
   try {
     if (typeof supabaseClient !== "undefined" && supabaseClient && !APP_CONFIG.SUPABASE_URL.includes("YOUR-")) {
@@ -38,6 +38,14 @@ function setHero(v) {
   if (d) d.textContent = v.description || "Uncut studio sessions, bonus segments and member-only drops.";
   const k = document.getElementById("hero-kicker");
   if (k) k.textContent = "Latest Drop • " + (v.title || "India's Got Latent");
+  const m = document.getElementById("hero-meta");
+  if (m) m.textContent = heroMetaText(v);
+}
+
+function heroMetaText(v) {
+  const c = (v.category || "").toLowerCase();
+  const label = { season1: "Season 1", season2: "Season 2", s1bonus: "S1 Bonus", s1bts: "S1 BTS", s2bonus: "S2 Bonus", s2bts: "S2 BTS", special: "Special" }[c] || "Fan Archive";
+  return label + (v.episode_number ? " • EP " + v.episode_number : "") + " • S1 • S2 • Bonus • BTS • Specials";
 }
 
 function renderRail(videos) {
@@ -48,24 +56,31 @@ function renderRail(videos) {
   if (h) h.textContent = "India's Got Latent — All Episodes (" + list.length + ")";
   grid.innerHTML = "";
   if (!list.length) { grid.innerHTML = "<p style='color:#C8BDB6'>No episodes in this section yet. Add via Admin.</p>"; return; }
-  list.forEach(v => {
+  list.forEach((v, i) => {
     const d = document.createElement("div");
     d.className = "cin-card";
+    d.tabIndex = 0;
+    d.setAttribute("role", "button");
+    d.setAttribute("aria-label", "Play " + (v.title || "episode"));
+    d.style.animationDelay = Math.min(i * 35, 400) + "ms";
     const yt = youtubeIdFromUrl(v.video_url);
     const label = yt ? "YouTube" : ({ season1: "S1", season2: "S2", s1bonus: "S1 Bonus", s1bts: "S1 BTS", s2bonus: "S2 Bonus", s2bts: "S2 BTS", special: "Special", bonus: "Bonus", bts: "BTS" }[(v.category || guessCategory(v)).toLowerCase()] || "EP");
     const src = thumbSrc(v);
-    const img = src ? `<img src="${src}" loading="lazy" onerror="this.style.display='none'" style="width:100%;aspect-ratio:16/9;object-fit:cover;display:block"/>` : "";
+    const img = src ? `<img src="${src}" loading="lazy" onload="this.classList.add('img-on')" onerror="this.style.display='none'" style="width:100%;aspect-ratio:16/9;object-fit:cover;display:block" alt=""/>` : "";
     d.innerHTML = `
       <div class="thumb">${img}</div>
       <div class="tags">${yt ? `<span class="mini">YouTube</span>` : ""}<span class="mini">${label} • EP ${v.episode_number || ""}</span></div>
       <div class="shade"></div>
+      <div class="play-ov"><span>▶</span></div>
       <div class="cmeta"><h3>${escapeHtml(v.title)}</h3><p>${escapeHtml((v.description || "").slice(0, 90))}</p></div>`;
     d.onclick = () => openPlayer(v);
+    d.onkeydown = (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); openPlayer(v); } };
     grid.appendChild(d);
   });
 }
 
 function filterRail(kind, el, keep) {
+  hideMenu();
   document.querySelectorAll(".fpill").forEach(b => { if (b.textContent.trim().toLowerCase().startsWith((kind || "all").toLowerCase().slice(0,4))) b.classList.add("active"); else if (!keep) b.classList.remove("active"); });
   if (!keep) { document.querySelectorAll(".fpill").forEach(b => b.classList.remove("active")); if (el) el.classList.add("active"); }
   document.querySelectorAll(".nav-dock a").forEach(a => a.classList.remove("active"));
@@ -102,8 +117,8 @@ function toggleWatchlist() {
   const l = JSON.parse(localStorage.getItem("watchlist") || "[]");
   const list = window._videos || [];
   const f = list[list.length - 1];
-  if (f && !l.includes(f.title)) { l.push(f.title); localStorage.setItem("watchlist", JSON.stringify(l)); }
-  alert(l.length ? "Watchlist: " + l.join(", ") : "Watchlist empty");
+  if (f && !l.includes(f.title)) { l.push(f.title); localStorage.setItem("watchlist", JSON.stringify(l)); toast("Added to watchlist: " + f.title); }
+  else toast(l.length ? "Watchlist (" + l.length + "): " + l.slice(0, 3).join(", ") + (l.length > 3 ? "…" : "") : "Watchlist empty");
 }
 
 function escapeHtml(s){return String(s||"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
@@ -181,9 +196,11 @@ async function playYouTubeInSite(videoId, title) {
 
 function openInfo() {
   document.getElementById("info-wrap").classList.remove("hidden");
+  syncBodyLock();
 }
 function closeInfo() {
   document.getElementById("info-wrap").classList.add("hidden");
+  syncBodyLock();
 }
 function infoTab(which) {
   ["about", "faq", "contact", "dmca"].forEach(t => {
@@ -197,10 +214,13 @@ async function openPlayer(v) {
   const directYt = youtubeIdFromUrl(v.video_url);
   if (directYt) {
     document.getElementById("player-wrap").classList.remove("hidden");
+    syncBodyLock();
+    setPlayerMeta(v);
     await playYouTubeInSite(directYt, v.title);
     return;
   }
   document.getElementById("player-wrap").classList.remove("hidden");
+  syncBodyLock();
   const vid = document.getElementById("player");
   const frame = document.getElementById("embed");
   destroyPlyr(); destroyYT();
@@ -211,6 +231,7 @@ async function openPlayer(v) {
   vid.classList.remove("hidden");
   vid.poster = thumbSrc(v) || "";
   document.getElementById("player-title").textContent = v.title;
+  setPlayerMeta(v);
 
   function initPlyr(qualities) {
     const opts = { speed: { selected: 1, options: [0.5, 0.75, 1, 1.25, 1.5, 2] }, fullscreen: { enabled: true, fallback: true, iosNative: true } };
@@ -230,6 +251,8 @@ async function openPlayer(v) {
   // Our own YouTube mirror first (free forever, plays in-site).
   if (v.yt_mirror_id) {
     document.getElementById("player-wrap").classList.remove("hidden");
+    syncBodyLock();
+    setPlayerMeta(v);
     await playYouTubeInSite(v.yt_mirror_id, v.title);
     return;
   }
@@ -274,5 +297,56 @@ function closePlayer() {
   vid.pause(); vid.innerHTML = ""; vid.removeAttribute("src"); vid.load();
   if (frame) frame.removeAttribute("src");
   document.getElementById("player-wrap").classList.add("hidden");
+  syncBodyLock();
 }
+
+/* ---------- global UI system: toast, mobile menu, modal lock/esc/backdrop ---------- */
+let toastTimer = null;
+function toast(msg) {
+  const t = document.getElementById("toast");
+  if (!t) return;
+  t.textContent = msg;
+  t.classList.remove("hidden");
+  requestAnimationFrame(() => t.classList.add("show"));
+  if (toastTimer) clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => { t.classList.remove("show"); setTimeout(() => t.classList.add("hidden"), 350); }, 2600);
+}
+function toggleMenu(e) {
+  if (e) e.stopPropagation();
+  document.getElementById("menu-panel").classList.toggle("hidden");
+}
+function hideMenu() {
+  const p = document.getElementById("menu-panel");
+  if (p) p.classList.add("hidden");
+}
+function syncBodyLock() {
+  const anyOpen = ["player-wrap", "admin-wrap", "info-wrap"].some(id => {
+    const el = document.getElementById(id);
+    return el && !el.classList.contains("hidden");
+  });
+  document.body.classList.toggle("locked", anyOpen);
+}
+function setPlayerMeta(v) {
+  const m = document.getElementById("player-meta");
+  if (m && v) m.textContent = heroMetaText(v);
+}
+document.addEventListener("keydown", (e) => {
+  if (e.key !== "Escape") return;
+  const pw = document.getElementById("player-wrap");
+  const aw = document.getElementById("admin-wrap");
+  const iw = document.getElementById("info-wrap");
+  if (pw && !pw.classList.contains("hidden")) closePlayer();
+  else if (aw && !aw.classList.contains("hidden") && typeof closeAdmin === "function") closeAdmin();
+  else if (iw && !iw.classList.contains("hidden")) closeInfo();
+  hideMenu();
+});
+document.addEventListener("click", (e) => {
+  if (!e.target.closest(".nav-dock")) hideMenu();
+  const pw = document.getElementById("player-wrap");
+  if (pw && !pw.classList.contains("hidden") && e.target === pw) closePlayer();
+  const aw = document.getElementById("admin-wrap");
+  if (aw && !aw.classList.contains("hidden") && e.target === aw && typeof closeAdmin === "function") closeAdmin();
+  const iw = document.getElementById("info-wrap");
+  if (iw && !iw.classList.contains("hidden") && e.target === iw) closeInfo();
+});
 window.loadVideos = loadVideos;

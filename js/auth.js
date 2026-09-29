@@ -13,12 +13,16 @@ const appEl = () => document.getElementById("app");
 function showApp() {
   authOverlay().classList.add("hidden");
   appEl().classList.remove("hidden");
+  const f = document.getElementById("dock-footer");
+  if (f) f.classList.remove("hidden");
   if (window.loadVideos) window.loadVideos();
   if (window.updateAdminUI) window.updateAdminUI();
 }
 function showAuth() {
   authOverlay().classList.remove("hidden");
   appEl().classList.add("hidden");
+  const f = document.getElementById("dock-footer");
+  if (f) f.classList.add("hidden");
 }
 
 async function initAuth() {

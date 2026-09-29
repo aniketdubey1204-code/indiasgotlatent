@@ -1,5 +1,4 @@
 @import url('https://fonts.googleapis.com/css2?family=Anton&family=Syne:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap');
-
 :root{
   --obsidian:#0C0C0E; --charcoal:#121214;
   --glow:#FFBC95; --cobalt:#266DF9;
@@ -91,3 +90,89 @@ input{width:100%;padding:12px;margin:6px 0;border-radius:12px;border:1px solid #
 label{font-size:12px;color:var(--peach-slate);letter-spacing:.1em;text-transform:uppercase}
 #player-title{font-family:'Syne';letter-spacing:.02em}
 .vignette{position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse at center, transparent 55%, rgba(0,0,0,.55) 100%)}
+
+/* ---------- premium layer ---------- */
+body.locked{overflow:hidden}
+::selection{background:rgba(38,109,249,.55)}
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-track{background:#0C0C0E}
+::-webkit-scrollbar-thumb{background:#2a2a30;border-radius:8px;border:2px solid #0C0C0E}
+::-webkit-scrollbar-thumb:hover{background:#3a3a44}
+
+/* hero motion */
+.hero-bg{animation:kenburns 26s ease-in-out infinite alternate}
+@keyframes kenburns{from{transform:scale(1.06)}to{transform:scale(1.15) translate(-1.5%,1%)}}
+.hero-inner>*{animation:rise .7s cubic-bezier(.2,.8,.2,1) both}
+.hero-inner>*:nth-child(2){animation-delay:.08s}
+.hero-inner>*:nth-child(3){animation-delay:.16s}
+.hero-inner>*:nth-child(4){animation-delay:.24s}
+.hero-inner>*:nth-child(5){animation-delay:.32s}
+@keyframes rise{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+.pill{transition:transform .2s ease, box-shadow .2s ease, background .2s ease}
+.pill:hover{transform:translateY(-2px)}
+.pill.solid:hover{box-shadow:0 10px 30px rgba(255,255,255,.25)}
+.pill.glass:hover{background:rgba(255,255,255,.18)}
+
+/* mobile menu */
+.menu-btn{display:none;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.16);color:#fff;border-radius:50%;width:34px;height:34px;flex-shrink:0;cursor:pointer;font-size:15px;line-height:1}
+.menu-panel{position:absolute;top:calc(100% + 10px);left:0;right:0;background:rgba(16,16,20,.96);border:1px solid rgba(255,255,255,.14);border-radius:18px;padding:8px;box-shadow:0 24px 60px rgba(0,0,0,.6);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px)}
+.menu-panel a{display:block!important;padding:12px 16px;font-size:13px;border-radius:12px}
+.menu-panel a:hover,.menu-panel a.active{background:rgba(38,109,249,.25);color:#fff!important}
+@media (max-width:680px){
+  .nav-dock .nav-link{display:none}
+  .menu-btn{display:grid;place-items:center}
+  .nav-dock{position:fixed;top:12px;left:12px;right:12px;transform:none;max-width:none;justify-content:flex-start;gap:12px;padding:10px 16px}
+  .nav-dock .brand{margin-right:auto}
+}
+
+/* skeleton loading */
+.skel{border-radius:18px;overflow:hidden;background:#151517;border:1px solid var(--line)}
+.skel .sk-thumb{aspect-ratio:16/9;background:linear-gradient(100deg,#16161a 30%,#232329 50%,#16161a 70%);background-size:200% 100%;animation:shimmer 1.4s linear infinite}
+.skel .sk-line{height:12px;margin:12px 14px;border-radius:6px;background:linear-gradient(100deg,#16161a 30%,#232329 50%,#16161a 70%);background-size:200% 100%;animation:shimmer 1.4s linear infinite}
+.skel .sk-line.short{width:55%}
+@keyframes shimmer{from{background-position:180% 0}to{background-position:-20% 0}}
+
+/* card entrance + hover play */
+.cin-card{animation:cardIn .5s cubic-bezier(.2,.8,.2,1) both}
+@keyframes cardIn{from{opacity:0;transform:translateY(14px) scale(.98)}to{opacity:1;transform:none}}
+.cin-card img{opacity:0;transition:opacity .6s ease}
+.cin-card img.img-on{opacity:1}
+.cin-card:focus-visible{outline:2px solid var(--cobalt);outline-offset:3px}
+.play-ov{position:absolute;inset:0;display:grid;place-items:center;opacity:0;transition:opacity .25s ease;background:rgba(5,5,10,.35);z-index:2}
+.cin-card:hover .play-ov,.cin-card:focus-visible .play-ov{opacity:1}
+.play-ov span{width:52px;height:52px;border-radius:50%;background:rgba(255,255,255,.94);display:grid;place-items:center;color:#0C0C0E;font-size:18px;padding-left:3px;box-shadow:0 8px 30px rgba(0,0,0,.5);transform:scale(.85);transition:transform .25s ease}
+.cin-card:hover .play-ov span{transform:scale(1)}
+
+/* toast */
+.toast{position:fixed;bottom:26px;left:50%;transform:translateX(-50%) translateY(20px);z-index:100;background:rgba(20,20,26,.95);border:1px solid rgba(255,255,255,.16);color:#F5F5F7;font-size:13px;font-weight:600;padding:12px 22px;border-radius:999px;box-shadow:0 16px 50px rgba(0,0,0,.6);opacity:0;transition:opacity .3s ease,transform .3s ease;max-width:90vw;text-align:center}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* modal polish */
+.player-inner{max-height:92vh;overflow-y:auto;border-radius:20px}
+.admin-wrap{box-shadow:0 30px 90px rgba(0,0,0,.65)}
+.modal{animation:pop .35s cubic-bezier(.2,.8,.2,1) both}
+.admin-wrap{animation:pop .35s cubic-bezier(.2,.8,.2,1) both}
+@keyframes pop{from{opacity:0;transform:translateY(16px) scale(.98)}to{opacity:1;transform:none}}
+.close{transition:transform .2s ease, color .2s ease}
+.close:hover{transform:scale(1.2);color:var(--glow)}
+.btn,.fpill,.tabs button{transition:transform .15s ease, background .2s ease, box-shadow .2s ease}
+.btn:hover{box-shadow:0 8px 26px rgba(38,109,249,.45)}
+.btn:active,.pill:active,.fpill:active{transform:scale(.97)}
+.fpill:hover{border-color:rgba(255,255,255,.35);color:#fff}
+#rail-search{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);border-radius:999px;padding:10px 18px;transition:border-color .2s ease, box-shadow .2s ease}
+#rail-search:focus{outline:none;border-color:var(--cobalt);box-shadow:0 0 0 3px rgba(38,109,249,.3)}
+input:focus,select:focus{outline:none;border-color:var(--cobalt)!important;box-shadow:0 0 0 3px rgba(38,109,249,.25)}
+
+@media (max-width:680px){
+  .hero{min-height:72vh}
+  .hero-inner{padding:110px 20px 36px}
+  .action-dock{flex-wrap:wrap}
+  .pill{padding:12px 20px;font-size:13px}
+  .filters,.rail{padding-left:16px;padding-right:16px}
+  .grid{grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px}
+  .player{padding:10px}
+}
+@media (prefers-reduced-motion:reduce){
+  .hero-bg,.hero-inner>*,.cin-card,.modal,.admin-wrap{animation:none!important}
+  *{transition-duration:.01ms!important}
+}
