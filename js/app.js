@@ -202,17 +202,9 @@ async function playYouTubeInSite(videoId, title, v) {
         if (ev.data === YT.PlayerState.ENDED) onEnded();
       },
       onError: (e) => {
-        // 101/150/153 = owner blocked embedding.
+        // 101/150/153 = owner blocked embedding -> fallback button (no proxy: egress protection).
         if ([101, 150, 153].includes(e.data)) {
           destroyYT();
-          // Mirror blocked? Cascade to the proxy stream so playback survives.
-          const cur = v || window._current;
-          if (cur && !cur._ytFailed && !youtubeIdFromUrl(cur.video_url || "")) {
-            cur._ytFailed = true;
-            toast("YouTube blocked this video — trying alternate stream…");
-            playViaProxy(cur);
-            return;
-          }
           const wrap = document.getElementById("player-wrap");
           let fb = document.getElementById("yt-fallback");
           if (!fb) {
@@ -316,8 +308,8 @@ async function playViaProxy(v) {
     try {
       const eps = await (await fetch(APP_CONFIG.OKCDN_JSON)).json();
       const ep = eps.find(e => e.dataId === dataId);
-      if (ep && ep.type === "youtube" && !v._ytFailed) {
-        // Try in-site YouTube player; blocked ones cascade to proxy automatically.
+      if (ep && ep.type === "youtube") {
+        // Try in-site YouTube player; blocked ones show Watch button automatically.
         await playYouTubeInSite(ep.youtubeId, v.title);
         return;
       }
