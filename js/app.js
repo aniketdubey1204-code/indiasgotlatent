@@ -4,14 +4,16 @@ async function loadVideos() {
   const grid = document.getElementById("video-grid");
   grid.innerHTML = Array.from({ length: 8 }, () => `<div class="skel"><div class="sk-thumb"></div><div class="sk-line"></div><div class="sk-line short"></div></div>`).join("");
   let videos = [];
-  try {
-    if (typeof supabaseClient !== "undefined" && supabaseClient && !APP_CONFIG.SUPABASE_URL.includes("YOUR-")) {
-      // Private-catalog order first, newest uploads last as fallback
-      const { data, error } = await supabaseClient.from("videos").select("*").order("source_index", { ascending: true }).order("episode_number", { ascending: false });
-      if (!error && data && data.length) videos = data;
-    }
-  } catch (e) { console.warn(e); }
-  if (!videos.length && typeof LOCAL_VIDEOS !== "undefined") videos = LOCAL_VIDEOS;
+  if (typeof LOCAL_VIDEOS !== "undefined" && LOCAL_VIDEOS.length) {
+    videos = LOCAL_VIDEOS;
+  } else {
+    try {
+      if (typeof supabaseClient !== "undefined" && supabaseClient && APP_CONFIG.SUPABASE_URL && !APP_CONFIG.SUPABASE_URL.includes("YOUR-")) {
+        const { data, error } = await supabaseClient.from("videos").select("*").order("source_index", { ascending: true }).order("episode_number", { ascending: false });
+        if (!error && data && data.length) videos = data;
+      }
+    } catch (e) { console.warn(e); }
+  }
   window._videos = videos;
   if (!videos.length) { grid.innerHTML = "<p>No videos yet. Open Admin to add.</p>"; return; }
   // Hero = newest synced video overall (any category), grid stays chronological
@@ -26,10 +28,12 @@ async function loadVideos() {
 }
 
 function thumbSrc(v) {
+  if (!v) return "";
   const t = v.thumbnail_url || "";
-  if (!t) return "";
-  if (t.includes("ytimg.com")) return t;
-  return APP_CONFIG.THUMB_PROXY + "?url=" + encodeURIComponent(t);
+  // Direct YouTube thumbnails (i.ytimg.com) and direct image links
+  if (t.includes("ytimg.com") || t.startsWith("http://") || t.startsWith("https://")) return t;
+  if (v.archive_id) return (APP_CONFIG.ARCHIVE_BASE || "https://archive.org") + "/services/img/" + v.archive_id;
+  return t;
 }
 
 function cleanText(s) {
@@ -293,44 +297,41 @@ async function playViaProxy(v) {
     plyr = new Plyr(vid, opts);
   }
 
-  if (isDirectVideo(v.video_url)) {
+  // 1. Direct MP4 link (archive.org direct link or local file)
+  let streamUrl = v.video_url || "";
+  if (!isDirectVideo(streamUrl)) {
+    const dataId = v.dataId || (streamUrl ? new URL(streamUrl, location.origin).searchParams.get("id") : "") || v.id;
+    const base = APP_CONFIG.ARCHIVE_DOWNLOAD_BASE || "https://archive.org/download";
+    if (v.archive_id && v.filename) {
+      streamUrl = `${base}/${v.archive_id}/${encodeURIComponent(v.filename)}`;
+    } else if (dataId) {
+      const found = (typeof LOCAL_VIDEOS !== "undefined") ? LOCAL_VIDEOS.find(x => x.dataId === dataId || x.id === dataId) : null;
+      if (found && found.video_url) streamUrl = found.video_url;
+      else if (v.filename) {
+        const ident = `igl-${dataId.toLowerCase().replace(/ /g, '-').replace(/_/g, '-')}`.replace(/[^a-z0-9\-]/g, '-').slice(0, 80);
+        streamUrl = `${base}/${ident}/${encodeURIComponent(v.filename)}`;
+      }
+    }
+  }
+
+  if (streamUrl && isDirectVideo(streamUrl)) {
     const s = document.createElement("source");
-    s.src = v.video_url; s.type = "video/mp4";
+    s.src = streamUrl;
+    s.type = "video/mp4";
     vid.appendChild(s);
     initPlyr(null);
+    hideLoader();
     return;
   }
-  document.getElementById("player-title").textContent = "Loading " + v.title + "...";
-  try {
-    const dataId = new URL(v.video_url, location.origin).searchParams.get("id");
-    if (!dataId) throw new Error("Invalid link");
-    // YouTube?
-    try {
-      const eps = await (await fetch(APP_CONFIG.OKCDN_JSON)).json();
-      const ep = eps.find(e => e.dataId === dataId);
-      if (ep && ep.type === "youtube") {
-        // Try in-site YouTube player; blocked ones show Watch button automatically.
-        await playYouTubeInSite(ep.youtubeId, v.title);
-        return;
-      }
-    } catch(e) {}
-    // Get qualities via proxy list (mp4 URLs stay hidden server-side)
-    const lr = await fetch(APP_CONFIG.STREAM_PROXY + "?dataId=" + encodeURIComponent(dataId) + "&list=1");
-    const lj = await lr.json();
-    if (!lj.qualities?.length) throw new Error("Stream unavailable");
-    lj.qualities.forEach(q => {
-      const s = document.createElement("source");
-      s.src = APP_CONFIG.STREAM_PROXY + "?dataId=" + encodeURIComponent(dataId) + "&q=" + encodeURIComponent(q.q);
-      s.type = "video/mp4";
-      s.setAttribute("size", q.size);
-      vid.appendChild(s);
-    });
-    vid.load();
-    initPlyr(lj.qualities);
-    document.getElementById("player-title").textContent = v.title;
-  } catch (e) {
-    document.getElementById("player-title").textContent = "Error: " + e.message;
+
+  // 2. YouTube fallback if available
+  if (v.youtubeId) {
+    await playYouTubeInSite(v.youtubeId, v.title);
+    return;
   }
+
+  document.getElementById("player-title").textContent = "Episode stream loading or unavailable";
+  hideLoader();
 }
 function closePlayer() {
   const vid = document.getElementById("player");
