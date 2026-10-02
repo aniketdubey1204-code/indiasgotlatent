@@ -446,6 +446,29 @@ def rebuild_catalog(episodes):
     log("OK", f"videos.js written — {len(catalog)} episodes in true chronological order")
     return catalog
 
+def ensure_thumbnail(ep):
+    """
+    Downloads high-res WebP thumbnail for new episodes directly to assets/thumbs/
+    so Vercel serves it in Full HD with zero latency.
+    """
+    loc = ep.get("localImage", "")
+    if loc:
+        thumbs_dir = BASE_DIR / "assets" / "thumbs"
+        thumbs_dir.mkdir(parents=True, exist_ok=True)
+        dest = thumbs_dir / loc
+        if not dest.exists() or dest.stat().st_size == 0:
+            url = f"https://igltalent.freeforall.dev/img/{loc}"
+            try:
+                req = urllib.request.Request(url, headers={
+                    "User-Agent": HEADERS["User-Agent"],
+                    "Referer": SITE + "/"
+                })
+                with urllib.request.urlopen(req, timeout=15) as res:
+                    dest.write_bytes(res.read())
+                log("THUMB", f"Saved high-res thumbnail: {loc} ({dest.stat().st_size / 1024:.1f} KB)")
+            except Exception as e:
+                log("WARN", f"Could not pre-download thumbnail {loc}: {e}")
+
 # ──────────────────────────────────────────────
 # Step 6 — Git commit + push
 # ──────────────────────────────────────────────
@@ -460,7 +483,7 @@ def git_push(new_titles):
     subprocess.run(["git", "config", "user.email", "github-actions[bot]@users.noreply.github.com"], cwd=BASE_DIR)
 
     log("GIT", "Staging files...")
-    subprocess.run(["git", "add", "js/videos.js", "scripts/archive_urls.json", "scripts/okcdn_cached.json"], cwd=BASE_DIR)
+    subprocess.run(["git", "add", "js/videos.js", "scripts/archive_urls.json", "scripts/okcdn_cached.json", "assets/thumbs/"], cwd=BASE_DIR)
 
     msg = f"auto-sync: add {len(new_titles)} new episode(s) — {', '.join(new_titles[:3])}"
     if len(new_titles) > 3:
@@ -523,9 +546,10 @@ def main():
     for i, ep in enumerate(new_eps, 1):
         data_id = ep.get("dataId", "")
         title   = ep.get("title", data_id)
-        print(f"\n[{i}/{len(new_eps)}] {title[:60]}")
+        # 3a. Pre-download HD thumbnail to assets/thumbs/
+        ensure_thumbnail(ep)
 
-        # 3. Download
+        # 3b. Download video
         filepath, dl_ok = download_episode(ep)
         if not dl_ok:
             log("FAIL", f"Download failed for {data_id}")
