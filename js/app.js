@@ -37,13 +37,14 @@ async function loadVideos() {
 function thumbSrc(v) {
   if (!v) return "";
   let t = v.thumbnail_url || "";
-  // Fix obsolete dead mirror host if present
+  // Prioritize Full HD YouTube thumbnail (1280x720, no black bars)
+  if (v.youtubeId) return `https://i.ytimg.com/vi/${v.youtubeId}/maxresdefault.jpg`;
+  // Local high-res assets bundled in Vercel CDN
+  if (v.localImage) return `/assets/thumbs/${v.localImage}`;
   if (t.includes("indiassgottlatent.freeforall.dev")) {
     t = t.replace("indiassgottlatent.freeforall.dev", "igltalent.freeforall.dev");
   }
-  // Any direct HTTP(S) URL works (YouTube, archive.org, live CDN)
-  if (t.startsWith("http://") || t.startsWith("https://")) return t;
-  // Archive.org fallback via identifier
+  if (t.startsWith("/assets/") || t.startsWith("assets/") || t.startsWith("http://") || t.startsWith("https://")) return t;
   if (v.archive_id) return (APP_CONFIG.ARCHIVE_BASE || "https://archive.org") + "/services/img/" + v.archive_id;
   return t;
 }
@@ -113,7 +114,9 @@ function renderRail(videos) {
     const yt = youtubeIdFromUrl(v.video_url);
     const label = yt ? "YouTube" : ({ season1: "S1", season2: "S2", s1bonus: "S1 Bonus", s1bts: "S1 BTS", s2bonus: "S2 Bonus", s2bts: "S2 BTS", special: "Special", bonus: "Bonus", bts: "BTS" }[(v.category || guessCategory(v)).toLowerCase()] || "EP");
     const src = thumbSrc(v);
-    const fallbackThumb = v.archive_id ? `https://archive.org/services/img/${v.archive_id}` : "";
+    const ytHq = v.youtubeId ? `https://i.ytimg.com/vi/${v.youtubeId}/hqdefault.jpg` : "";
+    const locFb = v.localImage ? `/assets/thumbs/${v.localImage}` : (v.archive_id ? `https://archive.org/services/img/${v.archive_id}` : "");
+    const fallbackThumb = ytHq || locFb;
     const img = src ? `<img src="${src}" loading="lazy" onload="this.classList.add('img-on')" onerror="if (!this.dataset.fb && '${fallbackThumb}') { this.dataset.fb='1'; this.src='${fallbackThumb}'; } else { this.style.display='none'; }" style="width:100%;aspect-ratio:16/9;object-fit:cover;display:block" alt=""/>` : "";
     d.innerHTML = `
       <div class="thumb">${img}</div>

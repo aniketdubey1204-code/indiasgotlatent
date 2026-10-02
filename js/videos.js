@@ -11,11 +11,12 @@ const LOCAL_VIDEOS = [
     "episode_number": 1,
     "sort_index": 101,
     "duration": "0h 43m 23s",
-    "thumbnail_url": "https://igltalent.freeforall.dev/img/5v1v1r.webp",
+    "thumbnail_url": "/assets/thumbs/5v1v1r.webp",
     "video_url": "https://archive.org/download/igl-ep-01/Episode%2001%20ft.%20Raftaar%20%5Bep-01%5D.mp4",
     "archive_url": "https://archive.org/details/igl-ep-01",
     "filename": "Episode 01 ft. Raftaar [ep-01].mp4",
-    "youtubeId": null
+    "youtubeId": null,
+    "localImage": "5v1v1r.webp"
   },
   {
     "id": "ep-02",
@@ -27,11 +28,12 @@ const LOCAL_VIDEOS = [
     "episode_number": 2,
     "sort_index": 102,
     "duration": "1h 6m 9s",
-    "thumbnail_url": "https://igltalent.freeforall.dev/img/1wxwnb.webp",
+    "thumbnail_url": "/assets/thumbs/1wxwnb.webp",
     "video_url": "https://archive.org/download/igl-ep-02/Episode%2002%20ft.%20GamerFleet%20%5Bep-02%5D.mp4",
     "archive_url": "https://archive.org/details/igl-ep-02",
     "filename": "Episode 02 ft. GamerFleet [ep-02].mp4",
-    "youtubeId": null
+    "youtubeId": null,
+    "localImage": "1wxwnb.webp"
   },
   {
     "id": "ep-03",
@@ -43,11 +45,12 @@ const LOCAL_VIDEOS = [
     "episode_number": 3,
     "sort_index": 103,
     "duration": "1h 5m 18s",
-    "thumbnail_url": "https://igltalent.freeforall.dev/img/xavl0p.webp",
+    "thumbnail_url": "/assets/thumbs/xavl0p.webp",
     "video_url": "https://archive.org/download/igl-ep-03/Episode%2003%20ft.%20Urfi%20Javed%20Ashish%20Solanki%20%5Bep-03%5D.mp4",
     "archive_url": "https://archive.org/details/igl-ep-03",
     "filename": "Episode 03 ft. Urfi Javed Ashish Solanki [ep-03].mp4",
-    "youtubeId": null
+    "youtubeId": null,
+    "localImage": "xavl0p.webp"
   },
   {
     "id": "ep-04",
@@ -59,11 +62,12 @@ const LOCAL_VIDEOS = [
     "episode_number": 4,
     "sort_index": 104,
     "duration": "1h 4m 57s",
-    "thumbnail_url": "https://igltalent.freeforall.dev/img/h9krad.webp",
+    "thumbnail_url": "/assets/thumbs/h9krad.webp",
     "video_url": "https://archive.org/download/igl-ep-04/Episode%2004%20ft.%20Maheep%20Singh%20%5Bep-04%5D.mp4",
     "archive_url": "https://archive.org/details/igl-ep-04",
     "filename": "Episode 04 ft. Maheep Singh [ep-04].mp4",
-    "youtubeId": null
+    "youtubeId": null,
+    "localImage": "h9krad.webp"
   },
   {
     "id": "ep-05",
@@ -75,11 +79,12 @@ const LOCAL_VIDEOS = [
     "episode_number": 5,
     "sort_index": 105,
     "duration": "1h 7m 26s",
-    "thumbnail_url": "https://igltalent.freeforall.dev/img/wonjl6.webp",
+    "thumbnail_url": "/assets/thumbs/wonjl6.webp",
     "video_url": "https://archive.org/download/igl-ep-05/Episode%2005%20ft.%20Kunal%20Kamra%20Atul%20Khatri%20%5Bep-05%5D.mp4",
     "archive_url": "https://archive.org/details/igl-ep-05",
     "filename": "Episode 05 ft. Kunal Kamra Atul Khatri [ep-05].mp4",
-    "youtubeId": null
+    "youtubeId": null,
+    "localImage": "wonjl6.webp"
   },
   {
     "id": "ep-06",
@@ -91,11 +96,12 @@ const LOCAL_VIDEOS = [
     "episode_number": 6,
     "sort_index": 106,
     "duration": "1h 5m 28s",
-    "thumbnail_url": "https://igltalent.freeforall.dev/img/v99xxv.webp",
+    "thumbnail_url": "/assets/thumbs/v99xxv.webp",
     "video_url": "https://archive.org/download/igl-ep-06/Episode%2006%20ft.%20Vipul%20Goyal%20Joke%20Singh%20%5Bep-06%5D.mp4",
     "archive_url": "https://archive.org/details/igl-ep-06",
     "filename": "Episode 06 ft. Vipul Goyal Joke Singh [ep-06].mp4",
-    "youtubeId": null
+    "youtubeId": null,
+    "localImage": "v99xxv.webp"
   },
   {
     "id": "ep-07",
@@ -107,11 +113,12 @@ const LOCAL_VIDEOS = [
     "episode_number": 7,
     "sort_index": 107,
     "duration": "1h 1m 19s",
-    "thumbnail_url": "https://igltalent.freeforall.dev/img/dycm14.webp",
+    "thumbnail_url": "/assets/thumbs/dycm14.webp",
     "video_url": "https://archive.org/download/igl-ep-07/Episode%2007%20ft.%20Ravi%20Gupta%20Rahgir%20%5Bep-07%5D.mp4",
     "archive_url": "https://archive.org/details/igl-ep-07",
     "filename": "Episode 07 ft. Ravi Gupta Rahgir [ep-07].mp4",
-    "youtubeId": null
+    "youtubeId": null,
+    "localImage": "dycm14.webp"
   },
   {
     "id": "ep-08",
@@ -123,11 +130,12 @@ const LOCAL_VIDEOS = [
     "episode_number": 8,
     "sort_index": 108,
     "duration": "0h 54m 31s",
-    "thumbnail_url": "https://igltalent.freeforall.dev/img/b9cjfx.webp",
+    "thumbnail_url": "/assets/thumbs/b9cjfx.webp",
     "video_url": "https://archive.org/download/igl-ep-08/Episode%2008%20ft.%20Poonam%20Pandey%20Vidit%20C%20%5Bep-08%5D.mp4",
     "archive_url": "https://archive.org/details/igl-ep-08",
     "filename": "Episode 08 ft. Poonam Pandey Vidit C [ep-08].mp4",
-    "youtubeId": null
+    "youtubeId": null,
+    "localImage": "b9cjfx.webp"
   },
   {
     "id": "ep-09",
@@ -139,11 +147,12 @@ const LOCAL_VIDEOS = [
     "episode_number": 9,
     "sort_index": 109,
     "duration": "1h 3m 59s",
-    "thumbnail_url": "https://igltalent.freeforall.dev/img/g4teuh.webp",
+    "thumbnail_url": "/assets/thumbs/g4teuh.webp",
     "video_url": "https://archive.org/download/igl-ep-09/Episode%2009%20ft.%20Deepak%20Kalal%20Manan%20Desai%20%5Bep-09%5D.mp4",
     "archive_url": "https://archive.org/details/igl-ep-09",
     "filename": "Episode 09 ft. Deepak Kalal Manan Desai [ep-09].mp4",
-    "youtubeId": null
+    "youtubeId": null,
+    "localImage": "g4teuh.webp"
   },
   {
     "id": "ep-10",
@@ -155,11 +164,12 @@ const LOCAL_VIDEOS = [
     "episode_number": 10,
     "sort_index": 110,
     "duration": "1h 8m 24s",
-    "thumbnail_url": "https://igltalent.freeforall.dev/img/37nxmd.webp",
+    "thumbnail_url": "/assets/thumbs/37nxmd.webp",
     "video_url": "https://archive.org/download/igl-ep-10/Episode%2010%20ft.%20Raghu%20Ram%20Tanmay%20Bhat%20%5Bep-10%5D.mp4",
     "archive_url": "https://archive.org/details/igl-ep-10",
     "filename": "Episode 10 ft. Raghu Ram Tanmay Bhat [ep-10].mp4",
-    "youtubeId": null
+    "youtubeId": null,
+    "localImage": "37nxmd.webp"
   },
   {
     "id": "ep-11",
@@ -171,11 +181,12 @@ const LOCAL_VIDEOS = [
     "episode_number": 11,
     "sort_index": 111,
     "duration": "1h 15m 10s",
-    "thumbnail_url": "https://igltalent.freeforall.dev/img/8j55ug.webp",
+    "thumbnail_url": "/assets/thumbs/8j55ug.webp",
     "video_url": "https://archive.org/download/igl-ep-11/Episode%2011%20ft.%20Bharti%20Singh%20Haarsh%20Limbachiyaa%20%5Bep-11%5D.mp4",
     "archive_url": "https://archive.org/details/igl-ep-11",
     "filename": "Episode 11 ft. Bharti Singh Haarsh Limbachiyaa [ep-11].mp4",
-    "youtubeId": null
+    "youtubeId": null,
+    "localImage": "8j55ug.webp"
   },
   {
     "id": "ep-12",
@@ -187,11 +198,12 @@ const LOCAL_VIDEOS = [
     "episode_number": 12,
     "sort_index": 112,
     "duration": "1h 14m 52s",
-    "thumbnail_url": "https://igltalent.freeforall.dev/img/p88fof.webp",
+    "thumbnail_url": "/assets/thumbs/p88fof.webp",
     "video_url": "https://archive.org/download/igl-ep-12/Episode%2012%20ft.%20Rakhi%20Sawant%20Ashish%20Solanki%20%5Bep-12%5D.mp4",
     "archive_url": "https://archive.org/details/igl-ep-12",
     "filename": "Episode 12 ft. Rakhi Sawant Ashish Solanki [ep-12].mp4",
-    "youtubeId": null
+    "youtubeId": null,
+    "localImage": "p88fof.webp"
   },
   {
     "id": "bonus-01",
@@ -203,11 +215,12 @@ const LOCAL_VIDEOS = [
     "episode_number": 1,
     "sort_index": 151,
     "duration": "0h 36m 6s",
-    "thumbnail_url": "https://igltalent.freeforall.dev/img/zqtar6.webp",
+    "thumbnail_url": "/assets/thumbs/zqtar6.webp",
     "video_url": "https://archive.org/download/igl-bonus-01/Bonus%20Segment%2001%20ft.%20Arpit%20Bala%20%5Bbonus-01%5D.mp4",
     "archive_url": "https://archive.org/details/igl-bonus-01",
     "filename": "Bonus Segment 01 ft. Arpit Bala [bonus-01].mp4",
-    "youtubeId": null
+    "youtubeId": null,
+    "localImage": "zqtar6.webp"
   },
   {
     "id": "bonus-02",
@@ -219,11 +232,12 @@ const LOCAL_VIDEOS = [
     "episode_number": 2,
     "sort_index": 152,
     "duration": "0h 52m 8s",
-    "thumbnail_url": "https://igltalent.freeforall.dev/img/zozibh.webp",
+    "thumbnail_url": "/assets/thumbs/zozibh.webp",
     "video_url": "https://archive.org/download/igl-bonus-02/Bonus%20Segment%2002%20ft.%20Badshah%20Siddhant%20Chaturvedi%20%5Bbonus-02%5D.mp4",
     "archive_url": "https://archive.org/details/igl-bonus-02",
     "filename": "Bonus Segment 02 ft. Badshah Siddhant Chaturvedi [bonus-02].mp4",
-    "youtubeId": null
+    "youtubeId": null,
+    "localImage": "zozibh.webp"
   },
   {
     "id": "bonus-03",
@@ -235,11 +249,12 @@ const LOCAL_VIDEOS = [
     "episode_number": 3,
     "sort_index": 153,
     "duration": "0h 54m 22s",
-    "thumbnail_url": "https://igltalent.freeforall.dev/img/eyst23.webp",
+    "thumbnail_url": "/assets/thumbs/eyst23.webp",
     "video_url": "https://archive.org/download/igl-bonus-03/Bonus%20Segment%2003%20ft.%20Avika%20Gor%20%5Bbonus-03%5D.mp4",
     "archive_url": "https://archive.org/details/igl-bonus-03",
     "filename": "Bonus Segment 03 ft. Avika Gor [bonus-03].mp4",
-    "youtubeId": null
+    "youtubeId": null,
+    "localImage": "eyst23.webp"
   },
   {
     "id": "bonus-04",
@@ -251,11 +266,12 @@ const LOCAL_VIDEOS = [
     "episode_number": 4,
     "sort_index": 154,
     "duration": "1h 12m 24s",
-    "thumbnail_url": "https://igltalent.freeforall.dev/img/sykxlk.webp",
+    "thumbnail_url": "/assets/thumbs/sykxlk.webp",
     "video_url": "https://archive.org/download/igl-bonus-04/Bonus%20Segment%2004%20ft.%20Seedhe%20Maut%20Madhur%20Virli%20%5Bbonus-04%5D.mp4",
     "archive_url": "https://archive.org/details/igl-bonus-04",
     "filename": "Bonus Segment 04 ft. Seedhe Maut Madhur Virli [bonus-04].mp4",
-    "youtubeId": null
+    "youtubeId": null,
+    "localImage": "sykxlk.webp"
   },
   {
     "id": "bonus-05",
@@ -267,11 +283,12 @@ const LOCAL_VIDEOS = [
     "episode_number": 5,
     "sort_index": 155,
     "duration": "1h 29m 5s",
-    "thumbnail_url": "https://igltalent.freeforall.dev/img/x6ieup.webp",
+    "thumbnail_url": "/assets/thumbs/x6ieup.webp",
     "video_url": "https://archive.org/download/igl-bonus-05/Bonus%20Segment%2005%20ft.%20Rohan%20Joshi%20%5Bbonus-05%5D.mp4",
     "archive_url": "https://archive.org/details/igl-bonus-05",
     "filename": "Bonus Segment 05 ft. Rohan Joshi [bonus-05].mp4",
-    "youtubeId": null
+    "youtubeId": null,
+    "localImage": "x6ieup.webp"
   },
   {
     "id": "bonus-06",
@@ -283,11 +300,12 @@ const LOCAL_VIDEOS = [
     "episode_number": 6,
     "sort_index": 156,
     "duration": "1h 3m 9s",
-    "thumbnail_url": "https://igltalent.freeforall.dev/img/vlhczg.webp",
+    "thumbnail_url": "/assets/thumbs/vlhczg.webp",
     "video_url": "https://archive.org/download/igl-bonus-06/Bonus%20Segment%2006%20ft.%20Ranveer%20Allahbadia%20%5Bbonus-06%5D.mp4",
     "archive_url": "https://archive.org/details/igl-bonus-06",
     "filename": "Bonus Segment 06 ft. Ranveer Allahbadia [bonus-06].mp4",
-    "youtubeId": null
+    "youtubeId": null,
+    "localImage": "vlhczg.webp"
   },
   {
     "id": "extra-01",
@@ -299,11 +317,12 @@ const LOCAL_VIDEOS = [
     "episode_number": 7,
     "sort_index": 157,
     "duration": "0h 36m 31s",
-    "thumbnail_url": "https://igltalent.freeforall.dev/img/mi1fo1.webp",
+    "thumbnail_url": "/assets/thumbs/mi1fo1.webp",
     "video_url": "https://archive.org/download/igl-extra-01/Bonus%20Segment%2007%20ft.%20Deepak%20Kalal%20%5Bextra-01%5D.mp4",
     "archive_url": "https://archive.org/details/igl-extra-01",
     "filename": "Bonus Segment 07 ft. Deepak Kalal [extra-01].mp4",
-    "youtubeId": null
+    "youtubeId": null,
+    "localImage": "mi1fo1.webp"
   },
   {
     "id": "extra-02",
@@ -315,11 +334,12 @@ const LOCAL_VIDEOS = [
     "episode_number": 8,
     "sort_index": 158,
     "duration": "0h 34m 7s",
-    "thumbnail_url": "https://igltalent.freeforall.dev/img/ckvmsi.webp",
+    "thumbnail_url": "/assets/thumbs/ckvmsi.webp",
     "video_url": "https://archive.org/download/igl-extra-02/Bonus%20Segment%2008%20ft.%20Raghu%20Ram%20%5Bextra-02%5D.mp4",
     "archive_url": "https://archive.org/details/igl-extra-02",
     "filename": "Bonus Segment 08 ft. Raghu Ram [extra-02].mp4",
-    "youtubeId": null
+    "youtubeId": null,
+    "localImage": "ckvmsi.webp"
   },
   {
     "id": "extra-03",
@@ -331,11 +351,12 @@ const LOCAL_VIDEOS = [
     "episode_number": 9,
     "sort_index": 159,
     "duration": "0h 27m 41s",
-    "thumbnail_url": "https://igltalent.freeforall.dev/img/p74kpp.webp",
+    "thumbnail_url": "/assets/thumbs/p74kpp.webp",
     "video_url": "https://archive.org/download/igl-extra-03/Discarded%20Segment%2001%20ft.%20Aakash%20Gupta%20Anubhav%20Bassi%20%5Bextra-03%5D.mp4",
     "archive_url": "https://archive.org/details/igl-extra-03",
     "filename": "Discarded Segment 01 ft. Aakash Gupta Anubhav Bassi [extra-03].mp4",
-    "youtubeId": null
+    "youtubeId": null,
+    "localImage": "p74kpp.webp"
   },
   {
     "id": "extra-04",
@@ -347,11 +368,12 @@ const LOCAL_VIDEOS = [
     "episode_number": 10,
     "sort_index": 160,
     "duration": "0h 39m 31s",
-    "thumbnail_url": "https://igltalent.freeforall.dev/img/s654fa.webp",
+    "thumbnail_url": "/assets/thumbs/s654fa.webp",
     "video_url": "https://archive.org/download/igl-extra-04/Deleted%20Footage%20%5Bextra-04%5D.mp4",
     "archive_url": "https://archive.org/details/igl-extra-04",
     "filename": "Deleted Footage [extra-04].mp4",
-    "youtubeId": null
+    "youtubeId": null,
+    "localImage": "s654fa.webp"
   },
   {
     "id": "s2-01",
@@ -363,11 +385,12 @@ const LOCAL_VIDEOS = [
     "episode_number": 1,
     "sort_index": 201,
     "duration": "",
-    "thumbnail_url": "https://i.ytimg.com/vi/eHTXQW58WhA/hqdefault.jpg",
+    "thumbnail_url": "https://i.ytimg.com/vi/eHTXQW58WhA/maxresdefault.jpg",
     "video_url": "https://archive.org/download/igl-s2-01/Season%202%20Episode%2001%20ft.%20Alia%20Bhatt%20Sharvari%20Ashish%20Solanki%20%5Bs2-01%5D.mp4",
     "archive_url": "https://archive.org/details/igl-s2-01",
     "filename": "Season 2 Episode 01 ft. Alia Bhatt Sharvari Ashish Solanki [s2-01].mp4",
-    "youtubeId": "eHTXQW58WhA"
+    "youtubeId": "eHTXQW58WhA",
+    "localImage": "2dfkpv.webp"
   },
   {
     "id": "s2-bts-01",
@@ -379,11 +402,12 @@ const LOCAL_VIDEOS = [
     "episode_number": 1,
     "sort_index": 202,
     "duration": "0h 17m 35s",
-    "thumbnail_url": "https://igltalent.freeforall.dev/img/4z062p.webp",
+    "thumbnail_url": "/assets/thumbs/4z062p.webp",
     "video_url": "https://archive.org/download/igl-s2-bts-01/BTS%2001%20ft.%20Alia%20Bhatt%20Sharvari%20Ashish%20Solanki%20%5Bs2-bts-01%5D.mp4",
     "archive_url": "https://archive.org/details/igl-s2-bts-01",
     "filename": "BTS 01 ft. Alia Bhatt Sharvari Ashish Solanki [s2-bts-01].mp4",
-    "youtubeId": null
+    "youtubeId": null,
+    "localImage": "4z062p.webp"
   },
   {
     "id": "s2-02",
@@ -395,11 +419,12 @@ const LOCAL_VIDEOS = [
     "episode_number": 2,
     "sort_index": 203,
     "duration": "",
-    "thumbnail_url": "https://i.ytimg.com/vi/c35fpGWqXnk/hqdefault.jpg",
+    "thumbnail_url": "https://i.ytimg.com/vi/c35fpGWqXnk/maxresdefault.jpg",
     "video_url": "https://archive.org/download/igl-s2-02/Season%202%20Episode%2002%20ft.%20Harssh%20Limbachiya%20Kiku%20Sharda%20Chandan%20Prabhakar%20%5Bs2-02%5D.mp4",
     "archive_url": "https://archive.org/details/igl-s2-02",
     "filename": "Season 2 Episode 02 ft. Harssh Limbachiya Kiku Sharda Chandan Prabhakar [s2-02].mp4",
-    "youtubeId": "c35fpGWqXnk"
+    "youtubeId": "c35fpGWqXnk",
+    "localImage": "c35fpGWqXnk-MQ.webp"
   },
   {
     "id": "s2-bts-02",
@@ -411,11 +436,12 @@ const LOCAL_VIDEOS = [
     "episode_number": 2,
     "sort_index": 204,
     "duration": "0h 15m 13s",
-    "thumbnail_url": "https://i.ytimg.com/vi/pfHrIXiqI4w/hqdefault.jpg",
+    "thumbnail_url": "https://i.ytimg.com/vi/pfHrIXiqI4w/maxresdefault.jpg",
     "video_url": "https://archive.org/download/igl-s2-bts-02/BTS%2002%20ft.%20Chandan%20Prabhakar%20Harssh%20Limbachyaa%20Kiku%20Sharda%20%5Bs2-bts-02%5D.mp4",
     "archive_url": "https://archive.org/details/igl-s2-bts-02",
     "filename": "BTS 02 ft. Chandan Prabhakar Harssh Limbachyaa Kiku Sharda [s2-bts-02].mp4",
-    "youtubeId": "pfHrIXiqI4w"
+    "youtubeId": "pfHrIXiqI4w",
+    "localImage": "pfHrIXiqI4w.webp"
   },
   {
     "id": "s2-03",
@@ -427,11 +453,12 @@ const LOCAL_VIDEOS = [
     "episode_number": 3,
     "sort_index": 205,
     "duration": "53m 43s",
-    "thumbnail_url": "https://i.ytimg.com/vi/aSR1tndcaLE/hqdefault.jpg",
+    "thumbnail_url": "https://i.ytimg.com/vi/aSR1tndcaLE/maxresdefault.jpg",
     "video_url": "https://archive.org/download/igl-s2-03/Season%202%20Episode%2003%20ft.%20Raghu%20Ram%20Vishal%20Dadlani%20Tanmay%20Bhat%20Yashraj%20%5Bs2-03%5D.mp4",
     "archive_url": "https://archive.org/details/igl-s2-03",
     "filename": "Season 2 Episode 03 ft. Raghu Ram Vishal Dadlani Tanmay Bhat Yashraj [s2-03].mp4",
-    "youtubeId": "aSR1tndcaLE"
+    "youtubeId": "aSR1tndcaLE",
+    "localImage": "aSR1tndcaLE.webp"
   },
   {
     "id": "s2-bts-03",
@@ -443,11 +470,12 @@ const LOCAL_VIDEOS = [
     "episode_number": 3,
     "sort_index": 206,
     "duration": "0h 10m 0s",
-    "thumbnail_url": "https://i.ytimg.com/vi/eOIrKDKVZqE/hqdefault.jpg",
+    "thumbnail_url": "https://i.ytimg.com/vi/eOIrKDKVZqE/maxresdefault.jpg",
     "video_url": "https://archive.org/download/igl-s2-bts-03/BTS%2003%20ft.%20Raghu%20Ram%20Tanmay%20Bhat%20Vishal%20Dadlani%20%5Bs2-bts-03%5D.mp4",
     "archive_url": "https://archive.org/details/igl-s2-bts-03",
     "filename": "BTS 03 ft. Raghu Ram Tanmay Bhat Vishal Dadlani [s2-bts-03].mp4",
-    "youtubeId": "eOIrKDKVZqE"
+    "youtubeId": "eOIrKDKVZqE",
+    "localImage": "eOIrKDKVZqE.webp"
   },
   {
     "id": "s2-bonus-ep1",
@@ -459,11 +487,12 @@ const LOCAL_VIDEOS = [
     "episode_number": 1,
     "sort_index": 207,
     "duration": "0h 57m 14s",
-    "thumbnail_url": "https://i.ytimg.com/vi/q8amKPDt_iY/hqdefault.jpg",
+    "thumbnail_url": "https://i.ytimg.com/vi/q8amKPDt_iY/maxresdefault.jpg",
     "video_url": "https://archive.org/download/igl-s2-bonus-ep1/S2%20Bonus%20EP1%20ft.%20Raghav%20Juyal%20Munawar%20Niharika%20NM%20Rohan%20Joshi%20%5Bs2-bonus-ep1%5D.mp4",
     "archive_url": "https://archive.org/details/igl-s2-bonus-ep1",
     "filename": "S2 Bonus EP1 ft. Raghav Juyal Munawar Niharika NM Rohan Joshi [s2-bonus-ep1].mp4",
-    "youtubeId": "q8amKPDt_iY"
+    "youtubeId": "q8amKPDt_iY",
+    "localImage": "q8amKPDt_iY.webp"
   },
   {
     "id": "s2-04",
@@ -475,11 +504,12 @@ const LOCAL_VIDEOS = [
     "episode_number": 4,
     "sort_index": 208,
     "duration": "53m 53s",
-    "thumbnail_url": "https://i.ytimg.com/vi/B6NVvtIz9_Q/hqdefault.jpg",
+    "thumbnail_url": "https://i.ytimg.com/vi/B6NVvtIz9_Q/maxresdefault.jpg",
     "video_url": "https://archive.org/download/igl-s2-04/INDIAS%20GOT%20LATENT%20S2%20EP4%20ft.%20Karan%20Aujla%20Tanmay%20Bhat%20Gurleen%20Pannu%20Rahul%20Dua%20%5Bs2-04%5D.mp4",
     "archive_url": "https://archive.org/details/igl-s2-04",
     "filename": "INDIAS GOT LATENT S2 EP4 ft. Karan Aujla Tanmay Bhat Gurleen Pannu Rahul Dua [s2-04].mp4",
-    "youtubeId": "B6NVvtIz9_Q"
+    "youtubeId": "B6NVvtIz9_Q",
+    "localImage": "B6NVvtIz9_Q.webp"
   },
   {
     "id": "s2-bonus-clip-01",
@@ -491,11 +521,12 @@ const LOCAL_VIDEOS = [
     "episode_number": 2,
     "sort_index": 209,
     "duration": "0h 8m 23s",
-    "thumbnail_url": "https://i.ytimg.com/vi/rI-Cj3Kitx4/hqdefault.jpg",
+    "thumbnail_url": "https://i.ytimg.com/vi/rI-Cj3Kitx4/maxresdefault.jpg",
     "video_url": "https://archive.org/download/igl-s2-bonus-clip-01/Latent%20BONUS%20CLIP%20ft.%20Karan%20Aujla%20Tanmay%20Bhat%20Gurleen%20Pannu%20Rahul%20Dua%20%5Bs2-bonus-clip-01%5D.mp4",
     "archive_url": "https://archive.org/details/igl-s2-bonus-clip-01",
     "filename": "Latent BONUS CLIP ft. Karan Aujla Tanmay Bhat Gurleen Pannu Rahul Dua [s2-bonus-clip-01].mp4",
-    "youtubeId": "rI-Cj3Kitx4"
+    "youtubeId": "rI-Cj3Kitx4",
+    "localImage": "rI-Cj3Kitx4.webp"
   },
   {
     "id": "s2-bts-04",
@@ -507,11 +538,12 @@ const LOCAL_VIDEOS = [
     "episode_number": 4,
     "sort_index": 210,
     "duration": "0h 14m 48s",
-    "thumbnail_url": "https://i.ytimg.com/vi/JpYbltLq2cs/hqdefault.jpg",
+    "thumbnail_url": "https://i.ytimg.com/vi/JpYbltLq2cs/maxresdefault.jpg",
     "video_url": "https://archive.org/download/igl-s2-bts-04/Latent%20BTS%20ft.%20Karan%20Aujla%20Tanmay%20Bhat%20Gurleen%20Pannu%20Rahul%20Dua%20%5Bs2-bts-04%5D.mp4",
     "archive_url": "https://archive.org/details/igl-s2-bts-04",
     "filename": "Latent BTS ft. Karan Aujla Tanmay Bhat Gurleen Pannu Rahul Dua [s2-bts-04].mp4",
-    "youtubeId": "JpYbltLq2cs"
+    "youtubeId": "JpYbltLq2cs",
+    "localImage": "JpYbltLq2cs.webp"
   },
   {
     "id": "s2-bonus-ep2",
@@ -523,11 +555,12 @@ const LOCAL_VIDEOS = [
     "episode_number": 3,
     "sort_index": 211,
     "duration": "0h 40m 0s",
-    "thumbnail_url": "https://i.ytimg.com/vi/otawyZaOxvs/hqdefault.jpg",
+    "thumbnail_url": "https://i.ytimg.com/vi/otawyZaOxvs/maxresdefault.jpg",
     "video_url": "https://archive.org/download/igl-s2-bonus-ep2/S2%20Bonus%20EP2%20ft.%20Badshah%20Sourav%20Joshi%20Harssh%20Limbachiyaa%20Rajat%20Sood%20%5Bs2-bonus-ep2%5D.mp4",
     "archive_url": "https://archive.org/details/igl-s2-bonus-ep2",
     "filename": "S2 Bonus EP2 ft. Badshah Sourav Joshi Harssh Limbachiyaa Rajat Sood [s2-bonus-ep2].mp4",
-    "youtubeId": "otawyZaOxvs"
+    "youtubeId": "otawyZaOxvs",
+    "localImage": "otawyZaOxvs.webp"
   },
   {
     "id": "s2-05",
@@ -539,11 +572,12 @@ const LOCAL_VIDEOS = [
     "episode_number": 5,
     "sort_index": 212,
     "duration": "0h 50m 0s",
-    "thumbnail_url": "https://i.ytimg.com/vi/VJ9VC9OqdAA/hqdefault.jpg",
+    "thumbnail_url": "https://i.ytimg.com/vi/VJ9VC9OqdAA/maxresdefault.jpg",
     "video_url": "https://archive.org/download/igl-s2-05/INDIAS%20GOT%20LATENT%20S2%20EP5%20ft.%20Orry%20Archana%20Puran%20Singh%20Sharon%20Verma%20Nishant%20Suri%20%5Bs2-05%5D.mp4",
     "archive_url": "https://archive.org/details/igl-s2-05",
     "filename": "INDIAS GOT LATENT S2 EP5 ft. Orry Archana Puran Singh Sharon Verma Nishant Suri [s2-05].mp4",
-    "youtubeId": "VJ9VC9OqdAA"
+    "youtubeId": "VJ9VC9OqdAA",
+    "localImage": "VJ9VC9OqdAA.webp"
   },
   {
     "id": "s2-06",
@@ -555,11 +589,12 @@ const LOCAL_VIDEOS = [
     "episode_number": 6,
     "sort_index": 213,
     "duration": "0h 43m 0s",
-    "thumbnail_url": "https://i.ytimg.com/vi/WE1zey_q8Ak/hqdefault.jpg",
+    "thumbnail_url": "https://i.ytimg.com/vi/WE1zey_q8Ak/maxresdefault.jpg",
     "video_url": "https://archive.org/download/igl-s2-06/INDIAS%20GOT%20LATENT%20S2%20EP6%20ft.%20Varun%20Dhawan%20Medha%20Shankar%20Nishant%20Tanwar%20Sharon%20Ve%20%5Bs2-06%5D.mp4",
     "archive_url": "https://archive.org/details/igl-s2-06",
     "filename": "INDIAS GOT LATENT S2 EP6 ft. Varun Dhawan Medha Shankar Nishant Tanwar Sharon Ve [s2-06].mp4",
-    "youtubeId": "WE1zey_q8Ak"
+    "youtubeId": "WE1zey_q8Ak",
+    "localImage": "WE1zey_q8Ak.webp"
   },
   {
     "id": "s2-06-rakhi",
@@ -571,11 +606,12 @@ const LOCAL_VIDEOS = [
     "episode_number": 6,
     "sort_index": 214,
     "duration": "0h 52m 26s",
-    "thumbnail_url": "https://igltalent.freeforall.dev/img/6a9d7adc5882d566ebfc00e6.webp",
+    "thumbnail_url": "/assets/thumbs/6a9d7adc5882d566ebfc00e6.webp",
     "video_url": "https://archive.org/download/igl-s2-06-rakhi/INDIAS%20GOT%20LATENT%20S2%20EP6%20ft.%20Rakhi%20Sawant%20Ashneer%20Grover%20Kushagra%20Srivastava%20%5Bs2-06-rakhi%5D.mp4",
     "archive_url": "https://archive.org/details/igl-s2-06-rakhi",
     "filename": "INDIAS GOT LATENT S2 EP6 ft. Rakhi Sawant Ashneer Grover Kushagra Srivastava [s2-06-rakhi].mp4",
-    "youtubeId": null
+    "youtubeId": null,
+    "localImage": "6a9d7adc5882d566ebfc00e6.webp"
   },
   {
     "id": "s2-03-bonus",
@@ -587,11 +623,12 @@ const LOCAL_VIDEOS = [
     "episode_number": 4,
     "sort_index": 215,
     "duration": "0h 34m 27s",
-    "thumbnail_url": "https://i.ytimg.com/vi/fzyL44FH2fI/hqdefault.jpg",
+    "thumbnail_url": "https://i.ytimg.com/vi/fzyL44FH2fI/maxresdefault.jpg",
     "video_url": "https://archive.org/download/igl-s2-03-bonus/INDIAS%20GOT%20LATENT%20S2%20Bonus%20EP%203%20ft.%20Deepak%20Kalal%20Ravi%20Gupta%20Agu%20Stanley%20%5Bs2-03-bonus%5D.mp4",
     "archive_url": "https://archive.org/details/igl-s2-03-bonus",
     "filename": "INDIAS GOT LATENT S2 Bonus EP 3 ft. Deepak Kalal Ravi Gupta Agu Stanley [s2-03-bonus].mp4",
-    "youtubeId": "fzyL44FH2fI"
+    "youtubeId": "fzyL44FH2fI",
+    "localImage": "fzyL44FH2fI.webp"
   },
   {
     "id": "s2-07",
@@ -603,11 +640,12 @@ const LOCAL_VIDEOS = [
     "episode_number": 7,
     "sort_index": 216,
     "duration": "0h 50m 0s",
-    "thumbnail_url": "https://i.ytimg.com/vi/rkKZIMPecRA/hqdefault.jpg",
+    "thumbnail_url": "https://i.ytimg.com/vi/rkKZIMPecRA/maxresdefault.jpg",
     "video_url": "https://archive.org/download/igl-s2-07/INDIAS%20GOT%20LATENT%20S2%20EP7%20ft.%20Nawazuddin%20Siddiqui%20Bhuvan%20Bam%20Mukesh%20Chhabra%20Kaust%20%5Bs2-07%5D.mp4",
     "archive_url": "https://archive.org/details/igl-s2-07",
     "filename": "INDIAS GOT LATENT S2 EP7 ft. Nawazuddin Siddiqui Bhuvan Bam Mukesh Chhabra Kaust [s2-07].mp4",
-    "youtubeId": "rkKZIMPecRA"
+    "youtubeId": "rkKZIMPecRA",
+    "localImage": "rkKZIMPecRA.webp"
   },
   {
     "id": "s2-08",
@@ -619,11 +657,12 @@ const LOCAL_VIDEOS = [
     "episode_number": 8,
     "sort_index": 217,
     "duration": "34m",
-    "thumbnail_url": "https://i.ytimg.com/vi/NQ6gWHMvna8/hqdefault.jpg",
+    "thumbnail_url": "https://i.ytimg.com/vi/NQ6gWHMvna8/maxresdefault.jpg",
     "video_url": "https://archive.org/download/igl-s2-08/INDIAS%20GOT%20LATENT%20S2%20Bonus%20EP%204%20ft.%20Ayushmann%20Khurrana%20Suhani%20Shah%20Kullu%20Rajat%20S%20%5Bs2-08%5D.mp4",
     "archive_url": "https://archive.org/details/igl-s2-08",
     "filename": "INDIAS GOT LATENT S2 Bonus EP 4 ft. Ayushmann Khurrana Suhani Shah Kullu Rajat S [s2-08].mp4",
-    "youtubeId": "NQ6gWHMvna8"
+    "youtubeId": "NQ6gWHMvna8",
+    "localImage": "NQ6gWHMvna8.webp"
   },
   {
     "id": "special-01",
@@ -635,11 +674,12 @@ const LOCAL_VIDEOS = [
     "episode_number": 1,
     "sort_index": 301,
     "duration": "",
-    "thumbnail_url": "https://i.ytimg.com/vi/LhpZJwUboeI/hqdefault.jpg",
+    "thumbnail_url": "https://i.ytimg.com/vi/LhpZJwUboeI/maxresdefault.jpg",
     "video_url": "https://archive.org/download/igl-special-01/Comedy%20Special%2001%20Samay%20Raina%20-%20Still%20Alive%20%5Bspecial-01%5D.mp4",
     "archive_url": "https://archive.org/details/igl-special-01",
     "filename": "Comedy Special 01 Samay Raina - Still Alive [special-01].mp4",
-    "youtubeId": "LhpZJwUboeI"
+    "youtubeId": "LhpZJwUboeI",
+    "localImage": "5n7q0a.webp"
   },
   {
     "id": "s2-stillalive",
@@ -651,11 +691,12 @@ const LOCAL_VIDEOS = [
     "episode_number": 2,
     "sort_index": 302,
     "duration": "0h 35m 0s",
-    "thumbnail_url": "https://i.ytimg.com/vi/_IxqDcOiZJU/hqdefault.jpg",
+    "thumbnail_url": "https://i.ytimg.com/vi/_IxqDcOiZJU/maxresdefault.jpg",
     "video_url": "https://archive.org/download/igl-s2-stillalive/STILL%20ALIVE%20-%20Mumbai%20Documentary%20%5Bs2-stillalive%5D.mp4",
     "archive_url": "https://archive.org/details/igl-s2-stillalive",
     "filename": "STILL ALIVE - Mumbai Documentary [s2-stillalive].mp4",
-    "youtubeId": "_IxqDcOiZJU"
+    "youtubeId": "_IxqDcOiZJU",
+    "localImage": "_IxqDcOiZJU.webp"
   },
   {
     "id": "kapil-01",
@@ -667,11 +708,12 @@ const LOCAL_VIDEOS = [
     "episode_number": 3,
     "sort_index": 303,
     "duration": "",
-    "thumbnail_url": "https://igltalent.freeforall.dev/img/dna7vi.webp",
+    "thumbnail_url": "/assets/thumbs/dna7vi.webp",
     "video_url": "https://archive.org/download/igl-kapil-01/Talk%20Show%20Segment%2001%20ft.%20Samay%20Raina%20BeerBiceps%20%5Bkapil-01%5D.mp4",
     "archive_url": "https://archive.org/details/igl-kapil-01",
     "filename": "Talk Show Segment 01 ft. Samay Raina BeerBiceps [kapil-01].mp4",
-    "youtubeId": null
+    "youtubeId": null,
+    "localImage": "dna7vi.webp"
   }
 ];
 

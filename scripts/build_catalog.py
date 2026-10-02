@@ -92,10 +92,14 @@ def get_episodes():
 
 def resolve_thumbnail(ep, ident):
     """
-    Robust thumbnail resolution:
-    1. Check YouTube ID (from youtubeId or 11-char localImage stem) -> i.ytimg.com
-    2. Local image from live host https://igltalent.freeforall.dev/img/ (NEVER dead mirror domain)
-    3. Fallback to archive.org generated thumbnail
+    High-Definition thumbnail resolution:
+    1. YouTube ID (from youtubeId or 11-char localImage stem):
+       Use maxresdefault.jpg (1280x720 Full HD, no 4:3 black bars)
+    2. Local image in assets/thumbs/ (hosted on Vercel CDN):
+       Use /assets/thumbs/<localImage>
+    3. Live source CDN:
+       Use https://igltalent.freeforall.dev/img/<localImage>
+    4. Fallback to archive.org generated thumbnail
     """
     yt = ep.get("youtubeId")
     loc = ep.get("localImage", "")
@@ -103,15 +107,17 @@ def resolve_thumbnail(ep, ident):
     resolved_yt = yt or (loc_stem if len(loc_stem) == 11 else None)
 
     if resolved_yt:
-        return f"https://i.ytimg.com/vi/{resolved_yt}/hqdefault.jpg", resolved_yt
+        return f"https://i.ytimg.com/vi/{resolved_yt}/maxresdefault.jpg", resolved_yt
 
     if loc:
-        # Live CDN domain
+        local_path = BASE_DIR / "assets" / "thumbs" / loc
+        if local_path.exists():
+            return f"/assets/thumbs/{loc}", None
         return f"https://igltalent.freeforall.dev/img/{loc}", None
 
     raw_thumb = ep.get("thumbnail", "")
     if "ytimg.com" in raw_thumb:
-        return raw_thumb, None
+        return raw_thumb.replace("hqdefault.jpg", "maxresdefault.jpg"), None
 
     if "indiassgottlatent" in raw_thumb:
         return raw_thumb.replace("indiassgottlatent.freeforall.dev", "igltalent.freeforall.dev"), None
@@ -157,6 +163,7 @@ def build_catalog():
         title = ep.get("title") or did
         desc = ep.get("description", "")
         duration = ep.get("duration", "")
+        loc = ep.get("localImage", "")
 
         fname = files_by_id.get(did) or f"{title} [{did}].mp4"
         direct_url = f"https://archive.org/download/{ident}/{urllib.parse.quote(fname)}"
@@ -165,7 +172,6 @@ def build_catalog():
         if did in canon_map:
             _, category, ep_num, sort_idx = canon_map[did]
         else:
-            # Fallback for future new episodes
             category = "season2" if ep.get("season") == "s2" else "season1"
             ep_num = 99
             sort_idx = 250
@@ -184,7 +190,8 @@ def build_catalog():
             "video_url": direct_url,
             "archive_url": f"https://archive.org/details/{ident}",
             "filename": fname,
-            "youtubeId": yt_id
+            "youtubeId": yt_id,
+            "localImage": loc
         })
 
     # Sort strictly by sort_index (chronological release order)

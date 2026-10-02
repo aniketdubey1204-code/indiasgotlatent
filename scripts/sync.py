@@ -363,12 +363,15 @@ def resolve_thumbnail(ep, ident):
     resolved_yt = yt or (loc_stem if len(loc_stem) == 11 else None)
 
     if resolved_yt:
-        return f"https://i.ytimg.com/vi/{resolved_yt}/hqdefault.jpg", resolved_yt
+        return f"https://i.ytimg.com/vi/{resolved_yt}/maxresdefault.jpg", resolved_yt
     if loc:
+        local_path = BASE_DIR / "assets" / "thumbs" / loc
+        if local_path.exists():
+            return f"/assets/thumbs/{loc}", None
         return f"https://igltalent.freeforall.dev/img/{loc}", None
     raw_thumb = ep.get("thumbnail", "")
     if "ytimg.com" in raw_thumb:
-        return raw_thumb, None
+        return raw_thumb.replace("hqdefault.jpg", "maxresdefault.jpg"), None
     if "indiassgottlatent" in raw_thumb:
         return raw_thumb.replace("indiassgottlatent.freeforall.dev", "igltalent.freeforall.dev"), None
     if raw_thumb.startswith("http"):
@@ -401,6 +404,7 @@ def rebuild_catalog(episodes):
         title = ep.get("title") or did
         desc  = ep.get("description", "")
         duration = ep.get("duration", "")
+        loc = ep.get("localImage", "")
 
         filename = files_by_id.get(did) or safe_filename(title, did)
         direct_url = f"https://archive.org/download/{ident}/{urllib.parse.quote(filename)}"
@@ -428,6 +432,7 @@ def rebuild_catalog(episodes):
             "archive_url":   f"https://archive.org/details/{ident}",
             "filename":      filename,
             "youtubeId":     yt_id,
+            "localImage":    loc,
         })
 
     catalog.sort(key=lambda x: x.get("sort_index", 9999))
