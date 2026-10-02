@@ -50,15 +50,21 @@ async function adminFetchMeta() {
   if (!dataId) { msg.textContent = "Invalid URL. Paste like https://igltalent.freeforall.dev/player?id=bonus-06"; return; }
   msg.textContent = "Fetching details...";
   try {
-    const eps = await (await fetch(APP_CONFIG.OKCDN_JSON)).json();
-    const ep = eps.find(e => e.dataId === dataId);
-    if (!ep) { msg.textContent = "ID " + dataId + " not found in okcdn.json"; return; }
+    let ep = null;
+    try {
+      const eps = await (await fetch(APP_CONFIG.OKCDN_JSON)).json();
+      ep = eps.find(e => e.dataId === dataId || e.id === dataId);
+    } catch (e) {
+      console.warn("okcdn fetch failed, searching local catalog", e);
+    }
+    if (!ep && typeof LOCAL_VIDEOS !== "undefined") {
+      ep = LOCAL_VIDEOS.find(e => e.dataId === dataId || e.id === dataId);
+    }
+    if (!ep) { msg.textContent = "ID " + dataId + " not found in okcdn.json or local catalog"; return; }
     document.getElementById("a-title").value = ep.title || dataId;
-    // Thumbnails: okcdn.json `thumbnail` may point to dead mirror domain — prefer /img/<localImage>, else YouTube.
-    document.getElementById("a-thumb").value = resolveThumb(ep);
+    document.getElementById("a-thumb").value = ep.thumbnail_url || resolveThumb(ep);
     document.getElementById("a-desc").value = ep.description || "";
-    // Auto-sort category from okcdn season + id/title keywords
-    document.getElementById("a-cat").value = detectCategory(ep);
+    document.getElementById("a-cat").value = ep.category || detectCategory(ep);
     await nextEpNum();
     msg.textContent = "Found: " + ep.title + (ep.type === "youtube" ? " (YouTube — card will redirect)" : "");
   } catch (e) { msg.textContent = "Error: " + e.message; }

@@ -15,20 +15,28 @@ function showApp() {
   authOverlay().classList.add("hidden");
   const f = document.getElementById("dock-footer");
   if (f) f.classList.remove("hidden");
+  if (typeof syncBodyLock === "function") syncBodyLock();
   if (window.loadVideos && !window._videos) window.loadVideos();
   if (window.updateAdminUI) window.updateAdminUI();
+  if (window._pendingVideo) {
+    const pv = window._pendingVideo;
+    window._pendingVideo = null;
+    if (typeof openPlayer === "function") openPlayer(pv);
+  }
 }
 function showAuth() {
   authOverlay().classList.remove("hidden");
   const f = document.getElementById("dock-footer");
   if (f) f.classList.add("hidden");
   mountTelegramWidget();
+  if (typeof syncBodyLock === "function") syncBodyLock();
 }
 function isLoggedIn() {
   return localStorage.getItem("tgl_auth") === "1" || localStorage.getItem("email_auth") === "1";
 }
-function requireAuth() {
+function requireAuth(pendingVideo) {
   if (isLoggedIn()) return true;
+  if (pendingVideo) window._pendingVideo = pendingVideo;
   showAuth();
   return false;
 }
@@ -38,6 +46,7 @@ function closeAuth() {
   if (o) o.classList.add("hidden");
   const f = document.getElementById("dock-footer");
   if (f && isLoggedIn()) f.classList.remove("hidden");
+  if (typeof syncBodyLock === "function") syncBodyLock();
 }
 function toggleAuthModal() {
   if (isLoggedIn()) {
@@ -214,7 +223,8 @@ function switchTab(which) {
 }
 
 function demoTelegramLogin() {
-  const v = ((document.getElementById("tg-demo") || {}).value || "telegram_user").replace(/^@/, "");
+  const el = document.getElementById("tg-demo");
+  const v = (el ? el.value : "telegram_user").replace(/^@/, "");
   localStorage.setItem("tgl_auth", "1");
   localStorage.setItem("tgl_user", JSON.stringify({ username: v }));
   showApp();
@@ -227,10 +237,10 @@ function signInWithGoogle() {
 async function sendEmailOtp() {
   const btn = document.querySelector("#pane-email .btn.secondary");
   if (btn && btn.disabled) return;
-  const email = document.getElementById("email").value.trim();
+  const el = document.getElementById("email");
+  const email = (el ? el.value : "").trim();
   if (!email) return alert("Enter email");
   if (!supabaseClient) {
-    // Demo mode: generate code locally
     const code = String(Math.floor(100000 + Math.random() * 900000));
     localStorage.setItem("demo_otp_" + email, code);
     alert("Demo mode OTP for " + email + ": " + code);
@@ -248,8 +258,10 @@ async function sendEmailOtp() {
 }
 
 async function verifyEmailOtp() {
-  const email = document.getElementById("email").value.trim();
-  const token = document.getElementById("otp").value.trim();
+  const emailEl = document.getElementById("email");
+  const tokenEl = document.getElementById("otp");
+  const email = (emailEl ? emailEl.value : "").trim();
+  const token = (tokenEl ? tokenEl.value : "").trim();
   if (!email) return alert("Enter email first, then Send Login Email.");
   if (!token) return alert("No code entered. Just click Sign in link in your email to enter. Code box is only if email shows a 6-digit code.");
   if (!supabaseClient) {

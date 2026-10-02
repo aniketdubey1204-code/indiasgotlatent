@@ -84,6 +84,7 @@ function splitTitle(full) {
 }
 
 function setHero(v) {
+  window._heroVideo = v;
   const bg = document.getElementById("hero-bg");
   const src = thumbSrc(v);
   if (bg) {
@@ -107,6 +108,7 @@ function setHero(v) {
   if (k) k.textContent = "● Latest Drop";
   const m = document.getElementById("hero-meta");
   if (m) m.textContent = heroMetaText(v);
+  updateWatchlistButtons();
 }
 
 function heroMetaText(v) {
@@ -147,12 +149,26 @@ function cardBadgeText(v) {
 
 function renderRail(videos) {
   const grid = document.getElementById("video-grid");
-  const q = (document.getElementById("rail-search")?.value || "").toLowerCase();
-  const list = videos.filter(v => !q || (v.title || "").toLowerCase().includes(q));
+  const list = videos || [];
   const h = document.querySelector(".rail h2");
-  if (h) h.textContent = "India's Got Latent — All Episodes (" + list.length + ")";
+  const kind = window._currentKind || "All";
+  if (h) {
+    if (kind === "Watchlist") {
+      h.textContent = "Your Watchlist (" + list.length + ")";
+    } else if (kind === "All") {
+      h.textContent = "India's Got Latent — All Episodes (" + list.length + ")";
+    } else {
+      h.textContent = "India's Got Latent — " + kind + " (" + list.length + ")";
+    }
+  }
   grid.innerHTML = "";
-  if (!list.length) { grid.innerHTML = "<p style='color:#C8BDB6'>No episodes in this section yet. Add via Admin.</p>"; return; }
+  if (!list.length) {
+    const emptyMsg = kind === "Watchlist"
+      ? "Your watchlist is empty. Click '+ Add to Watchlist' on any episode to save it here."
+      : "No episodes found matching your filter or search.";
+    grid.innerHTML = `<p style='color:#C8BDB6;grid-column:1/-1;text-align:center;padding:36px 12px;font-size:14px'>${emptyMsg}</p>`;
+    return;
+  }
   list.forEach((v, i) => {
     const d = document.createElement("div");
     d.className = "cin-card";
@@ -181,20 +197,49 @@ function renderRail(videos) {
   });
 }
 
-function filterRail(kind, el, keep) {
-  hideMenu();
-  document.querySelectorAll(".fpill").forEach(b => { if (b.textContent.trim().toLowerCase().startsWith((kind || "all").toLowerCase().slice(0,4))) b.classList.add("active"); else if (!keep) b.classList.remove("active"); });
-  if (!keep) { document.querySelectorAll(".fpill").forEach(b => b.classList.remove("active")); if (el) el.classList.add("active"); }
-  document.querySelectorAll(".nav-dock a").forEach(a => a.classList.remove("active"));
-  if (!window._videos) return;
-  const k = (kind || "All").toLowerCase();
-  let list = window._videos;
-  // Legacy tolerance: old 'bonus'/'bts' behave as S1 buckets
+function onSearchInput() {
+  const q = (document.getElementById("rail-search")?.value || "").trim().toLowerCase();
+  let list = window._videos || [];
+  const k = (window._currentKind || "All").toLowerCase();
   const cat = v => { const c = (v.category || guessCategory(v)).toLowerCase(); return c === "bonus" ? "s1bonus" : c === "bts" ? "s1bts" : c; };
+
   if (k.includes("season 1")) list = list.filter(v => ["season1", "s1bonus", "s1bts"].includes(cat(v)));
   else if (k.includes("season 2")) list = list.filter(v => ["season2", "s2bonus", "s2bts"].includes(cat(v)));
   else if (k.includes("bonus")) list = list.filter(v => ["s1bonus", "s1bts", "s2bonus", "s2bts", "special"].includes(cat(v)));
+  else if (k.includes("watchlist")) {
+    const wl = JSON.parse(localStorage.getItem("watchlist") || "[]");
+    list = list.filter(v => wl.includes(v.id) || wl.includes(v.title));
+  }
+
+  if (q) {
+    list = list.filter(v =>
+      (v.title || "").toLowerCase().includes(q) ||
+      (v.description || "").toLowerCase().includes(q) ||
+      (v.category || "").toLowerCase().includes(q)
+    );
+  }
   renderRail(list);
+}
+
+function filterRail(kind, el, keep) {
+  hideMenu();
+  window._currentKind = kind || "All";
+  const target = (window._currentKind).toLowerCase();
+  document.querySelectorAll(".fpill").forEach(b => {
+    const text = b.textContent.trim().toLowerCase();
+    if (text.includes(target) || (target === "all" && text.includes("all"))) {
+      b.classList.add("active");
+    } else {
+      b.classList.remove("active");
+    }
+  });
+  if (el) {
+    document.querySelectorAll(".fpill").forEach(b => b.classList.remove("active"));
+    el.classList.add("active");
+  }
+  document.querySelectorAll(".nav-dock a").forEach(a => a.classList.remove("active"));
+  if (!window._videos) return;
+  onSearchInput();
   if (!keep) {
     const rail = document.getElementById("rail");
     if (rail) rail.scrollIntoView({ behavior: "smooth" });
@@ -211,19 +256,63 @@ function guessCategory(v) {
   if (/episode/.test(s)) return "season1";
   return "s1bonus";
 }
+
 function playFeatured() {
-  const list = window._videos || [];
-  if (list.length) {
-    const heroEp = list.find(v => v.id === "s2-08") || list[list.length - 1];
-    openPlayer(heroEp);
+  const v = window._heroVideo || (window._videos && (window._videos.find(x => x.id === "s2-08") || window._videos[window._videos.length - 1]));
+  if (v) openPlayer(v);
+}
+
+function updateWatchlistButtons() {
+  const wl = JSON.parse(localStorage.getItem("watchlist") || "[]");
+  const heroBtn = document.querySelector(".action-dock .pill.glass");
+  if (heroBtn && window._heroVideo) {
+    const inWl = wl.includes(window._heroVideo.id) || wl.includes(window._heroVideo.title);
+    heroBtn.textContent = inWl ? "✓ In Watchlist" : "+ Add to Watchlist";
+  }
+  const pBtn = document.getElementById("player-wl-btn");
+  if (pBtn && window._current) {
+    const inWl = wl.includes(window._current.id) || wl.includes(window._current.title);
+    pBtn.textContent = inWl ? "✓ In Watchlist" : "+ Watchlist";
+    pBtn.classList.toggle("on", inWl);
   }
 }
+
 function toggleWatchlist() {
-  const l = JSON.parse(localStorage.getItem("watchlist") || "[]");
-  const list = window._videos || [];
-  const f = list[list.length - 1];
-  if (f && !l.includes(f.title)) { l.push(f.title); localStorage.setItem("watchlist", JSON.stringify(l)); toast("Added to watchlist: " + f.title); }
-  else toast(l.length ? "Watchlist (" + l.length + "): " + l.slice(0, 3).join(", ") + (l.length > 3 ? "…" : "") : "Watchlist empty");
+  const wl = JSON.parse(localStorage.getItem("watchlist") || "[]");
+  const f = window._heroVideo || (window._videos && window._videos[0]);
+  if (!f) return;
+  const key = f.id || f.title;
+  const idx = wl.findIndex(x => x === key || x === f.id || x === f.title);
+  if (idx >= 0) {
+    wl.splice(idx, 1);
+    localStorage.setItem("watchlist", JSON.stringify(wl));
+    toast("Removed from Watchlist: " + f.title);
+  } else {
+    wl.push(key);
+    localStorage.setItem("watchlist", JSON.stringify(wl));
+    toast("Added to Watchlist: " + f.title);
+  }
+  updateWatchlistButtons();
+  if (window._currentKind === "Watchlist") onSearchInput();
+}
+
+function addCurrentToWatchlist() {
+  const f = window._current;
+  if (!f) return;
+  const wl = JSON.parse(localStorage.getItem("watchlist") || "[]");
+  const key = f.id || f.title;
+  const idx = wl.findIndex(x => x === key || x === f.id || x === f.title);
+  if (idx >= 0) {
+    wl.splice(idx, 1);
+    localStorage.setItem("watchlist", JSON.stringify(wl));
+    toast("Removed from Watchlist");
+  } else {
+    wl.push(key);
+    localStorage.setItem("watchlist", JSON.stringify(wl));
+    toast("Saved to Watchlist ⭐");
+  }
+  updateWatchlistButtons();
+  if (window._currentKind === "Watchlist") onSearchInput();
 }
 
 function escapeHtml(s){return String(s||"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
@@ -242,7 +331,13 @@ function youtubeIdFromUrl(url){
 }
 function destroyPlyr(){ try { if (plyr) plyr.destroy(); } catch(e){} plyr = null; }
 let ytPlayer = null;
-function destroyYT(){ try { if (ytPlayer && ytPlayer.destroy) ytPlayer.destroy(); } catch(e){} ytPlayer = null; const h = document.getElementById("yt-holder"); if (h) { h.classList.add("hidden"); h.innerHTML = ""; } }
+function destroyYT(){
+  try { if (ytPlayer && ytPlayer.destroy) ytPlayer.destroy(); } catch(e){}
+  ytPlayer = null;
+  window._ytPlayer = null;
+  const h = document.getElementById("yt-holder");
+  if (h) { h.classList.add("hidden"); h.innerHTML = ""; }
+}
 function ensureYTApi(){
   return new Promise(res => {
     if (window.YT && window.YT.Player) return res();
@@ -269,7 +364,11 @@ async function playYouTubeInSite(videoId, title, v) {
     videoId, width: "100%", height: "100%",
     playerVars: pv,
     events: {
-      onReady: () => { hideLoader(); restoreYT(); },
+      onReady: () => {
+        window._ytPlayer = ytPlayer;
+        hideLoader();
+        restoreYT();
+      },
       onStateChange: (ev) => {
         if (!window.YT) return;
         if (ev.data === YT.PlayerState.PLAYING) hideLoader();
@@ -406,19 +505,17 @@ async function playViaProxy(v) {
     plyr.on('canplay', () => {
       if (window._current && !window._current._resumed) {
         window._current._resumed = true;
-        const saved = parseInt(localStorage.getItem("pos_" + window._current.id) || "0", 10);
+        const saved = getSavedPos(window._current);
         if (saved > 10 && (!plyr.duration || saved < plyr.duration - 15)) {
           plyr.currentTime = saved;
-          const m = Math.floor(saved / 60);
-          const s = saved % 60;
-          toast(`Resumed from ${m}:${s < 10 ? '0' : ''}${s} ⏱`);
+          toast("Resumed from " + fmtTime(saved) + " ⏱");
         }
       }
     });
 
     plyr.on('timeupdate', () => {
       if (window._current && plyr.currentTime > 5 && (!plyr.duration || plyr.currentTime < plyr.duration - 15)) {
-        localStorage.setItem("pos_" + window._current.id, Math.floor(plyr.currentTime));
+        setSavedPos(window._current, plyr.currentTime);
       }
     });
 
@@ -476,11 +573,21 @@ function closePlayer() {
   if (fb) fb.remove();
   vid.pause(); vid.innerHTML = ""; vid.removeAttribute("src"); vid.load();
   if (frame) frame.removeAttribute("src");
-  document.getElementById("player-wrap").classList.add("hidden");
+  const wrap = document.getElementById("player-wrap");
+  wrap.classList.add("hidden");
+  wrap.classList.remove("theater");
+  const box = document.getElementById("player-box");
+  if (box) box.classList.remove("theater");
+  const btn = document.getElementById("theater-btn");
+  if (btn) btn.classList.remove("on");
   syncBodyLock();
   if (location.search.includes("ep=")) {
     try { history.replaceState(null, "", location.pathname); } catch (e) {}
   }
+  if (window._videos) {
+    try { renderContinueWatching(window._videos); } catch(e){}
+  }
+  updateWatchlistButtons();
 }
 
 /* ---------- global UI system: toast, mobile menu, modal lock/esc/backdrop ---------- */
@@ -503,7 +610,7 @@ function hideMenu() {
   if (p) p.classList.add("hidden");
 }
 function syncBodyLock() {
-  const anyOpen = ["player-wrap", "admin-wrap", "info-wrap"].some(id => {
+  const anyOpen = ["player-wrap", "admin-wrap", "info-wrap", "auth-overlay"].some(id => {
     const el = document.getElementById(id);
     return el && !el.classList.contains("hidden");
   });
@@ -518,9 +625,11 @@ document.addEventListener("keydown", (e) => {
   const pw = document.getElementById("player-wrap");
   const aw = document.getElementById("admin-wrap");
   const iw = document.getElementById("info-wrap");
+  const au = document.getElementById("auth-overlay");
   if (pw && !pw.classList.contains("hidden")) closePlayer();
   else if (aw && !aw.classList.contains("hidden") && typeof closeAdmin === "function") closeAdmin();
   else if (iw && !iw.classList.contains("hidden")) closeInfo();
+  else if (au && !au.classList.contains("hidden") && typeof closeAuth === "function") closeAuth();
   hideMenu();
 });
 document.addEventListener("click", (e) => {
@@ -531,6 +640,8 @@ document.addEventListener("click", (e) => {
   if (aw && !aw.classList.contains("hidden") && e.target === aw && typeof closeAdmin === "function") closeAdmin();
   const iw = document.getElementById("info-wrap");
   if (iw && !iw.classList.contains("hidden") && e.target === iw) closeInfo();
+  const au = document.getElementById("auth-overlay");
+  if (au && !au.classList.contains("hidden") && e.target === au) closeAuth();
 });
 /* ---------- player engine: loader, glow, up-next, autoplay, resume, share ---------- */
 let posTimer = null;
@@ -544,7 +655,26 @@ function hideLoader() {
   const l = document.getElementById("screen-loader");
   if (l) l.classList.add("hidden");
 }
-function posKey(v) { return "igl_pos_" + (v.id || v.video_url); }
+function posKey(v) { return "igl_pos_" + (v ? (v.id || v.video_url) : ""); }
+function getSavedPos(v) {
+  if (!v) return 0;
+  const k1 = posKey(v);
+  const k2 = "pos_" + (v.id || v.video_url);
+  return parseFloat(localStorage.getItem(k1) || localStorage.getItem(k2) || "0");
+}
+function setSavedPos(v, time) {
+  if (!v) return;
+  const s = String(Math.floor(time));
+  localStorage.setItem(posKey(v), s);
+  localStorage.setItem("pos_" + (v.id || v.video_url), s);
+}
+function clearSavedPos(v) {
+  if (!v) return;
+  try {
+    localStorage.removeItem(posKey(v));
+    localStorage.removeItem("pos_" + (v.id || v.video_url));
+  } catch (e) {}
+}
 function fmtTime(s) {
   s = Math.max(0, Math.floor(s || 0));
   const m = Math.floor(s / 60), h = Math.floor(m / 60);
@@ -557,6 +687,7 @@ function playerSetup(v) {
   const cb = document.getElementById("autoplay-next");
   if (cb) cb.checked = (localStorage.getItem("igl_autoplay") ?? "1") === "1";
   renderUpNext(v);
+  updateWatchlistButtons();
   const vid = document.getElementById("player");
   if (vid) {
     vid._resumeDone = false;
@@ -565,10 +696,10 @@ function playerSetup(v) {
     vid.onloadedmetadata = () => {
       if (vid._resumeDone) return;
       vid._resumeDone = true;
-      const saved = parseFloat(localStorage.getItem(posKey(v)) || "0");
+      const saved = getSavedPos(v);
       if (saved > 10 && vid.duration && saved < vid.duration - 15) {
         vid.currentTime = saved;
-        toast("Resumed from " + fmtTime(saved));
+        toast("Resumed from " + fmtTime(saved) + " ⏱");
       }
     };
     vid.onerror = () => hideLoader();
@@ -580,22 +711,23 @@ function playerSetup(v) {
     try {
       const vid2 = document.getElementById("player");
       if (vid2 && !vid2.classList.contains("hidden") && vid2.duration) {
-        localStorage.setItem(posKey(cur), String(vid2.currentTime));
-      } else if (ytPlayer && ytPlayer.getCurrentTime) {
-        localStorage.setItem(posKey(cur), String(ytPlayer.getCurrentTime()));
+        setSavedPos(cur, vid2.currentTime);
+      } else if (window._ytPlayer && window._ytPlayer.getCurrentTime) {
+        setSavedPos(cur, window._ytPlayer.getCurrentTime());
       }
     } catch (e) {}
-  }, 5000);
+  }, 4000);
 }
 function restoreYT() {
   const cur = window._current;
-  if (!cur || !ytPlayer) return;
+  const yt = window._ytPlayer || ytPlayer;
+  if (!cur || !yt) return;
   try {
-    const saved = parseFloat(localStorage.getItem(posKey(cur)) || "0");
-    const dur = ytPlayer.getDuration ? ytPlayer.getDuration() : 0;
+    const saved = getSavedPos(cur);
+    const dur = yt.getDuration ? yt.getDuration() : 0;
     if (saved > 10 && (!dur || saved < dur - 15)) {
-      ytPlayer.seekTo(saved, true);
-      toast("Resumed from " + fmtTime(saved));
+      yt.seekTo(saved, true);
+      toast("Resumed from " + fmtTime(saved) + " ⏱");
     }
   } catch (e) {}
 }
@@ -634,35 +766,50 @@ function onEnded() {
     toast("Up next: " + nxt.title);
     nextTimer = setTimeout(() => openPlayer(nxt), 6000);
   }
-  try { localStorage.removeItem(posKey(window._current)); } catch (e) {}
+  clearSavedPos(window._current);
 }
 function stepEpisode(d) {
   const list = window._videos || [];
-  const n = list[idxOf(window._current) + d];
+  if (!list.length) return;
+  const curIdx = idxOf(window._current);
+  if (curIdx < 0) { openPlayer(list[0]); return; }
+  const n = list[curIdx + d];
   if (n) openPlayer(n);
   else toast(d > 0 ? "This is the latest episode" : "This is the first episode");
 }
 function toggleTheater() {
+  const wrap = document.getElementById("player-wrap");
   const box = document.getElementById("player-box");
   const btn = document.getElementById("theater-btn");
-  if (!box) return;
-  box.classList.toggle("theater");
-  if (btn) btn.classList.toggle("on", box.classList.contains("theater"));
+  if (!wrap) return;
+  const isTheater = wrap.classList.toggle("theater");
+  if (box) box.classList.toggle("theater", isTheater);
+  if (btn) btn.classList.toggle("on", isTheater);
+  toast(isTheater ? "Theater mode on ⛶" : "Theater mode off");
 }
-function addCurrentToWatchlist() {
-  const f = window._current;
-  if (!f) return;
-  const l = JSON.parse(localStorage.getItem("watchlist") || "[]");
-  if (!l.includes(f.title)) { l.push(f.title); localStorage.setItem("watchlist", JSON.stringify(l)); }
-  toast("Saved to watchlist");
+function copyToClipboard(url) {
+  const done = () => toast("Link copied — share it 🔗");
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(url).then(done, () => toast(url));
+  } else {
+    toast(url);
+  }
 }
 function shareEpisode() {
   const f = window._current;
   if (!f) return;
   const url = location.origin + location.pathname + "?ep=" + (f.id || encodeURIComponent(f.video_url));
-  const done = () => toast("Link copied — share it");
-  if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(url).then(done, () => toast(url));
-  else toast(url);
+  if (navigator.share) {
+    navigator.share({
+      title: (f.title || "India's Got Latent") + " | IGL Fan Vault",
+      text: `Watch ${f.title} on India's Got Latent Fan Vault:`,
+      url: url
+    }).catch(() => {
+      copyToClipboard(url);
+    });
+  } else {
+    copyToClipboard(url);
+  }
 }
 function skipTime(delta) {
   if (plyr) {
@@ -676,7 +823,7 @@ function skipTime(delta) {
       window._ytPlayer.seekTo(cur + delta, true);
     }
   }
-  toast(delta > 0 ? `+${delta}s ⏭` : `⏮ ${delta}s`);
+  toast(delta > 0 ? `+${delta}s ⏭` : `⏮ ${Math.abs(delta)}s`);
 }
 
 function showGestureAnim(side) {
@@ -775,7 +922,14 @@ function downloadCurrent() {
   const cur = window._current;
   if (!cur) return;
   const vid = document.getElementById("player");
-  const src = (vid && vid.currentSrc) ? vid.currentSrc : cur.video_url;
+  let src = (vid && vid.currentSrc) ? vid.currentSrc : cur.video_url;
+  if (!src || !src.startsWith("http") || !isDirectVideo(src)) {
+    if (cur.archive_id && cur.filename) {
+      src = `https://archive.org/download/${cur.archive_id}/${encodeURIComponent(cur.filename)}`;
+    } else if (cur.video_url && isDirectVideo(cur.video_url)) {
+      src = cur.video_url;
+    }
+  }
   if (src && src.startsWith("http")) {
     const a = document.createElement("a");
     a.href = src;
@@ -785,7 +939,10 @@ function downloadCurrent() {
     document.body.appendChild(a);
     a.click();
     a.remove();
-    toast("Download started ⬇");
+    toast("Download started 📥");
+  } else if (cur.youtubeId) {
+    window.open("https://www.youtube.com/watch?v=" + cur.youtubeId, "_blank");
+    toast("Opening YouTube...");
   } else {
     toast("Download link unavailable");
   }
@@ -807,17 +964,36 @@ window.addEventListener("keydown", (e) => {
     showGestureAnim("right");
   } else if (e.key === " " || e.key === "k" || e.key === "K") {
     e.preventDefault();
-    if (plyr) plyr.togglePlay();
+    if (plyr) {
+      plyr.togglePlay();
+    } else if (window._ytPlayer && window._ytPlayer.getPlayerState) {
+      const state = window._ytPlayer.getPlayerState();
+      if (state === 1) window._ytPlayer.pauseVideo();
+      else window._ytPlayer.playVideo();
+    }
   } else if (e.key === "m" || e.key === "M") {
     e.preventDefault();
-    if (plyr) plyr.muted = !plyr.muted;
+    if (plyr) {
+      plyr.muted = !plyr.muted;
+    } else if (window._ytPlayer && window._ytPlayer.isMuted) {
+      if (window._ytPlayer.isMuted()) window._ytPlayer.unMute();
+      else window._ytPlayer.mute();
+    }
   } else if (e.key === "f" || e.key === "F") {
     e.preventDefault();
-    if (plyr) plyr.fullscreen.toggle();
+    if (plyr) {
+      plyr.fullscreen.toggle();
+    } else {
+      const holder = document.getElementById("yt-holder");
+      if (holder) {
+        if (document.fullscreenElement) document.exitFullscreen();
+        else holder.requestFullscreen?.();
+      }
+    }
   } else if (e.key === "t" || e.key === "T") {
     e.preventDefault();
     toggleTheater();
-  } else if (e.key === ">") {
+  } else if (e.key === ">" || e.key === ".") {
     cycleSpeed();
   }
 });
@@ -828,9 +1004,8 @@ function renderContinueWatching(videos) {
   // Build list of partially-watched episodes
   const watched = [];
   videos.forEach(v => {
-    const key = "pos_" + (v.id || v.video_url);
-    const saved = parseFloat(localStorage.getItem(key) || "0");
-    if (saved > 30) { // at least 30 seconds watched
+    const saved = getSavedPos(v);
+    if (saved > 25) { // at least 25 seconds watched
       watched.push({ video: v, position: saved });
     }
   });
@@ -854,7 +1029,7 @@ function renderContinueWatching(videos) {
     const v = w.video;
     const pct = v.duration ? Math.min(95, Math.round((w.position / parseDuration(v.duration)) * 100)) : 50;
     const resumeTime = fmtTime(w.position);
-    return `<div class="continue-card" onclick="openPlayer(window._videos.find(x=>x.id==='${v.id}'))" title="Resume from ${resumeTime}">
+    return `<div class="continue-card" onclick="openPlayerById('${v.id}')" title="Resume from ${resumeTime}">
       <img src="${thumbSrc(v)}" loading="lazy" onerror="this.style.visibility='hidden'" alt=""/>
       <div class="c-info"><h4>${escapeHtml(v.title)}</h4><div class="c-prog"><span style="width:${pct}%"></span></div></div>
     </div>`;
@@ -870,12 +1045,33 @@ function parseDuration(str) {
   return 3600;
 }
 
+function openPlayerById(id) {
+  const f = (window._videos || []).find(x => x.id === id);
+  if (f) openPlayer(f);
+}
+
 window.loadVideos = loadVideos;
 window.skipTime = skipTime;
 window.cycleSpeed = cycleSpeed;
 window.openQualityMenu = openQualityMenu;
 window.togglePiP = togglePiP;
 window.downloadCurrent = downloadCurrent;
+window.openPlayer = openPlayer;
+window.openPlayerById = openPlayerById;
+window.filterRail = filterRail;
+window.onSearchInput = onSearchInput;
+window.toggleWatchlist = toggleWatchlist;
+window.addCurrentToWatchlist = addCurrentToWatchlist;
+window.playFeatured = playFeatured;
+window.stepEpisode = stepEpisode;
+window.toggleTheater = toggleTheater;
+window.shareEpisode = shareEpisode;
+window.closePlayer = closePlayer;
+window.openInfo = openInfo;
+window.closeInfo = closeInfo;
+window.infoTab = infoTab;
+window.toggleMenu = toggleMenu;
+window.hideMenu = hideMenu;
 
 // Auto-run loadVideos when DOM is ready
 if (document.readyState === "loading") {

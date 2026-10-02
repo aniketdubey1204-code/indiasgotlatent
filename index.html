@@ -151,6 +151,7 @@
     <a href="#rail" onclick="filterRail('Season 1',this);return false">Season 1</a>
     <a href="#rail" onclick="filterRail('Season 2',this);return false">Season 2</a>
     <a href="#rail" onclick="filterRail('Bonus',this);return false">Bonus & BTS</a>
+    <a href="#rail" onclick="filterRail('Watchlist',this);return false">⭐ Watchlist</a>
     <a href="#" onclick="openInfo();return false">Info</a>
     <a href="#" id="menu-auth-btn" onclick="toggleAuthModal();return false">Login</a>
   </div>
@@ -208,7 +209,8 @@
     <button class="fpill" onclick="filterRail('Season 1',this)">Season 1</button>
     <button class="fpill" onclick="filterRail('Season 2',this)">Season 2</button>
     <button class="fpill" onclick="filterRail('Bonus',this)">Bonus & BTS</button>
-    <input id="rail-search" placeholder="Search IGL episodes, guests..." oninput="filterRail('All',null,true)" style="max-width:240px"/>
+    <button class="fpill" onclick="filterRail('Watchlist',this)">⭐ Watchlist</button>
+    <input id="rail-search" placeholder="Search IGL episodes, guests..." oninput="onSearchInput()" style="max-width:240px"/>
   </div>
 
   <section class="rail" id="rail">
@@ -237,6 +239,7 @@
         <a href="#" onclick="filterRail('Season 1');return false">Season 1</a>
         <a href="#" onclick="filterRail('Season 2');return false">Season 2</a>
         <a href="#" onclick="filterRail('Bonus');return false">Bonus &amp; BTS</a>
+        <a href="#" onclick="filterRail('Watchlist');return false">Watchlist</a>
       </div>
       <div class="footer-col">
         <h4>Legal</h4>
@@ -300,7 +303,7 @@
       <button class="pbtn" id="theater-btn" onclick="toggleTheater()" aria-label="Theater mode">⛶ Theater</button>
       <button class="pbtn" id="download-btn" onclick="downloadCurrent()" title="Download MP4">⬇ Download</button>
       <button class="pbtn" onclick="shareEpisode()" aria-label="Copy link">🔗 Share</button>
-      <button class="pbtn" onclick="addCurrentToWatchlist()" aria-label="Add to watchlist">+ Watchlist</button>
+      <button class="pbtn" id="player-wl-btn" onclick="addCurrentToWatchlist()" aria-label="Add to watchlist">+ Watchlist</button>
     </div>
     <iframe id="embed" class="hidden" style="width:100%;aspect-ratio:16/9;border:0;border-radius:18px;background:#000" allowfullscreen allow="autoplay; encrypted-media; fullscreen"></iframe>
   </div>
