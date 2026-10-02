@@ -7,6 +7,9 @@ __pycache__/
 .venv
 env/
 venv/
+service_account*.json
+credentials*.json
+*.key
 
 # Video downloads (never commit huge MP4 files)
 downloads/

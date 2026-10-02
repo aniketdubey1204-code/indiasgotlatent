@@ -3,7 +3,7 @@ import re
 import os
 import html
 
-# Load LOCAL_VIDEOS
+# Load LOCAL_VIDEOS from js/videos.js
 with open("js/videos.js", encoding="utf-8") as f:
     js_content = f.read()
 
@@ -70,9 +70,20 @@ def cat_badge(v):
     if c == "special": return "Special"
     return f"EP {num}" if num else "Special"
 
+def extract_guests(title_text):
+    m = re.search(r"ft\.\s*([^|\[\]]+)", title_text, re.IGNORECASE)
+    if m:
+        raw = m.group(1).strip()
+        parts = re.split(r",|\band\b|&", raw)
+        clean = [p.strip() for p in parts if p.strip()]
+        return clean
+    return []
+
+# Generate all 42 individual static SEO landing pages
 for i, v in enumerate(videos):
     vid_id = v["id"]
-    title = html.escape(v.get("title", "India's Got Latent Episode"))
+    raw_title = v.get("title", "India's Got Latent Episode")
+    title = html.escape(raw_title)
     desc = html.escape(v.get("description", "Watch India's Got Latent episode free on IGL Fan Vault."))
     thumb = thumb_url(v)
     duration_iso = parse_duration_to_iso(v.get("duration"))
@@ -86,18 +97,32 @@ for i, v in enumerate(videos):
     prev_v = videos[i - 1] if i > 0 else None
     next_v = videos[i + 1] if i < len(videos) - 1 else None
 
-    # Video JSON-LD schema
+    guests = extract_guests(raw_title)
+    guest_str = ", ".join(guests) if guests else "Special Guests"
+
+    # Actors and judges array for rich Google Schema
+    actors = [{"@type": "Person", "name": "Samay Raina"}]
+    for g in guests:
+        actors.append({"@type": "Person", "name": g})
+
+    # Video JSON-LD schema with complete Rich Result attributes
     schema = {
         "@context": "https://schema.org",
         "@type": "VideoObject",
         "name": f"India's Got Latent — {title}",
-        "description": desc,
+        "description": f"Watch India's Got Latent {title} hosted by Samay Raina" + (f" with guest judges {guest_str}." if guests else " on IGL Fan Vault.") + f" {desc}",
         "thumbnailUrl": [thumb],
         "uploadDate": "2024-08-01T08:00:00+05:30",
         "duration": duration_iso,
         "contentUrl": stream_url or canonical,
         "embedUrl": canonical,
-        "inLanguage": "hi",
+        "inLanguage": ["hi", "en"],
+        "genre": ["Stand-up Comedy", "Reality TV", "Talent Show", "Comedy Roast"],
+        "director": {
+            "@type": "Person",
+            "name": "Samay Raina"
+        },
+        "actor": actors,
         "publisher": {
             "@type": "Organization",
             "name": "IGL Fan Vault",
@@ -139,30 +164,48 @@ for i, v in enumerate(videos):
         "mainEntity": [
             {
                 "@type": "Question",
-                "name": f"Where can I watch India's Got Latent {title} free?",
+                "name": f"Where can I watch India's Got Latent {title} free online?",
                 "acceptedAnswer": {
                     "@type": "Answer",
-                    "text": f"You can watch the full uncut stream of India's Got Latent {title} in high definition right here on the IGL Fan Vault."
+                    "text": f"You can watch the full uncut stream of India's Got Latent {title} in high definition right here on the IGL Fan Vault directory without hidden fees."
                 }
             },
             {
                 "@type": "Question",
-                "name": "Who is featured in this episode?",
+                "name": f"Who are the celebrity guest judges in India's Got Latent {title}?",
                 "acceptedAnswer": {
                     "@type": "Answer",
-                    "text": desc
+                    "text": f"This episode is hosted by Samay Raina" + (f" and features special guest judges: {guest_str}." if guests else ".")
+                }
+            },
+            {
+                "@type": "Question",
+                "name": "How does the latent scoring mechanism work?",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "In India's Got Latent, each contestant self-predicts their latent talent score from 0 to 10 before performing. Celebrity judges then submit their real score. If the contestant correctly predicted their score, they win prize money."
+                }
+            },
+            {
+                "@type": "Question",
+                "name": "Is IGL Fan Vault an official platform?",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "No. IGL Fan Vault is an independent, non-commercial community archive created for fans of Samay Raina's India's Got Latent show. All media streams are embedded from publicly accessible sources."
                 }
             }
         ]
     }
+
+    guest_badges_html = "".join([f'<span class="mini" style="background:rgba(255,188,149,.15);border-color:rgba(255,188,149,.3);color:#FFBC95">⭐ Judge: {html.escape(g)}</span>' for g in guests])
 
     html_page = f"""<!DOCTYPE html>
 <html lang="hi">
 <head>
 <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
 <title>India's Got Latent — {title} | Watch Free Full Episode</title>
-<meta name="description" content="Watch India's Got Latent {title} free in HD. {desc} Complete uncut comedy talent show episode by Samay Raina."/>
-<meta name="keywords" content="India's Got Latent, {title}, Samay Raina, watch India's Got Latent free, {badge}, IGL episodes"/>
+<meta name="description" content="Watch India's Got Latent {title} free in HD. Hosted by Samay Raina{f' with guest judges {guest_str}' if guests else ''}. {desc} Complete uncut comedy talent show episode."/>
+<meta name="keywords" content="India's Got Latent, {title}, Samay Raina, {guest_str}, watch India's Got Latent free, {badge}, IGL episodes, comedy roast"/>
 <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"/>
 <link rel="canonical" href="{canonical}"/>
 <link rel="icon" type="image/svg+xml" href="../assets/brand.svg"/>
@@ -173,7 +216,7 @@ for i, v in enumerate(videos):
 <meta property="og:type" content="video.episode"/>
 <meta property="og:site_name" content="IGL Fan Vault"/>
 <meta property="og:title" content="India's Got Latent — {title} | Watch Free"/>
-<meta property="og:description" content="Watch India's Got Latent {title} free on IGL Fan Vault. {desc}"/>
+<meta property="og:description" content="Watch India's Got Latent {title} free on IGL Fan Vault. Hosted by Samay Raina{f' with judges {guest_str}' if guests else ''}."/>
 <meta property="og:image" content="{thumb}"/>
 <meta property="og:url" content="{canonical}"/>
 <meta property="og:locale" content="en_IN"/>
@@ -201,9 +244,20 @@ for i, v in enumerate(videos):
 .ep-hero {{ max-width: 1100px; margin: 80px auto 40px; padding: 0 20px; }}
 .ep-stage {{ position: relative; border-radius: 16px; overflow: hidden; background: #000; aspect-ratio: 16/9; box-shadow: 0 20px 60px rgba(0,0,0,.7); margin-bottom: 24px; border: 1px solid rgba(255,255,255,.12); }}
 .ep-details {{ display: flex; flex-direction: column; gap: 14px; text-align: left; }}
-.ep-details h1 {{ font-family: 'Syne', sans-serif; font-size: clamp(22px, 3.5vw, 32px); margin: 0; color: #fff; }}
-.ep-meta-row {{ display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }}
+.ep-details h1 {{ font-family: 'Syne', sans-serif; font-size: clamp(22px, 3.5vw, 32px); margin: 0; color: #fff; line-height: 1.25; }}
+.ep-meta-row {{ display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }}
 .ep-nav-row {{ display: flex; justify-content: space-between; gap: 12px; margin-top: 30px; padding-top: 20px; border-top: 1px solid var(--line); flex-wrap: wrap; }}
+.faq-box {{ margin-top: 36px; padding: 24px; border-radius: 16px; background: rgba(255,255,255,.03); border: 1px solid var(--line); }}
+.faq-box h2 {{ font-family: 'Syne', sans-serif; font-size: 20px; margin: 0 0 16px; color: #fff; }}
+.faq-item {{ margin-bottom: 12px; border-bottom: 1px solid rgba(255,255,255,.07); padding-bottom: 12px; }}
+.faq-item summary {{ cursor: pointer; font-weight: 600; color: #EDE6E0; font-size: 15px; outline: none; list-style: none; display: flex; justify-content: space-between; align-items: center; }}
+.faq-item summary::-webkit-details-marker {{ display: none; }}
+.faq-item summary::after {{ content: '+'; font-size: 18px; color: var(--gold); }}
+.faq-item[open] summary::after {{ content: '−'; }}
+.faq-item p {{ margin: 10px 0 0; color: #C8BDB6; font-size: 14px; line-height: 1.6; }}
+.show-info-box {{ margin-top: 24px; padding: 20px; border-radius: 14px; background: rgba(20,20,24,.6); border: 1px solid var(--line); }}
+.show-info-box h3 {{ font-family: 'Syne', sans-serif; font-size: 16px; margin: 0 0 8px; color: #FFBC95; }}
+.show-info-box p {{ color: #C8BDB6; font-size: 13.5px; line-height: 1.55; margin: 0; }}
 </style>
 </head>
 <body>
@@ -222,14 +276,42 @@ for i, v in enumerate(videos):
   <div class="ep-details">
     <div class="ep-meta-row">
       <span class="badge live">● {badge}</span>
+      <span class="mini">Host: Samay Raina</span>
+      {guest_badges_html}
       {f'<span class="mini" style="background:rgba(255,255,255,.08);padding:4px 10px;border-radius:6px;font-size:12px">⏱ {v["duration"]}</span>' if v.get("duration") else ''}
     </div>
     <h1>India's Got Latent — {title}</h1>
-    <p style="color:#C8BDB6;font-size:15px;line-height:1.6;margin:0">{desc}</p>
+    <p style="color:#EDE6E0;font-size:15px;line-height:1.6;margin:0">{desc}</p>
+    
     <div class="action-dock" style="margin-top:10px">
       <a href="../?ep={vid_id}" class="pill solid">▶ Watch In Cinematic Theater</a>
       <a href="{stream_url}" download class="pill glass" target="_blank" rel="noopener">⬇ Download MP4</a>
       <a href="../" class="pill glass">⭐ Save to Watchlist</a>
+    </div>
+
+    <div class="show-info-box">
+      <h3>About India's Got Latent Format</h3>
+      <p>India's Got Latent is an unscripted comedy talent show created and hosted by stand-up comedian <strong>Samay Raina</strong>. In every episode, contestants showcase unconventional, raw, and latent abilities. Before performing, each contestant guesses their own score on a scale of 0 to 10. Celebrity guest judges then award their scores — if the predictions match, the contestant wins cash rewards. Uncensored, raw, and filled with spontaneous roasts and banter.</p>
+    </div>
+
+    <div class="faq-box">
+      <h2>Frequently Asked Questions</h2>
+      <details class="faq-item" open>
+        <summary>Where can I watch India's Got Latent {title} free online?</summary>
+        <p>You can stream this full episode in high definition directly on the IGL Fan Vault. Choose between the standard web player, the cinematic theater view, or direct MP4 download.</p>
+      </details>
+      <details class="faq-item">
+        <summary>Who are the guest judges in this episode?</summary>
+        <p>This episode features stand-up comedian & creator <strong>Samay Raina</strong> alongside {f'guest judges <strong>{guest_str}</strong>' if guests else 'featured celebrity guest judges'}.</p>
+      </details>
+      <details class="faq-item">
+        <summary>How does scoring work in India's Got Latent?</summary>
+        <p>Contestants perform raw talents and must accurately predict their own score before receiving the judges' verdict. Exact matches win cash prizes!</p>
+      </details>
+      <details class="faq-item">
+        <summary>Is this episode uncut?</summary>
+        <p>Yes. The IGL Fan Vault features the complete runtime of {v.get("duration") or "the full broadcast"} with full banter, performances, and judging comments preserved.</p>
+      </details>
     </div>
   </div>
 
@@ -251,6 +333,7 @@ for i, v in enumerate(videos):
         <a href="../">All Episodes</a>
         <a href="../#rail">Season 1</a>
         <a href="../#rail">Season 2</a>
+        <a href="../#rail">Bonus &amp; BTS</a>
       </div>
       <div class="footer-col">
         <h4>Legal</h4>
@@ -273,7 +356,7 @@ if (document.getElementById("player")) {{
     with open(f"episodes/{vid_id}.html", "w", encoding="utf-8") as f_out:
         f_out.write(html_page)
 
-print(f"Generated {len(videos)} static episode pages in /episodes/ folder.")
+print(f"Generated {len(videos)} enriched static episode pages in /episodes/ folder.")
 
 # Generate updated sitemap.xml
 sitemap_xml = ['<?xml version="1.0" encoding="UTF-8"?>',
@@ -318,3 +401,38 @@ with open("sitemap.xml", "w", encoding="utf-8") as f_sm:
     f_sm.write("\n".join(sitemap_xml) + "\n")
 
 print("Updated sitemap.xml with 42 self-canonical episode landing pages.")
+
+# Pre-render crawlable cards directly into index.html
+prerendered_cards = []
+for v in videos:
+    vid_id = v["id"]
+    title = html.escape(v.get("title", ""))
+    desc = html.escape((v.get("description") or "")[:90])
+    badge = cat_badge(v)
+    thumb = thumb_url(v)
+    dur = v.get("duration") or ""
+    card_html = f'''      <a href="episodes/{vid_id}.html" class="cin-card" role="button" aria-label="Play {title}">
+        <div class="thumb"><img src="{thumb}" loading="lazy" class="img-on" style="width:100%;aspect-ratio:16/9;object-fit:cover;display:block" alt="{title}"/></div>
+        <div class="tags"><span class="mini">{badge}</span></div>
+        {f'<span class="dur">{dur}</span>' if dur else ''}
+        <div class="shade"></div>
+        <div class="play-ov"><span>▶</span></div>
+        <div class="cmeta"><h3>{title}</h3><p>{desc}</p></div>
+      </a>'''
+    prerendered_cards.append(card_html)
+
+cards_block = "\n".join(prerendered_cards)
+
+with open("index.html", encoding="utf-8") as f_in:
+    idx_content = f_in.read()
+
+# Replace inner of <div id="video-grid" class="grid">...</div>
+grid_pattern = r'(<div id="video-grid" class="grid">)(.*?)(</div>\s*</section>)'
+m_grid = re.search(grid_pattern, idx_content, re.DOTALL)
+if m_grid:
+    new_idx = idx_content[:m_grid.start(2)] + "\n" + cards_block + "\n    " + idx_content[m_grid.end(2):]
+    with open("index.html", "w", encoding="utf-8") as f_out:
+        f_out.write(new_idx)
+    print("Pre-rendered 42 crawlable episode cards into index.html.")
+else:
+    print("Warning: Could not locate #video-grid in index.html for card pre-rendering.")

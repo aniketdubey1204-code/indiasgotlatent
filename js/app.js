@@ -170,8 +170,9 @@ function renderRail(videos) {
     return;
   }
   list.forEach((v, i) => {
-    const d = document.createElement("div");
+    const d = document.createElement("a");
     d.className = "cin-card";
+    d.href = `episodes/${v.id}.html`;
     d.tabIndex = 0;
     d.setAttribute("role", "button");
     d.setAttribute("aria-label", "Play " + (v.title || "episode"));
@@ -191,7 +192,12 @@ function renderRail(videos) {
       <div class="shade"></div>
       <div class="play-ov"><span>▶</span></div>
       <div class="cmeta"><h3>${escapeHtml(v.title)}</h3><p>${escapeHtml((v.description || "").slice(0, 90))}</p></div>`;
-    d.onclick = () => openPlayer(v);
+    d.onclick = (e) => {
+      if (e.button === 0 && !e.ctrlKey && !e.metaKey && !e.shiftKey) {
+        e.preventDefault();
+        openPlayer(v);
+      }
+    };
     d.onkeydown = (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); openPlayer(v); } };
     grid.appendChild(d);
   });
