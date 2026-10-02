@@ -1,22 +1,16 @@
 """
 IGL Auto-Sync Pipeline
 ======================
-Jab bhi igltalent.freeforall.dev pe naya video aaye, bas yeh chalao:
-
-    python sync.py
-
-Yeh automatically:
+Jab bhi igltalent.freeforall.dev pe naya video aaye, yeh script:
   1. okcdn.json fetch karta hai (source site se)
-  2. Naye videos detect karta hai (jo abhi tak archive nahi hue)
-  3. Unhe D:\\IGL me download karta hai (okcdn CDN se, YouTube fallback)
+  2. Naye videos detect karta hai (jo abhi tak archive.org pe nahi hain)
+  3. Download karta hai (CDN se, YouTube fallback)
   4. archive.org pe upload karta hai
-  5. js/videos.js catalog rebuild karta hai
-  6. git commit + push karta hai (site live ho jati hai)
+  5. Runner/local space bachane ke liye uploaded video delete karta hai (CI mode me)
+  6. js/videos.js catalog & scripts/archive_urls.json update karta hai
+  7. git commit + push karta hai (Vercel auto-deploy trigger hota hai)
 
-Flags:
-  --dry-run     Kuch bhi download/upload/push nahi, sirf dikhata hai kya hoga
-  --no-push     Git push skip (local test ke liye)
-  --force       Already uploaded videos bhi re-upload kare
+Can run locally or in GitHub Actions on schedule!
 """
 
 import subprocess
@@ -36,7 +30,10 @@ from pathlib import Path
 BASE_DIR     = Path(__file__).parent.parent
 SCRIPTS_DIR  = BASE_DIR / "scripts"
 JS_DIR       = BASE_DIR / "js"
-DOWNLOAD_DIR = Path(r"D:\IGL")
+
+# Downloads directory (local D:\IGL fallback to repo/downloads)
+DEFAULT_DL   = Path(r"D:\IGL") if os.name == "nt" and Path(r"D:\IGL").exists() else BASE_DIR / "downloads"
+DOWNLOAD_DIR = Path(os.environ.get("DOWNLOAD_DIR", str(DEFAULT_DL)))
 
 ARCHIVE_URLS_FILE = SCRIPTS_DIR / "archive_urls.json"
 OKCDN_CACHE_FILE  = SCRIPTS_DIR / "okcdn_cached.json"
@@ -45,6 +42,12 @@ VIDEOS_JS_FILE    = JS_DIR / "videos.js"
 SITE          = "https://igltalent.freeforall.dev"
 OKCDN_JSON    = f"{SITE}/okcdn.json"
 OKCDN_WORKER  = "https://okcdn.baapall2.workers.dev"
+
+# Clean up local video after upload? True in GitHub Actions to save runner disk space
+CLEANUP_AFTER_UPLOAD = os.environ.get(
+    "CLEANUP_AFTER_UPLOAD",
+    "true" if os.environ.get("GITHUB_ACTIONS") else "false"
+).lower() == "true"
 
 # SSL context (okcdn CDN has self-signed cert)
 ssl_ctx = ssl.create_default_context()
@@ -61,6 +64,27 @@ HEADERS = {
 DRY_RUN  = "--dry-run" in sys.argv
 NO_PUSH  = "--no-push" in sys.argv
 FORCE    = "--force"   in sys.argv
+
+# ──────────────────────────────────────────────
+# Credentials
+# ──────────────────────────────────────────────
+
+def ensure_ia_config():
+    """Ensure ia CLI has S3 credentials from env or fallback"""
+    access = os.environ.get("IA_ACCESS_KEY_ID", "EXPs0qKXe2s8HtOH")
+    secret = os.environ.get("IA_SECRET_ACCESS_KEY", "96xCWf8keeEFOtFj")
+    os.environ["IA_ACCESS_KEY_ID"] = access
+    os.environ["IA_SECRET_ACCESS_KEY"] = secret
+
+    # Write ~/.config/internetarchive/ia.ini if missing
+    try:
+        cfg_dir = Path.home() / ".config" / "internetarchive"
+        cfg_file = cfg_dir / "ia.ini"
+        if not cfg_file.exists():
+            cfg_dir.mkdir(parents=True, exist_ok=True)
+            cfg_file.write_text(f"[s3]\naccess = {access}\nsecret = {secret}\n", encoding="utf-8")
+    except Exception:
+        pass
 
 # ──────────────────────────────────────────────
 # Helpers
@@ -101,16 +125,7 @@ def fetch_episodes():
 # ──────────────────────────────────────────────
 
 def find_new_episodes(episodes, archive_urls):
-    """Episodes jo abhi tak download+upload nahi hue"""
-    # Build set of already-handled dataIds from filenames in D:\IGL
-    downloaded_ids = set()
-    if DOWNLOAD_DIR.exists():
-        for f in DOWNLOAD_DIR.glob("*.mp4"):
-            m = re.search(r'\[([^\]]+)\]', f.stem)
-            if m:
-                downloaded_ids.add(m.group(1))
-
-    # Already uploaded identifiers
+    """Detect episodes that are not yet uploaded to archive.org"""
     uploaded_idents = set()
     for filename, url in archive_urls.items():
         if url:
@@ -123,9 +138,7 @@ def find_new_episodes(episodes, archive_urls):
         did = ep.get("dataId", "")
         if not did:
             continue
-        if FORCE:
-            new_eps.append(ep)
-        elif did not in downloaded_ids or did not in uploaded_idents:
+        if FORCE or (did not in uploaded_idents):
             new_eps.append(ep)
 
     return new_eps
@@ -167,7 +180,7 @@ def download_file(url, dest):
             "Referer": SITE + "/"
         })
         total = 0
-        with urllib.request.urlopen(req, timeout=600, context=ssl_ctx) as resp:
+        with urllib.request.urlopen(req, timeout=900, context=ssl_ctx) as resp:
             with open(dest, "wb") as f:
                 while True:
                     chunk = resp.read(1024 * 1024)  # 1 MB chunks
@@ -313,13 +326,18 @@ def rebuild_catalog(episodes):
     archive_urls = load_json(ARCHIVE_URLS_FILE)
     ep_map = {e.get("dataId"): e for e in episodes if e.get("dataId")}
 
-    # Build filename → dataId index from D:\IGL
-    files = {}
+    # Index filenames from archive_urls keys or local directory
+    files_by_id = {}
+    for fname in archive_urls.keys():
+        m = re.search(r'\[([^\]]+)\]', Path(fname).stem)
+        if m:
+            files_by_id[m.group(1)] = fname
+
     if DOWNLOAD_DIR.exists():
         for f in DOWNLOAD_DIR.glob("*.mp4"):
             m = re.search(r'\[([^\]]+)\]', f.stem)
             if m:
-                files[m.group(1)] = f
+                files_by_id[m.group(1)] = f.name
 
     catalog = []
     for did, ep in ep_map.items():
@@ -328,9 +346,8 @@ def rebuild_catalog(episodes):
         desc  = ep.get("description", "")
         yt_id = ep.get("youtubeId")
 
-        # Get filename from local files or reconstruct
-        f = files.get(did)
-        filename = f.name if f else safe_filename(title, did)
+        # Filename from archive_urls / local files or reconstruct
+        filename = files_by_id.get(did) or safe_filename(title, did)
 
         # Thumbnail: YouTube first, then source site
         if yt_id:
@@ -383,25 +400,32 @@ def git_push(new_titles):
         log("DRY" if DRY_RUN else "SKIP", "Git push skipped")
         return
 
-    log("GIT", "Staging and committing ...")
-    subprocess.run(["git", "add", "js/videos.js"], cwd=BASE_DIR)
-    msg = f"sync: add {len(new_titles)} new episode(s) — {', '.join(new_titles[:3])}"
+    log("GIT", "Configuring git user...")
+    subprocess.run(["git", "config", "user.name", "github-actions[bot]"], cwd=BASE_DIR)
+    subprocess.run(["git", "config", "user.email", "github-actions[bot]@users.noreply.github.com"], cwd=BASE_DIR)
+
+    log("GIT", "Staging files...")
+    subprocess.run(["git", "add", "js/videos.js", "scripts/archive_urls.json", "scripts/okcdn_cached.json"], cwd=BASE_DIR)
+
+    msg = f"auto-sync: add {len(new_titles)} new episode(s) — {', '.join(new_titles[:3])}"
     if len(new_titles) > 3:
         msg += f" (+{len(new_titles)-3} more)"
+
     result = subprocess.run(
         ["git", "commit", "-m", msg],
         cwd=BASE_DIR, capture_output=True, text=True
     )
-    if "nothing to commit" in result.stdout + result.stderr:
+    if "nothing to commit" in (result.stdout + result.stderr):
         log("GIT", "Nothing new to commit")
         return
+
     log("GIT", f"Commit: {result.stdout.strip()}")
     push = subprocess.run(
         ["git", "push", "origin", "main"],
         cwd=BASE_DIR, capture_output=True, text=True
     )
     if push.returncode == 0:
-        log("GIT", "Pushed! Site will redeploy on Vercel automatically.")
+        log("GIT", "Pushed successfully! Vercel redeploy triggered.")
     else:
         log("ERROR", f"Push failed: {push.stderr.strip()}")
 
@@ -415,6 +439,8 @@ def main():
     if DRY_RUN: print("[MODE] DRY RUN — nothing will actually change")
     print("=" * 60)
 
+    ensure_ia_config()
+
     # 1. Fetch source
     episodes = fetch_episodes()
 
@@ -424,10 +450,10 @@ def main():
     # 3. Find new episodes
     new_eps = find_new_episodes(episodes, archive_urls)
     if not new_eps:
-        log("INFO", "No new episodes found — everything is up to date!")
-        log("INFO", "Re-building catalog anyway to ensure it's fresh...")
+        log("INFO", "No new episodes found — all episodes already archived!")
+        log("INFO", "Re-building catalog anyway to ensure fresh state...")
         rebuild_catalog(episodes)
-        log("DONE", "Catalog is up to date. Run with --force to re-upload everything.")
+        log("DONE", "Everything up to date.")
         return
 
     print(f"\n{'='*60}")
@@ -451,13 +477,21 @@ def main():
             fail += 1
             continue
 
-        # 4. Upload
+        # 4. Upload to Archive.org
         archive_url = upload_to_archive(filepath, title, data_id)
         if archive_url:
             archive_urls[filepath.name] = archive_url
             save_json(ARCHIVE_URLS_FILE, archive_urls)
             added_titles.append(title)
             ok += 1
+
+            # Clean up local file if requested (CI mode)
+            if CLEANUP_AFTER_UPLOAD and filepath.exists():
+                try:
+                    filepath.unlink()
+                    log("CLEANUP", f"Deleted local file to free disk space: {filepath.name}")
+                except Exception as e:
+                    log("WARN", f"Could not delete local file: {e}")
         else:
             archive_urls[filepath.name] = None
             save_json(ARCHIVE_URLS_FILE, archive_urls)

@@ -1,5 +1,5 @@
-// Pre-built catalog of India's Got Latent episodes hosted on archive.org
-// Generated automatically — zero Supabase dependency
+// IGL Fan Archive — auto-generated catalog (archive.org hosted)
+// Run scripts/sync.py to update when new episodes are added
 const LOCAL_VIDEOS = [
   {
     "id": "ep-01",
@@ -515,8 +515,8 @@ const LOCAL_VIDEOS = [
     "id": "s2-08",
     "dataId": "s2-08",
     "archive_id": "igl-s2-08",
-    "title": "INDIA\u2019S GOT LATENT S2 Bonus EP 4 ft. Ayushmann Khurrana, Suhani Shah, Kullu, Rajat Sood",
-    "description": "INDIA\u2019S GOT LATENT S2 Bonus EP 4 ft. Ayushmann Khurrana, Suhani Shah, Kullu, Rajat Sood\nThank you for supporting the channel members!! \u2764\ufe0f\n",
+    "title": "INDIA’S GOT LATENT S2 Bonus EP 4 ft. Ayushmann Khurrana, Suhani Shah, Kullu, Rajat Sood",
+    "description": "INDIA’S GOT LATENT S2 Bonus EP 4 ft. Ayushmann Khurrana, Suhani Shah, Kullu, Rajat Sood\nThank you for supporting the channel members!! ❤️\n",
     "category": "s2bonus",
     "episode_number": 4,
     "duration": "34m",
@@ -621,7 +621,7 @@ const LOCAL_VIDEOS = [
     "dataId": "kapil-01",
     "archive_id": "igl-kapil-01",
     "title": "Talk Show Segment 01 | ft. Samay Raina, BeerBiceps",
-    "description": "The Great Indian Kapil Show \u2014 Season 4 Episode 14.",
+    "description": "The Great Indian Kapil Show — Season 4 Episode 14.",
     "category": "special",
     "episode_number": 1,
     "duration": "",
@@ -633,6 +633,4 @@ const LOCAL_VIDEOS = [
   }
 ];
 
-if (typeof module !== 'undefined' && module.exports) {
-  module.exports = LOCAL_VIDEOS;
-}
+if (typeof module !== 'undefined' && module.exports) { module.exports = LOCAL_VIDEOS; }

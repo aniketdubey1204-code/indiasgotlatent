@@ -1,0 +1,19 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.env
+.venv
+env/
+venv/
+
+# Video downloads (never commit huge MP4 files)
+downloads/
+*.mp4
+*.mkv
+*.webm
+
+# OS
+.DS_Store
+Thumbs.db
