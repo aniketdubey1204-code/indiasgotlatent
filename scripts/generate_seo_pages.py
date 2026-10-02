@@ -371,10 +371,13 @@ sitemap_xml = ['<?xml version="1.0" encoding="UTF-8"?>',
 
 for v in videos:
     vid_id = v["id"]
-    title = html.escape(v.get("title", ""))
-    desc = html.escape(v.get("description", ""))
+    title = html.escape(re.sub(r"\s+", " ", v.get("title", "")).strip())
+    raw_desc = re.sub(r"\s+", " ", v.get("description", "")).strip()
+    if not raw_desc:
+        raw_desc = f"Watch India's Got Latent {title} free on IGL Fan Vault."
+    desc = html.escape(raw_desc[:1000])
     thumb = thumb_url(v)
-    dur_sec = parse_duration_seconds(v.get("duration"))
+    dur_sec = max(60, parse_duration_seconds(v.get("duration")))
     stream_url = v.get("video_url") or ""
     if not stream_url.startswith("http") and v.get("archive_id") and v.get("filename"):
         stream_url = f"https://archive.org/download/{v['archive_id']}/{v['filename']}"
@@ -388,9 +391,10 @@ for v in videos:
     sitemap_xml.append(f'      <video:thumbnail_loc>{thumb}</video:thumbnail_loc>')
     sitemap_xml.append(f'      <video:title>{title}</video:title>')
     sitemap_xml.append(f'      <video:description>{desc}</video:description>')
-    if stream_url:
+    if v.get("youtubeId"):
+        sitemap_xml.append(f'      <video:player_loc allow_embed="yes">https://www.youtube-nocookie.com/embed/{v["youtubeId"]}</video:player_loc>')
+    elif stream_url:
         sitemap_xml.append(f'      <video:content_loc>{html.escape(stream_url)}</video:content_loc>')
-    sitemap_xml.append(f'      <video:player_loc>https://indiasgotlatent-opal.vercel.app/episodes/{vid_id}.html</video:player_loc>')
     sitemap_xml.append(f'      <video:duration>{dur_sec}</video:duration>')
     sitemap_xml.append('    </video:video>')
     sitemap_xml.append('  </url>')
