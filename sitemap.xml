@@ -8,549 +8,593 @@
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://indiasgotlatent-opal.vercel.app/?ep=ep-01</loc>
+    <loc>https://indiasgotlatent-opal.vercel.app/episodes/ep-01.html</loc>
     <lastmod>2026-10-02</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.85</priority>
     <video:video>
       <video:thumbnail_loc>https://indiasgotlatent-opal.vercel.app/assets/thumbs/5v1v1r.webp</video:thumbnail_loc>
       <video:title>Episode 01 | ft. Raftaar</video:title>
-      <video:description>India&apos;s Got Latent Episode 1 featuring Raftaar.</video:description>
+      <video:description>India&#x27;s Got Latent Episode 1 featuring Raftaar.</video:description>
       <video:content_loc>https://archive.org/download/igl-ep-01/Episode%2001%20ft.%20Raftaar%20%5Bep-01%5D.mp4</video:content_loc>
+      <video:player_loc>https://indiasgotlatent-opal.vercel.app/episodes/ep-01.html</video:player_loc>
       <video:duration>2603</video:duration>
     </video:video>
   </url>
   <url>
-    <loc>https://indiasgotlatent-opal.vercel.app/?ep=ep-02</loc>
+    <loc>https://indiasgotlatent-opal.vercel.app/episodes/ep-02.html</loc>
     <lastmod>2026-10-02</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.85</priority>
     <video:video>
       <video:thumbnail_loc>https://indiasgotlatent-opal.vercel.app/assets/thumbs/1wxwnb.webp</video:thumbnail_loc>
       <video:title>Episode 02 | ft. GamerFleet</video:title>
-      <video:description>India&apos;s Got Latent Episode 2 featuring GamerFleet.</video:description>
+      <video:description>India&#x27;s Got Latent Episode 2 featuring GamerFleet.</video:description>
       <video:content_loc>https://archive.org/download/igl-ep-02/Episode%2002%20ft.%20GamerFleet%20%5Bep-02%5D.mp4</video:content_loc>
+      <video:player_loc>https://indiasgotlatent-opal.vercel.app/episodes/ep-02.html</video:player_loc>
       <video:duration>3969</video:duration>
     </video:video>
   </url>
   <url>
-    <loc>https://indiasgotlatent-opal.vercel.app/?ep=ep-03</loc>
+    <loc>https://indiasgotlatent-opal.vercel.app/episodes/ep-03.html</loc>
     <lastmod>2026-10-02</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.85</priority>
     <video:video>
       <video:thumbnail_loc>https://indiasgotlatent-opal.vercel.app/assets/thumbs/xavl0p.webp</video:thumbnail_loc>
       <video:title>Episode 03 | ft. Urfi Javed, Ashish Solanki</video:title>
-      <video:description>India&apos;s Got Latent Episode 3 featuring Urfi Javed and Ashish Solanki.</video:description>
+      <video:description>India&#x27;s Got Latent Episode 3 featuring Urfi Javed and Ashish Solanki.</video:description>
       <video:content_loc>https://archive.org/download/igl-ep-03/Episode%2003%20ft.%20Urfi%20Javed%20Ashish%20Solanki%20%5Bep-03%5D.mp4</video:content_loc>
+      <video:player_loc>https://indiasgotlatent-opal.vercel.app/episodes/ep-03.html</video:player_loc>
       <video:duration>3918</video:duration>
     </video:video>
   </url>
   <url>
-    <loc>https://indiasgotlatent-opal.vercel.app/?ep=ep-04</loc>
+    <loc>https://indiasgotlatent-opal.vercel.app/episodes/ep-04.html</loc>
     <lastmod>2026-10-02</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.85</priority>
     <video:video>
       <video:thumbnail_loc>https://indiasgotlatent-opal.vercel.app/assets/thumbs/h9krad.webp</video:thumbnail_loc>
       <video:title>Episode 04 | ft. Maheep Singh</video:title>
-      <video:description>India&apos;s Got Latent Episode 4 featuring Maheep Singh.</video:description>
+      <video:description>India&#x27;s Got Latent Episode 4 featuring Maheep Singh.</video:description>
       <video:content_loc>https://archive.org/download/igl-ep-04/Episode%2004%20ft.%20Maheep%20Singh%20%5Bep-04%5D.mp4</video:content_loc>
+      <video:player_loc>https://indiasgotlatent-opal.vercel.app/episodes/ep-04.html</video:player_loc>
       <video:duration>3897</video:duration>
     </video:video>
   </url>
   <url>
-    <loc>https://indiasgotlatent-opal.vercel.app/?ep=ep-05</loc>
+    <loc>https://indiasgotlatent-opal.vercel.app/episodes/ep-05.html</loc>
     <lastmod>2026-10-02</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.85</priority>
     <video:video>
       <video:thumbnail_loc>https://indiasgotlatent-opal.vercel.app/assets/thumbs/wonjl6.webp</video:thumbnail_loc>
       <video:title>Episode 05 | ft. Kunal Kamra, Atul Khatri</video:title>
-      <video:description>India&apos;s Got Latent Episode 5 featuring Kunal Kamra and Atul Khatri.</video:description>
+      <video:description>India&#x27;s Got Latent Episode 5 featuring Kunal Kamra and Atul Khatri.</video:description>
       <video:content_loc>https://archive.org/download/igl-ep-05/Episode%2005%20ft.%20Kunal%20Kamra%20Atul%20Khatri%20%5Bep-05%5D.mp4</video:content_loc>
+      <video:player_loc>https://indiasgotlatent-opal.vercel.app/episodes/ep-05.html</video:player_loc>
       <video:duration>4046</video:duration>
     </video:video>
   </url>
   <url>
-    <loc>https://indiasgotlatent-opal.vercel.app/?ep=ep-06</loc>
+    <loc>https://indiasgotlatent-opal.vercel.app/episodes/ep-06.html</loc>
     <lastmod>2026-10-02</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.85</priority>
     <video:video>
       <video:thumbnail_loc>https://indiasgotlatent-opal.vercel.app/assets/thumbs/v99xxv.webp</video:thumbnail_loc>
       <video:title>Episode 06 | ft. Vipul Goyal, Joke Singh</video:title>
-      <video:description>India&apos;s Got Latent Episode 6 featuring Vipul Goyal and Joke Singh.</video:description>
+      <video:description>India&#x27;s Got Latent Episode 6 featuring Vipul Goyal and Joke Singh.</video:description>
       <video:content_loc>https://archive.org/download/igl-ep-06/Episode%2006%20ft.%20Vipul%20Goyal%20Joke%20Singh%20%5Bep-06%5D.mp4</video:content_loc>
+      <video:player_loc>https://indiasgotlatent-opal.vercel.app/episodes/ep-06.html</video:player_loc>
       <video:duration>3928</video:duration>
     </video:video>
   </url>
   <url>
-    <loc>https://indiasgotlatent-opal.vercel.app/?ep=ep-07</loc>
+    <loc>https://indiasgotlatent-opal.vercel.app/episodes/ep-07.html</loc>
     <lastmod>2026-10-02</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.85</priority>
     <video:video>
       <video:thumbnail_loc>https://indiasgotlatent-opal.vercel.app/assets/thumbs/dycm14.webp</video:thumbnail_loc>
       <video:title>Episode 07 | ft. Ravi Gupta, Rahgir</video:title>
-      <video:description>India&apos;s Got Latent Episode 7 featuring Ravi Gupta and Rahgir.</video:description>
+      <video:description>India&#x27;s Got Latent Episode 7 featuring Ravi Gupta and Rahgir.</video:description>
       <video:content_loc>https://archive.org/download/igl-ep-07/Episode%2007%20ft.%20Ravi%20Gupta%20Rahgir%20%5Bep-07%5D.mp4</video:content_loc>
+      <video:player_loc>https://indiasgotlatent-opal.vercel.app/episodes/ep-07.html</video:player_loc>
       <video:duration>3679</video:duration>
     </video:video>
   </url>
   <url>
-    <loc>https://indiasgotlatent-opal.vercel.app/?ep=ep-08</loc>
+    <loc>https://indiasgotlatent-opal.vercel.app/episodes/ep-08.html</loc>
     <lastmod>2026-10-02</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.85</priority>
     <video:video>
       <video:thumbnail_loc>https://indiasgotlatent-opal.vercel.app/assets/thumbs/b9cjfx.webp</video:thumbnail_loc>
       <video:title>Episode 08 | ft. Poonam Pandey, Vidit C</video:title>
-      <video:description>India&apos;s Got Latent Episode 8 featuring Poonam Pandey and Vidit C.</video:description>
+      <video:description>India&#x27;s Got Latent Episode 8 featuring Poonam Pandey and Vidit C.</video:description>
       <video:content_loc>https://archive.org/download/igl-ep-08/Episode%2008%20ft.%20Poonam%20Pandey%20Vidit%20C%20%5Bep-08%5D.mp4</video:content_loc>
+      <video:player_loc>https://indiasgotlatent-opal.vercel.app/episodes/ep-08.html</video:player_loc>
       <video:duration>3271</video:duration>
     </video:video>
   </url>
   <url>
-    <loc>https://indiasgotlatent-opal.vercel.app/?ep=ep-09</loc>
+    <loc>https://indiasgotlatent-opal.vercel.app/episodes/ep-09.html</loc>
     <lastmod>2026-10-02</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.85</priority>
     <video:video>
       <video:thumbnail_loc>https://indiasgotlatent-opal.vercel.app/assets/thumbs/g4teuh.webp</video:thumbnail_loc>
       <video:title>Episode 09 | ft. Deepak Kalal, Manan Desai</video:title>
-      <video:description>India&apos;s Got Latent Episode 9 featuring Deepak Kalal and Manan Desai.</video:description>
+      <video:description>India&#x27;s Got Latent Episode 9 featuring Deepak Kalal and Manan Desai.</video:description>
       <video:content_loc>https://archive.org/download/igl-ep-09/Episode%2009%20ft.%20Deepak%20Kalal%20Manan%20Desai%20%5Bep-09%5D.mp4</video:content_loc>
+      <video:player_loc>https://indiasgotlatent-opal.vercel.app/episodes/ep-09.html</video:player_loc>
       <video:duration>3839</video:duration>
     </video:video>
   </url>
   <url>
-    <loc>https://indiasgotlatent-opal.vercel.app/?ep=ep-10</loc>
+    <loc>https://indiasgotlatent-opal.vercel.app/episodes/ep-10.html</loc>
     <lastmod>2026-10-02</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.85</priority>
     <video:video>
       <video:thumbnail_loc>https://indiasgotlatent-opal.vercel.app/assets/thumbs/37nxmd.webp</video:thumbnail_loc>
       <video:title>Episode 10 | ft. Raghu Ram, Tanmay Bhat</video:title>
-      <video:description>India&apos;s Got Latent Episode 10 featuring Raghu Ram and Tanmay Bhat.</video:description>
+      <video:description>India&#x27;s Got Latent Episode 10 featuring Raghu Ram and Tanmay Bhat.</video:description>
       <video:content_loc>https://archive.org/download/igl-ep-10/Episode%2010%20ft.%20Raghu%20Ram%20Tanmay%20Bhat%20%5Bep-10%5D.mp4</video:content_loc>
+      <video:player_loc>https://indiasgotlatent-opal.vercel.app/episodes/ep-10.html</video:player_loc>
       <video:duration>4104</video:duration>
     </video:video>
   </url>
   <url>
-    <loc>https://indiasgotlatent-opal.vercel.app/?ep=ep-11</loc>
+    <loc>https://indiasgotlatent-opal.vercel.app/episodes/ep-11.html</loc>
     <lastmod>2026-10-02</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.85</priority>
     <video:video>
       <video:thumbnail_loc>https://indiasgotlatent-opal.vercel.app/assets/thumbs/8j55ug.webp</video:thumbnail_loc>
       <video:title>Episode 11 | ft. Bharti Singh, Haarsh Limbachiyaa</video:title>
-      <video:description>India&apos;s Got Latent Episode 11 featuring Bharti Singh and Haarsh Limbachiyaa.</video:description>
+      <video:description>India&#x27;s Got Latent Episode 11 featuring Bharti Singh and Haarsh Limbachiyaa.</video:description>
       <video:content_loc>https://archive.org/download/igl-ep-11/Episode%2011%20ft.%20Bharti%20Singh%20Haarsh%20Limbachiyaa%20%5Bep-11%5D.mp4</video:content_loc>
+      <video:player_loc>https://indiasgotlatent-opal.vercel.app/episodes/ep-11.html</video:player_loc>
       <video:duration>4510</video:duration>
     </video:video>
   </url>
   <url>
-    <loc>https://indiasgotlatent-opal.vercel.app/?ep=ep-12</loc>
+    <loc>https://indiasgotlatent-opal.vercel.app/episodes/ep-12.html</loc>
     <lastmod>2026-10-02</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.85</priority>
     <video:video>
       <video:thumbnail_loc>https://indiasgotlatent-opal.vercel.app/assets/thumbs/p88fof.webp</video:thumbnail_loc>
       <video:title>Episode 12 | ft. Rakhi Sawant, Ashish Solanki</video:title>
-      <video:description>India&apos;s Got Latent Episode 12 featuring Rakhi Sawant and Ashish Solanki.</video:description>
+      <video:description>India&#x27;s Got Latent Episode 12 featuring Rakhi Sawant and Ashish Solanki.</video:description>
       <video:content_loc>https://archive.org/download/igl-ep-12/Episode%2012%20ft.%20Rakhi%20Sawant%20Ashish%20Solanki%20%5Bep-12%5D.mp4</video:content_loc>
+      <video:player_loc>https://indiasgotlatent-opal.vercel.app/episodes/ep-12.html</video:player_loc>
       <video:duration>4492</video:duration>
     </video:video>
   </url>
   <url>
-    <loc>https://indiasgotlatent-opal.vercel.app/?ep=bonus-01</loc>
+    <loc>https://indiasgotlatent-opal.vercel.app/episodes/bonus-01.html</loc>
     <lastmod>2026-10-02</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.85</priority>
     <video:video>
       <video:thumbnail_loc>https://indiasgotlatent-opal.vercel.app/assets/thumbs/zqtar6.webp</video:thumbnail_loc>
       <video:title>Bonus Segment 01 | ft. Arpit Bala</video:title>
       <video:description>Bonus segment 1 featuring Arpit Bala.</video:description>
       <video:content_loc>https://archive.org/download/igl-bonus-01/Bonus%20Segment%2001%20ft.%20Arpit%20Bala%20%5Bbonus-01%5D.mp4</video:content_loc>
+      <video:player_loc>https://indiasgotlatent-opal.vercel.app/episodes/bonus-01.html</video:player_loc>
       <video:duration>2166</video:duration>
     </video:video>
   </url>
   <url>
-    <loc>https://indiasgotlatent-opal.vercel.app/?ep=bonus-02</loc>
+    <loc>https://indiasgotlatent-opal.vercel.app/episodes/bonus-02.html</loc>
     <lastmod>2026-10-02</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.85</priority>
     <video:video>
       <video:thumbnail_loc>https://indiasgotlatent-opal.vercel.app/assets/thumbs/zozibh.webp</video:thumbnail_loc>
       <video:title>Bonus Segment 02 | ft. Badshah, Siddhant Chaturvedi</video:title>
       <video:description>Bonus segment 2 featuring Badshah and Siddhant Chaturvedi.</video:description>
       <video:content_loc>https://archive.org/download/igl-bonus-02/Bonus%20Segment%2002%20ft.%20Badshah%20Siddhant%20Chaturvedi%20%5Bbonus-02%5D.mp4</video:content_loc>
+      <video:player_loc>https://indiasgotlatent-opal.vercel.app/episodes/bonus-02.html</video:player_loc>
       <video:duration>3128</video:duration>
     </video:video>
   </url>
   <url>
-    <loc>https://indiasgotlatent-opal.vercel.app/?ep=bonus-03</loc>
+    <loc>https://indiasgotlatent-opal.vercel.app/episodes/bonus-03.html</loc>
     <lastmod>2026-10-02</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.85</priority>
     <video:video>
       <video:thumbnail_loc>https://indiasgotlatent-opal.vercel.app/assets/thumbs/eyst23.webp</video:thumbnail_loc>
       <video:title>Bonus Segment 03 | ft. Avika Gor</video:title>
       <video:description>Bonus segment 3 featuring Avika Gor.</video:description>
       <video:content_loc>https://archive.org/download/igl-bonus-03/Bonus%20Segment%2003%20ft.%20Avika%20Gor%20%5Bbonus-03%5D.mp4</video:content_loc>
+      <video:player_loc>https://indiasgotlatent-opal.vercel.app/episodes/bonus-03.html</video:player_loc>
       <video:duration>3262</video:duration>
     </video:video>
   </url>
   <url>
-    <loc>https://indiasgotlatent-opal.vercel.app/?ep=bonus-04</loc>
+    <loc>https://indiasgotlatent-opal.vercel.app/episodes/bonus-04.html</loc>
     <lastmod>2026-10-02</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.85</priority>
     <video:video>
       <video:thumbnail_loc>https://indiasgotlatent-opal.vercel.app/assets/thumbs/sykxlk.webp</video:thumbnail_loc>
       <video:title>Bonus Segment 04 | ft. Seedhe Maut, Madhur Virli</video:title>
       <video:description>Bonus segment 4 featuring Seedhe Maut and Madhur Virli.</video:description>
       <video:content_loc>https://archive.org/download/igl-bonus-04/Bonus%20Segment%2004%20ft.%20Seedhe%20Maut%20Madhur%20Virli%20%5Bbonus-04%5D.mp4</video:content_loc>
+      <video:player_loc>https://indiasgotlatent-opal.vercel.app/episodes/bonus-04.html</video:player_loc>
       <video:duration>4344</video:duration>
     </video:video>
   </url>
   <url>
-    <loc>https://indiasgotlatent-opal.vercel.app/?ep=bonus-05</loc>
+    <loc>https://indiasgotlatent-opal.vercel.app/episodes/bonus-05.html</loc>
     <lastmod>2026-10-02</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.85</priority>
     <video:video>
       <video:thumbnail_loc>https://indiasgotlatent-opal.vercel.app/assets/thumbs/x6ieup.webp</video:thumbnail_loc>
       <video:title>Bonus Segment 05 | ft. Rohan Joshi</video:title>
       <video:description>Bonus segment 5 featuring Rohan Joshi.</video:description>
       <video:content_loc>https://archive.org/download/igl-bonus-05/Bonus%20Segment%2005%20ft.%20Rohan%20Joshi%20%5Bbonus-05%5D.mp4</video:content_loc>
+      <video:player_loc>https://indiasgotlatent-opal.vercel.app/episodes/bonus-05.html</video:player_loc>
       <video:duration>5345</video:duration>
     </video:video>
   </url>
   <url>
-    <loc>https://indiasgotlatent-opal.vercel.app/?ep=bonus-06</loc>
+    <loc>https://indiasgotlatent-opal.vercel.app/episodes/bonus-06.html</loc>
     <lastmod>2026-10-02</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.85</priority>
     <video:video>
       <video:thumbnail_loc>https://indiasgotlatent-opal.vercel.app/assets/thumbs/vlhczg.webp</video:thumbnail_loc>
       <video:title>Bonus Segment 06 | ft. Ranveer Allahbadia</video:title>
       <video:description>Bonus segment 6 featuring Ranveer Allahbadia.</video:description>
       <video:content_loc>https://archive.org/download/igl-bonus-06/Bonus%20Segment%2006%20ft.%20Ranveer%20Allahbadia%20%5Bbonus-06%5D.mp4</video:content_loc>
+      <video:player_loc>https://indiasgotlatent-opal.vercel.app/episodes/bonus-06.html</video:player_loc>
       <video:duration>3789</video:duration>
     </video:video>
   </url>
   <url>
-    <loc>https://indiasgotlatent-opal.vercel.app/?ep=extra-01</loc>
+    <loc>https://indiasgotlatent-opal.vercel.app/episodes/extra-01.html</loc>
     <lastmod>2026-10-02</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.85</priority>
     <video:video>
       <video:thumbnail_loc>https://indiasgotlatent-opal.vercel.app/assets/thumbs/mi1fo1.webp</video:thumbnail_loc>
       <video:title>Bonus Segment 07 | ft. Deepak Kalal</video:title>
       <video:description>Extra segment featuring Deepak Kalal.</video:description>
       <video:content_loc>https://archive.org/download/igl-extra-01/Bonus%20Segment%2007%20ft.%20Deepak%20Kalal%20%5Bextra-01%5D.mp4</video:content_loc>
+      <video:player_loc>https://indiasgotlatent-opal.vercel.app/episodes/extra-01.html</video:player_loc>
       <video:duration>2191</video:duration>
     </video:video>
   </url>
   <url>
-    <loc>https://indiasgotlatent-opal.vercel.app/?ep=extra-02</loc>
+    <loc>https://indiasgotlatent-opal.vercel.app/episodes/extra-02.html</loc>
     <lastmod>2026-10-02</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.85</priority>
     <video:video>
       <video:thumbnail_loc>https://indiasgotlatent-opal.vercel.app/assets/thumbs/ckvmsi.webp</video:thumbnail_loc>
       <video:title>Bonus Segment 08 | ft. Raghu Ram</video:title>
       <video:description>Extra segment featuring Raghu Ram.</video:description>
       <video:content_loc>https://archive.org/download/igl-extra-02/Bonus%20Segment%2008%20ft.%20Raghu%20Ram%20%5Bextra-02%5D.mp4</video:content_loc>
+      <video:player_loc>https://indiasgotlatent-opal.vercel.app/episodes/extra-02.html</video:player_loc>
       <video:duration>2047</video:duration>
     </video:video>
   </url>
   <url>
-    <loc>https://indiasgotlatent-opal.vercel.app/?ep=extra-03</loc>
+    <loc>https://indiasgotlatent-opal.vercel.app/episodes/extra-03.html</loc>
     <lastmod>2026-10-02</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.85</priority>
     <video:video>
       <video:thumbnail_loc>https://indiasgotlatent-opal.vercel.app/assets/thumbs/p74kpp.webp</video:thumbnail_loc>
       <video:title>Discarded Segment 01 | ft. Aakash Gupta, Anubhav Bassi</video:title>
       <video:description>Discarded segment featuring Aakash Gupta and Anubhav Bassi.</video:description>
       <video:content_loc>https://archive.org/download/igl-extra-03/Discarded%20Segment%2001%20ft.%20Aakash%20Gupta%20Anubhav%20Bassi%20%5Bextra-03%5D.mp4</video:content_loc>
+      <video:player_loc>https://indiasgotlatent-opal.vercel.app/episodes/extra-03.html</video:player_loc>
       <video:duration>1661</video:duration>
     </video:video>
   </url>
   <url>
-    <loc>https://indiasgotlatent-opal.vercel.app/?ep=extra-04</loc>
+    <loc>https://indiasgotlatent-opal.vercel.app/episodes/extra-04.html</loc>
     <lastmod>2026-10-02</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.85</priority>
     <video:video>
       <video:thumbnail_loc>https://indiasgotlatent-opal.vercel.app/assets/thumbs/s654fa.webp</video:thumbnail_loc>
       <video:title>Deleted Footage</video:title>
       <video:description>Deleted footage compilation.</video:description>
       <video:content_loc>https://archive.org/download/igl-extra-04/Deleted%20Footage%20%5Bextra-04%5D.mp4</video:content_loc>
+      <video:player_loc>https://indiasgotlatent-opal.vercel.app/episodes/extra-04.html</video:player_loc>
       <video:duration>2371</video:duration>
     </video:video>
   </url>
   <url>
-    <loc>https://indiasgotlatent-opal.vercel.app/?ep=s2-01</loc>
+    <loc>https://indiasgotlatent-opal.vercel.app/episodes/s2-01.html</loc>
     <lastmod>2026-10-02</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.85</priority>
     <video:video>
       <video:thumbnail_loc>https://i.ytimg.com/vi/eHTXQW58WhA/maxresdefault.jpg</video:thumbnail_loc>
       <video:title>Season 2 Episode 01 | ft. Alia Bhatt, Sharvari, Ashish Solanki</video:title>
       <video:description>Full episode online stream. Free community fan archive.</video:description>
       <video:content_loc>https://archive.org/download/igl-s2-01/Season%202%20Episode%2001%20ft.%20Alia%20Bhatt%20Sharvari%20Ashish%20Solanki%20%5Bs2-01%5D.mp4</video:content_loc>
-      <video:duration>3560</video:duration>
+      <video:player_loc>https://indiasgotlatent-opal.vercel.app/episodes/s2-01.html</video:player_loc>
+      <video:duration>2700</video:duration>
     </video:video>
   </url>
   <url>
-    <loc>https://indiasgotlatent-opal.vercel.app/?ep=s2-bts-01</loc>
+    <loc>https://indiasgotlatent-opal.vercel.app/episodes/s2-bts-01.html</loc>
     <lastmod>2026-10-02</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.85</priority>
     <video:video>
       <video:thumbnail_loc>https://indiasgotlatent-opal.vercel.app/assets/thumbs/4z062p.webp</video:thumbnail_loc>
       <video:title>BTS 01 | ft. Alia Bhatt, Sharvari, Ashish Solanki</video:title>
       <video:description>Behind the scenes featuring Alia Bhatt, Sharvari, and Ashish Solanki.</video:description>
       <video:content_loc>https://archive.org/download/igl-s2-bts-01/BTS%2001%20ft.%20Alia%20Bhatt%20Sharvari%20Ashish%20Solanki%20%5Bs2-bts-01%5D.mp4</video:content_loc>
+      <video:player_loc>https://indiasgotlatent-opal.vercel.app/episodes/s2-bts-01.html</video:player_loc>
       <video:duration>1055</video:duration>
     </video:video>
   </url>
   <url>
-    <loc>https://indiasgotlatent-opal.vercel.app/?ep=s2-02</loc>
+    <loc>https://indiasgotlatent-opal.vercel.app/episodes/s2-02.html</loc>
     <lastmod>2026-10-02</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.85</priority>
     <video:video>
       <video:thumbnail_loc>https://i.ytimg.com/vi/c35fpGWqXnk/maxresdefault.jpg</video:thumbnail_loc>
       <video:title>Season 2 Episode 02 | ft. Harssh Limbachiya, Kiku Sharda, Chandan Prabhakar</video:title>
-      <video:description>India&apos;s Got Latent Season 2 Episode 2 featuring Harssh Limbachiya, Kiku Sharda and Chandan Prabhakar.</video:description>
+      <video:description>India&#x27;s Got Latent Season 2 Episode 2 featuring Harssh Limbachiya, Kiku Sharda and Chandan Prabhakar.</video:description>
       <video:content_loc>https://archive.org/download/igl-s2-02/Season%202%20Episode%2002%20ft.%20Harssh%20Limbachiya%20Kiku%20Sharda%20Chandan%20Prabhakar%20%5Bs2-02%5D.mp4</video:content_loc>
-      <video:duration>3685</video:duration>
+      <video:player_loc>https://indiasgotlatent-opal.vercel.app/episodes/s2-02.html</video:player_loc>
+      <video:duration>2700</video:duration>
     </video:video>
   </url>
   <url>
-    <loc>https://indiasgotlatent-opal.vercel.app/?ep=s2-bts-02</loc>
+    <loc>https://indiasgotlatent-opal.vercel.app/episodes/s2-bts-02.html</loc>
     <lastmod>2026-10-02</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.85</priority>
     <video:video>
       <video:thumbnail_loc>https://i.ytimg.com/vi/pfHrIXiqI4w/maxresdefault.jpg</video:thumbnail_loc>
       <video:title>BTS 02 | ft. Chandan Prabhakar, Harssh Limbachyaa, Kiku Sharda</video:title>
       <video:description>Behind the scenes featuring Chandan Prabhakar, Harssh Limbachyaa, and Kiku Sharda.</video:description>
       <video:content_loc>https://archive.org/download/igl-s2-bts-02/BTS%2002%20ft.%20Chandan%20Prabhakar%20Harssh%20Limbachyaa%20Kiku%20Sharda%20%5Bs2-bts-02%5D.mp4</video:content_loc>
+      <video:player_loc>https://indiasgotlatent-opal.vercel.app/episodes/s2-bts-02.html</video:player_loc>
       <video:duration>913</video:duration>
     </video:video>
   </url>
   <url>
-    <loc>https://indiasgotlatent-opal.vercel.app/?ep=s2-03</loc>
+    <loc>https://indiasgotlatent-opal.vercel.app/episodes/s2-03.html</loc>
     <lastmod>2026-10-02</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.85</priority>
     <video:video>
       <video:thumbnail_loc>https://i.ytimg.com/vi/aSR1tndcaLE/maxresdefault.jpg</video:thumbnail_loc>
       <video:title>Season 2 Episode 03 | ft. Raghu Ram, Vishal Dadlani, Tanmay Bhat, Yashraj</video:title>
-      <video:description>India&apos;s Got Latent Season 2 Episode 3 featuring Raghu Ram, Vishal Dadlani, Tanmay Bhat, and Yashraj.</video:description>
+      <video:description>India&#x27;s Got Latent Season 2 Episode 3 featuring Raghu Ram, Vishal Dadlani, Tanmay Bhat, and Yashraj.</video:description>
       <video:content_loc>https://archive.org/download/igl-s2-03/Season%202%20Episode%2003%20ft.%20Raghu%20Ram%20Vishal%20Dadlani%20Tanmay%20Bhat%20Yashraj%20%5Bs2-03%5D.mp4</video:content_loc>
+      <video:player_loc>https://indiasgotlatent-opal.vercel.app/episodes/s2-03.html</video:player_loc>
       <video:duration>3223</video:duration>
     </video:video>
   </url>
   <url>
-    <loc>https://indiasgotlatent-opal.vercel.app/?ep=s2-bts-03</loc>
+    <loc>https://indiasgotlatent-opal.vercel.app/episodes/s2-bts-03.html</loc>
     <lastmod>2026-10-02</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.85</priority>
     <video:video>
       <video:thumbnail_loc>https://i.ytimg.com/vi/eOIrKDKVZqE/maxresdefault.jpg</video:thumbnail_loc>
       <video:title>BTS 03 | ft. Raghu Ram, Tanmay Bhat, Vishal Dadlani</video:title>
       <video:description>Behind the scenes featuring Raghu Ram, Tanmay Bhat, and Vishal Dadlani.</video:description>
       <video:content_loc>https://archive.org/download/igl-s2-bts-03/BTS%2003%20ft.%20Raghu%20Ram%20Tanmay%20Bhat%20Vishal%20Dadlani%20%5Bs2-bts-03%5D.mp4</video:content_loc>
+      <video:player_loc>https://indiasgotlatent-opal.vercel.app/episodes/s2-bts-03.html</video:player_loc>
       <video:duration>600</video:duration>
     </video:video>
   </url>
   <url>
-    <loc>https://indiasgotlatent-opal.vercel.app/?ep=s2-bonus-ep1</loc>
+    <loc>https://indiasgotlatent-opal.vercel.app/episodes/s2-bonus-ep1.html</loc>
     <lastmod>2026-10-02</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.85</priority>
     <video:video>
       <video:thumbnail_loc>https://i.ytimg.com/vi/q8amKPDt_iY/maxresdefault.jpg</video:thumbnail_loc>
       <video:title>S2 Bonus EP1 | ft. Raghav Juyal, Munawar, Niharika NM, Rohan Joshi</video:title>
       <video:description>Season 2 Bonus episode featuring Raghav Juyal, Munawar, Niharika NM, and Rohan Joshi.</video:description>
       <video:content_loc>https://archive.org/download/igl-s2-bonus-ep1/S2%20Bonus%20EP1%20ft.%20Raghav%20Juyal%20Munawar%20Niharika%20NM%20Rohan%20Joshi%20%5Bs2-bonus-ep1%5D.mp4</video:content_loc>
+      <video:player_loc>https://indiasgotlatent-opal.vercel.app/episodes/s2-bonus-ep1.html</video:player_loc>
       <video:duration>3434</video:duration>
     </video:video>
   </url>
   <url>
-    <loc>https://indiasgotlatent-opal.vercel.app/?ep=s2-04</loc>
+    <loc>https://indiasgotlatent-opal.vercel.app/episodes/s2-04.html</loc>
     <lastmod>2026-10-02</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.85</priority>
     <video:video>
       <video:thumbnail_loc>https://i.ytimg.com/vi/B6NVvtIz9_Q/maxresdefault.jpg</video:thumbnail_loc>
-      <video:title>INDIA&apos;S GOT LATENT S2 EP4 ft. Karan Aujla, Tanmay Bhat, Gurleen Pannu, Rahul Dua</video:title>
-      <video:description>India&apos;s Got Latent Season 2 Episode 4 featuring Karan Aujla, Tanmay Bhat, Gurleen Pannu, and Rahul Dua.</video:description>
+      <video:title>INDIA&#x27;S GOT LATENT S2 EP4 ft. Karan Aujla, Tanmay Bhat, Gurleen Pannu, Rahul Dua</video:title>
+      <video:description>India&#x27;s Got Latent Season 2 Episode 4 featuring Karan Aujla, Tanmay Bhat, Gurleen Pannu, and Rahul Dua.</video:description>
       <video:content_loc>https://archive.org/download/igl-s2-04/INDIAS%20GOT%20LATENT%20S2%20EP4%20ft.%20Karan%20Aujla%20Tanmay%20Bhat%20Gurleen%20Pannu%20Rahul%20Dua%20%5Bs2-04%5D.mp4</video:content_loc>
+      <video:player_loc>https://indiasgotlatent-opal.vercel.app/episodes/s2-04.html</video:player_loc>
       <video:duration>3233</video:duration>
     </video:video>
   </url>
   <url>
-    <loc>https://indiasgotlatent-opal.vercel.app/?ep=s2-bonus-clip-01</loc>
+    <loc>https://indiasgotlatent-opal.vercel.app/episodes/s2-bonus-clip-01.html</loc>
     <lastmod>2026-10-02</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.85</priority>
     <video:video>
       <video:thumbnail_loc>https://i.ytimg.com/vi/rI-Cj3Kitx4/maxresdefault.jpg</video:thumbnail_loc>
       <video:title>Latent BONUS CLIP ft. Karan Aujla, Tanmay Bhat, Gurleen Pannu, Rahul Dua</video:title>
-      <video:description>Bonus clip from India&apos;s Got Latent Season 2 featuring Karan Aujla, Tanmay Bhat, Gurleen Pannu, and Rahul Dua.</video:description>
+      <video:description>Bonus clip from India&#x27;s Got Latent Season 2 featuring Karan Aujla, Tanmay Bhat, Gurleen Pannu, and Rahul Dua.</video:description>
       <video:content_loc>https://archive.org/download/igl-s2-bonus-clip-01/Latent%20BONUS%20CLIP%20ft.%20Karan%20Aujla%20Tanmay%20Bhat%20Gurleen%20Pannu%20Rahul%20Dua%20%5Bs2-bonus-clip-01%5D.mp4</video:content_loc>
+      <video:player_loc>https://indiasgotlatent-opal.vercel.app/episodes/s2-bonus-clip-01.html</video:player_loc>
       <video:duration>503</video:duration>
     </video:video>
   </url>
   <url>
-    <loc>https://indiasgotlatent-opal.vercel.app/?ep=s2-bts-04</loc>
+    <loc>https://indiasgotlatent-opal.vercel.app/episodes/s2-bts-04.html</loc>
     <lastmod>2026-10-02</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.85</priority>
     <video:video>
       <video:thumbnail_loc>https://i.ytimg.com/vi/JpYbltLq2cs/maxresdefault.jpg</video:thumbnail_loc>
       <video:title>Latent BTS ft. Karan Aujla, Tanmay Bhat, Gurleen Pannu, Rahul Dua</video:title>
-      <video:description>Behind the scenes from India&apos;s Got Latent Season 2 featuring Karan Aujla, Tanmay Bhat, Gurleen Pannu, and Rahul Dua.</video:description>
+      <video:description>Behind the scenes from India&#x27;s Got Latent Season 2 featuring Karan Aujla, Tanmay Bhat, Gurleen Pannu, and Rahul Dua.</video:description>
       <video:content_loc>https://archive.org/download/igl-s2-bts-04/Latent%20BTS%20ft.%20Karan%20Aujla%20Tanmay%20Bhat%20Gurleen%20Pannu%20Rahul%20Dua%20%5Bs2-bts-04%5D.mp4</video:content_loc>
+      <video:player_loc>https://indiasgotlatent-opal.vercel.app/episodes/s2-bts-04.html</video:player_loc>
       <video:duration>888</video:duration>
     </video:video>
   </url>
   <url>
-    <loc>https://indiasgotlatent-opal.vercel.app/?ep=s2-bonus-ep2</loc>
+    <loc>https://indiasgotlatent-opal.vercel.app/episodes/s2-bonus-ep2.html</loc>
     <lastmod>2026-10-02</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.85</priority>
     <video:video>
       <video:thumbnail_loc>https://i.ytimg.com/vi/otawyZaOxvs/maxresdefault.jpg</video:thumbnail_loc>
       <video:title>S2 Bonus EP2 | ft. Badshah, Sourav Joshi, Harssh Limbachiyaa, Rajat Sood</video:title>
       <video:description>Season 2 Bonus episode featuring Badshah, Sourav Joshi, Harssh Limbachiyaa, and Rajat Sood.</video:description>
       <video:content_loc>https://archive.org/download/igl-s2-bonus-ep2/S2%20Bonus%20EP2%20ft.%20Badshah%20Sourav%20Joshi%20Harssh%20Limbachiyaa%20Rajat%20Sood%20%5Bs2-bonus-ep2%5D.mp4</video:content_loc>
+      <video:player_loc>https://indiasgotlatent-opal.vercel.app/episodes/s2-bonus-ep2.html</video:player_loc>
       <video:duration>2400</video:duration>
     </video:video>
   </url>
   <url>
-    <loc>https://indiasgotlatent-opal.vercel.app/?ep=s2-05</loc>
+    <loc>https://indiasgotlatent-opal.vercel.app/episodes/s2-05.html</loc>
     <lastmod>2026-10-02</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.85</priority>
     <video:video>
       <video:thumbnail_loc>https://i.ytimg.com/vi/VJ9VC9OqdAA/maxresdefault.jpg</video:thumbnail_loc>
-      <video:title>INDIA&apos;S GOT LATENT S2 EP5 ft. Orry, Archana Puran Singh, Sharon Verma, Nishant Suri</video:title>
+      <video:title>INDIA&#x27;S GOT LATENT S2 EP5 ft. Orry, Archana Puran Singh, Sharon Verma, Nishant Suri</video:title>
       <video:description>Season 2 Episode 05 ft. Orry, Archana Puran Singh, Sharon Verma, Nishant Suri.</video:description>
       <video:content_loc>https://archive.org/download/igl-s2-05/INDIAS%20GOT%20LATENT%20S2%20EP5%20ft.%20Orry%20Archana%20Puran%20Singh%20Sharon%20Verma%20Nishant%20Suri%20%5Bs2-05%5D.mp4</video:content_loc>
+      <video:player_loc>https://indiasgotlatent-opal.vercel.app/episodes/s2-05.html</video:player_loc>
       <video:duration>3000</video:duration>
     </video:video>
   </url>
   <url>
-    <loc>https://indiasgotlatent-opal.vercel.app/?ep=s2-06</loc>
+    <loc>https://indiasgotlatent-opal.vercel.app/episodes/s2-06.html</loc>
     <lastmod>2026-10-02</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.85</priority>
     <video:video>
       <video:thumbnail_loc>https://i.ytimg.com/vi/WE1zey_q8Ak/maxresdefault.jpg</video:thumbnail_loc>
-      <video:title>INDIA&apos;S GOT LATENT S2 EP6 ft. Varun Dhawan, Medha Shankar, Nishant Tanwar, Sharon Verma</video:title>
+      <video:title>INDIA&#x27;S GOT LATENT S2 EP6 ft. Varun Dhawan, Medha Shankar, Nishant Tanwar, Sharon Verma</video:title>
       <video:description>Season 2 Episode 06 ft. Varun Dhawan, Medha Shankar, Nishant Tanwar, Sharon Verma.</video:description>
       <video:content_loc>https://archive.org/download/igl-s2-06/INDIAS%20GOT%20LATENT%20S2%20EP6%20ft.%20Varun%20Dhawan%20Medha%20Shankar%20Nishant%20Tanwar%20Sharon%20Ve%20%5Bs2-06%5D.mp4</video:content_loc>
+      <video:player_loc>https://indiasgotlatent-opal.vercel.app/episodes/s2-06.html</video:player_loc>
       <video:duration>2580</video:duration>
     </video:video>
   </url>
   <url>
-    <loc>https://indiasgotlatent-opal.vercel.app/?ep=s2-06-rakhi</loc>
+    <loc>https://indiasgotlatent-opal.vercel.app/episodes/s2-06-rakhi.html</loc>
     <lastmod>2026-10-02</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.85</priority>
     <video:video>
       <video:thumbnail_loc>https://indiasgotlatent-opal.vercel.app/assets/thumbs/6a9d7adc5882d566ebfc00e6.webp</video:thumbnail_loc>
-      <video:title>INDIA&apos;S GOT LATENT S2 EP6 ft. Rakhi Sawant, Ashneer Grover, Kushagra Srivastava</video:title>
+      <video:title>INDIA&#x27;S GOT LATENT S2 EP6 ft. Rakhi Sawant, Ashneer Grover, Kushagra Srivastava</video:title>
       <video:description>Season 2 Episode 06 ft. Rakhi Sawant, Ashneer Grover, Kushagra Srivastava.</video:description>
       <video:content_loc>https://archive.org/download/igl-s2-06-rakhi/INDIAS%20GOT%20LATENT%20S2%20EP6%20ft.%20Rakhi%20Sawant%20Ashneer%20Grover%20Kushagra%20Srivastava%20%5Bs2-06-rakhi%5D.mp4</video:content_loc>
+      <video:player_loc>https://indiasgotlatent-opal.vercel.app/episodes/s2-06-rakhi.html</video:player_loc>
       <video:duration>3146</video:duration>
     </video:video>
   </url>
   <url>
-    <loc>https://indiasgotlatent-opal.vercel.app/?ep=s2-03-bonus</loc>
+    <loc>https://indiasgotlatent-opal.vercel.app/episodes/s2-03-bonus.html</loc>
     <lastmod>2026-10-02</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.85</priority>
     <video:video>
       <video:thumbnail_loc>https://i.ytimg.com/vi/fzyL44FH2fI/maxresdefault.jpg</video:thumbnail_loc>
-      <video:title>INDIA&apos;S GOT LATENT S2 Bonus EP 3 ft. Deepak Kalal, Ravi Gupta, Agu Stanley</video:title>
+      <video:title>INDIA&#x27;S GOT LATENT S2 Bonus EP 3 ft. Deepak Kalal, Ravi Gupta, Agu Stanley</video:title>
       <video:description>Season 2 Bonus Episode 03 ft. Deepak Kalal, Ravi Gupta, Agu Stanley.</video:description>
       <video:content_loc>https://archive.org/download/igl-s2-03-bonus/INDIAS%20GOT%20LATENT%20S2%20Bonus%20EP%203%20ft.%20Deepak%20Kalal%20Ravi%20Gupta%20Agu%20Stanley%20%5Bs2-03-bonus%5D.mp4</video:content_loc>
+      <video:player_loc>https://indiasgotlatent-opal.vercel.app/episodes/s2-03-bonus.html</video:player_loc>
       <video:duration>2067</video:duration>
     </video:video>
   </url>
   <url>
-    <loc>https://indiasgotlatent-opal.vercel.app/?ep=s2-07</loc>
+    <loc>https://indiasgotlatent-opal.vercel.app/episodes/s2-07.html</loc>
     <lastmod>2026-10-02</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.85</priority>
     <video:video>
       <video:thumbnail_loc>https://i.ytimg.com/vi/rkKZIMPecRA/maxresdefault.jpg</video:thumbnail_loc>
-      <video:title>INDIA&apos;S GOT LATENT S2 EP7 ft. Nawazuddin Siddiqui, Bhuvan Bam, Mukesh Chhabra, Kaustubh Agarwal</video:title>
+      <video:title>INDIA&#x27;S GOT LATENT S2 EP7 ft. Nawazuddin Siddiqui, Bhuvan Bam, Mukesh Chhabra, Kaustubh Agarwal</video:title>
       <video:description>Season 2 Episode 07 ft. Nawazuddin Siddiqui, Bhuvan Bam, Mukesh Chhabra, Kaustubh Agarwal.</video:description>
       <video:content_loc>https://archive.org/download/igl-s2-07/INDIAS%20GOT%20LATENT%20S2%20EP7%20ft.%20Nawazuddin%20Siddiqui%20Bhuvan%20Bam%20Mukesh%20Chhabra%20Kaust%20%5Bs2-07%5D.mp4</video:content_loc>
+      <video:player_loc>https://indiasgotlatent-opal.vercel.app/episodes/s2-07.html</video:player_loc>
       <video:duration>3000</video:duration>
     </video:video>
   </url>
   <url>
-    <loc>https://indiasgotlatent-opal.vercel.app/?ep=s2-08</loc>
+    <loc>https://indiasgotlatent-opal.vercel.app/episodes/s2-08.html</loc>
     <lastmod>2026-10-02</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.85</priority>
     <video:video>
       <video:thumbnail_loc>https://i.ytimg.com/vi/NQ6gWHMvna8/maxresdefault.jpg</video:thumbnail_loc>
       <video:title>INDIA’S GOT LATENT S2 Bonus EP 4 ft. Ayushmann Khurrana, Suhani Shah, Kullu, Rajat Sood</video:title>
-      <video:description>INDIA’S GOT LATENT S2 Bonus EP 4 ft. Ayushmann Khurrana, Suhani Shah, Kullu, Rajat Sood Thank you for supporting the channel members!! ❤️</video:description>
+      <video:description>INDIA’S GOT LATENT S2 Bonus EP 4 ft. Ayushmann Khurrana, Suhani Shah, Kullu, Rajat Sood
+Thank you for supporting the channel members!! ❤️
+</video:description>
       <video:content_loc>https://archive.org/download/igl-s2-08/INDIAS%20GOT%20LATENT%20S2%20Bonus%20EP%204%20ft.%20Ayushmann%20Khurrana%20Suhani%20Shah%20Kullu%20Rajat%20S%20%5Bs2-08%5D.mp4</video:content_loc>
+      <video:player_loc>https://indiasgotlatent-opal.vercel.app/episodes/s2-08.html</video:player_loc>
       <video:duration>2040</video:duration>
     </video:video>
   </url>
   <url>
-    <loc>https://indiasgotlatent-opal.vercel.app/?ep=special-01</loc>
+    <loc>https://indiasgotlatent-opal.vercel.app/episodes/special-01.html</loc>
     <lastmod>2026-10-02</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.85</priority>
     <video:video>
       <video:thumbnail_loc>https://i.ytimg.com/vi/LhpZJwUboeI/maxresdefault.jpg</video:thumbnail_loc>
       <video:title>Comedy Special 01 | Samay Raina - Still Alive</video:title>
       <video:description>Standup comedy special stream. Non-commercial collection.</video:description>
       <video:content_loc>https://archive.org/download/igl-special-01/Comedy%20Special%2001%20Samay%20Raina%20-%20Still%20Alive%20%5Bspecial-01%5D.mp4</video:content_loc>
-      <video:duration>4861</video:duration>
+      <video:player_loc>https://indiasgotlatent-opal.vercel.app/episodes/special-01.html</video:player_loc>
+      <video:duration>2700</video:duration>
     </video:video>
   </url>
   <url>
-    <loc>https://indiasgotlatent-opal.vercel.app/?ep=s2-stillalive</loc>
+    <loc>https://indiasgotlatent-opal.vercel.app/episodes/s2-stillalive.html</loc>
     <lastmod>2026-10-02</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.85</priority>
     <video:video>
       <video:thumbnail_loc>https://i.ytimg.com/vi/_IxqDcOiZJU/maxresdefault.jpg</video:thumbnail_loc>
       <video:title>STILL ALIVE - Mumbai Documentary</video:title>
       <video:description>Mumbai documentary by Samay Raina.</video:description>
       <video:content_loc>https://archive.org/download/igl-s2-stillalive/STILL%20ALIVE%20-%20Mumbai%20Documentary%20%5Bs2-stillalive%5D.mp4</video:content_loc>
+      <video:player_loc>https://indiasgotlatent-opal.vercel.app/episodes/s2-stillalive.html</video:player_loc>
       <video:duration>2100</video:duration>
     </video:video>
   </url>
   <url>
-    <loc>https://indiasgotlatent-opal.vercel.app/?ep=kapil-01</loc>
+    <loc>https://indiasgotlatent-opal.vercel.app/episodes/kapil-01.html</loc>
     <lastmod>2026-10-02</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.85</priority>
     <video:video>
       <video:thumbnail_loc>https://indiasgotlatent-opal.vercel.app/assets/thumbs/dna7vi.webp</video:thumbnail_loc>
       <video:title>Talk Show Segment 01 | ft. Samay Raina, BeerBiceps</video:title>
       <video:description>The Great Indian Kapil Show — Season 4 Episode 14.</video:description>
       <video:content_loc>https://archive.org/download/igl-kapil-01/Talk%20Show%20Segment%2001%20ft.%20Samay%20Raina%20BeerBiceps%20%5Bkapil-01%5D.mp4</video:content_loc>
-      <video:duration>3194</video:duration>
+      <video:player_loc>https://indiasgotlatent-opal.vercel.app/episodes/kapil-01.html</video:player_loc>
+      <video:duration>2700</video:duration>
     </video:video>
   </url>
 </urlset>
