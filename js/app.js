@@ -25,7 +25,7 @@ async function loadVideos() {
   // Hero = newest synced episode drop (s2-08 or highest sort_index)
   const heroVideo = videos.find(v => v.id === "s2-08") || videos[videos.length - 1];
   setHero(heroVideo);
-  renderContinueWatching(videos);
+  try { renderContinueWatching(videos); } catch (e) { console.warn("continue-watching:", e); }
   renderRail(videos);
   // Deep link: ?ep=<id> or #v=<id> opens that episode directly (from Sitemap / Google / Share)
   const urlParams = new URLSearchParams(location.search);
@@ -861,3 +861,12 @@ window.cycleSpeed = cycleSpeed;
 window.openQualityMenu = openQualityMenu;
 window.togglePiP = togglePiP;
 window.downloadCurrent = downloadCurrent;
+
+// Auto-run loadVideos when DOM is ready
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", () => {
+    if (!window._videos) loadVideos();
+  });
+} else {
+  if (!window._videos) loadVideos();
+}

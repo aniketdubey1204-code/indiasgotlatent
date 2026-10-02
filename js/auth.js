@@ -1,6 +1,7 @@
 // Auth gate: Telegram (Login Widget) default, Email OTP via Supabase fallback.
 // Zero-setup demo mode: works without keys using localStorage.
-const { SUPABASE_URL, SUPABASE_ANON_KEY, TELEGRAM_BOT_NAME } = APP_CONFIG;
+const cfg = (typeof APP_CONFIG !== "undefined" && APP_CONFIG) ? APP_CONFIG : {};
+const { SUPABASE_URL = "", SUPABASE_ANON_KEY = "", TELEGRAM_BOT_NAME = "Latentttbot" } = cfg;
 const isSupabaseConfigured = SUPABASE_URL && !SUPABASE_URL.includes("YOUR-") && SUPABASE_ANON_KEY && !SUPABASE_ANON_KEY.includes("YOUR-");
 let supabaseClient = null;
 try {
@@ -35,17 +36,19 @@ function requireAuth() {
 function closeAuth() {
   const o = authOverlay();
   if (o) o.classList.add("hidden");
+  const f = document.getElementById("dock-footer");
+  if (f && isLoggedIn()) f.classList.remove("hidden");
 }
 function toggleAuthModal() {
   if (isLoggedIn()) {
-    openInfo();
+    const u = getCurrentUser();
+    const who = u ? (u.username ? "@" + u.username : u.email || "Account") : "User";
+    if (confirm(`Logged in as ${who}. Do you want to log out?`)) {
+      logout();
+    }
     return;
   }
-  const o = authOverlay();
-  if (o) {
-    if (o.classList.contains("hidden")) showAuth();
-    else closeAuth();
-  }
+  showAuth();
 }
 
 async function initAuth() {
@@ -156,7 +159,8 @@ function updateAdminUI() {
   const u = getCurrentUser();
   const navBtn = document.getElementById("nav-auth-btn");
   const menuBtn = document.getElementById("menu-auth-btn");
-  const label = u ? (u.username ? "@" + u.username : "Account") : "Login";
+  const logged = isLoggedIn();
+  const label = logged ? (u && u.username ? "Logout (@" + u.username + ")" : "Logout") : "Login";
   if (navBtn) navBtn.textContent = label;
   if (menuBtn) menuBtn.textContent = label;
 }
