@@ -91,9 +91,39 @@ function setHero(v) {
 }
 
 function heroMetaText(v) {
-  const c = (v.category || "").toLowerCase();
-  const label = { season1: "Season 1", season2: "Season 2", s1bonus: "S1 Bonus", s1bts: "S1 BTS", s2bonus: "S2 Bonus", s2bts: "S2 BTS", special: "Special" }[c] || "Fan Archive";
-  return label + (v.episode_number ? " • EP " + v.episode_number : "") + " • S1 • S2 • Bonus • BTS • Specials";
+  if (!v) return "";
+  const c = (v.category || guessCategory(v) || "").toLowerCase();
+  const num = v.episode_number;
+
+  if (c === "season1") return num ? `Season 1 • EP ${num}` : "Season 1";
+  if (c === "season2") return num ? `Season 2 • EP ${num}` : "Season 2";
+  if (c === "s1bonus") return num ? `Season 1 • Bonus ${num}` : "Season 1 • Bonus";
+  if (c === "s2bonus") return num ? `Season 2 • Bonus ${num}` : "Season 2 • Bonus";
+  if (c === "s1bts") return num ? `Season 1 • BTS ${num}` : "Season 1 • BTS";
+  if (c === "s2bts") return num ? `Season 2 • BTS ${num}` : "Season 2 • BTS";
+  if (c === "bonus") return num ? `Bonus ${num}` : "Bonus";
+  if (c === "bts") return num ? `BTS ${num}` : "BTS";
+  if (c === "special") return "Special";
+
+  return num ? `EP ${num}` : "Special";
+}
+
+function cardBadgeText(v) {
+  if (!v) return "";
+  const c = (v.category || guessCategory(v) || "").toLowerCase();
+  const num = v.episode_number;
+
+  if (c === "season1") return num ? `S1 • EP ${num}` : "S1";
+  if (c === "season2") return num ? `S2 • EP ${num}` : "S2";
+  if (c === "s1bonus") return num ? `S1 • Bonus ${num}` : "S1 • Bonus";
+  if (c === "s2bonus") return num ? `S2 • Bonus ${num}` : "S2 • Bonus";
+  if (c === "s1bts") return num ? `S1 • BTS ${num}` : "S1 • BTS";
+  if (c === "s2bts") return num ? `S2 • BTS ${num}` : "S2 • BTS";
+  if (c === "bonus") return num ? `Bonus ${num}` : "Bonus";
+  if (c === "bts") return num ? `BTS ${num}` : "BTS";
+  if (c === "special") return "Special";
+
+  return num ? `EP ${num}` : "Special";
 }
 
 function renderRail(videos) {
@@ -112,7 +142,7 @@ function renderRail(videos) {
     d.setAttribute("aria-label", "Play " + (v.title || "episode"));
     d.style.animationDelay = Math.min(i * 35, 400) + "ms";
     const yt = youtubeIdFromUrl(v.video_url);
-    const label = yt ? "YouTube" : ({ season1: "S1", season2: "S2", s1bonus: "S1 Bonus", s1bts: "S1 BTS", s2bonus: "S2 Bonus", s2bts: "S2 BTS", special: "Special", bonus: "Bonus", bts: "BTS" }[(v.category || guessCategory(v)).toLowerCase()] || "EP");
+    const badge = yt ? "YouTube" : cardBadgeText(v);
     const src = thumbSrc(v);
     const ytHq = v.youtubeId ? `https://i.ytimg.com/vi/${v.youtubeId}/hqdefault.jpg` : "";
     const locFb = v.localImage ? `/assets/thumbs/${v.localImage}` : (v.archive_id ? `https://archive.org/services/img/${v.archive_id}` : "");
@@ -120,7 +150,7 @@ function renderRail(videos) {
     const img = src ? `<img src="${src}" loading="lazy" onload="this.classList.add('img-on')" onerror="if (!this.dataset.fb && '${fallbackThumb}') { this.dataset.fb='1'; this.src='${fallbackThumb}'; } else { this.style.display='none'; }" style="width:100%;aspect-ratio:16/9;object-fit:cover;display:block" alt=""/>` : "";
     d.innerHTML = `
       <div class="thumb">${img}</div>
-      <div class="tags">${yt ? `<span class="mini">YouTube</span>` : ""}<span class="mini">${label} • EP ${v.episode_number || ""}</span></div>
+      <div class="tags"><span class="mini">${badge}</span></div>
       <div class="shade"></div>
       <div class="play-ov"><span>▶</span></div>
       <div class="cmeta"><h3>${escapeHtml(v.title)}</h3><p>${escapeHtml((v.description || "").slice(0, 90))}</p></div>`;
@@ -546,8 +576,7 @@ function idxOf(v) {
   return list.findIndex(x => v && (x.id === v.id || x.video_url === v.video_url));
 }
 function epLabel(v) {
-  const c = (v.category || "").toLowerCase();
-  return ({ season1: "S1", season2: "S2", s1bonus: "S1 Bonus", s1bts: "S1 BTS", s2bonus: "S2 Bonus", s2bts: "S2 BTS", special: "Special" }[c] || "EP") + (v.episode_number ? " • EP " + v.episode_number : "");
+  return cardBadgeText(v);
 }
 function renderUpNext(v) {
   const box = document.getElementById("upnext-list");
