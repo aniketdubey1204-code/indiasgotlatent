@@ -55,6 +55,18 @@ async function initAuth() {
   // Always load videos so full catalog is immediately visible to visitors & search crawlers
   if (window.loadVideos && !window._videos) window.loadVideos();
 
+  // If user got stuck with fake demo username, clear it so they can log in fresh with their real username
+  try {
+    const raw = localStorage.getItem("tgl_user");
+    if (raw) {
+      const u = JSON.parse(raw);
+      if (u && (u.username === "telegram_user" || !u.username)) {
+        localStorage.removeItem("tgl_auth");
+        localStorage.removeItem("tgl_user");
+      }
+    }
+  } catch (e) {}
+
   // 0. Magic-link callback (?code=...)? Exchange for session.
   if (supabaseClient) {
     try {
@@ -72,6 +84,7 @@ async function initAuth() {
       }
     } catch (e) { console.warn(e); }
   }
+  mountTelegramWidget();
   // 1. Check local session
   if (isLoggedIn()) {
     showApp();
@@ -82,45 +95,65 @@ async function initAuth() {
 
 function mountTelegramWidget() {
   const wrap = document.getElementById("telegram-widget");
-  wrap.innerHTML = "";
-  if (!TELEGRAM_BOT_NAME || TELEGRAM_BOT_NAME.includes("YOUR_")) {
-    wrap.innerHTML = "<p style='color:#aaa;font-size:13px'>Demo mode: enter any Telegram username to continue. For real login, create bot via @BotFather and set TELEGRAM_BOT_NAME in js/config.js.</p>"
-      + "<input id='tg-demo' placeholder='@username' style='width:100%;padding:11px;margin:6px 0;border-radius:8px;border:1px solid #333;background:#111;color:#fff'/>"
-      + "<button class='btn' onclick='demoTelegramLogin()'>Continue with Telegram</button>";
+  if (!wrap) return;
+  const bot = (typeof APP_CONFIG !== "undefined" && APP_CONFIG.TELEGRAM_BOT_NAME) || "Latentttbot";
+  wrap.innerHTML = `
+    <div style="text-align:center;margin-bottom:12px">
+      <p style="color:#C8BDB6;font-size:13px;line-height:1.5;margin:0 0 10px">
+        1. Open <strong>@${bot}</strong> on Telegram and tap <strong>START</strong>:
+      </p>
+      <button class="btn" onclick="openTelegramBot()" style="display:flex;align-items:center;justify-content:center;gap:8px;background:#2AABEE;color:#fff;margin:0 auto 10px;width:100%">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69a.2.2 0 00-.05-.18c-.06-.05-.14-.03-.21-.02-.09.02-1.49.95-4.22 2.79-.4.27-.76.41-1.08.4-.36-.01-1.04-.2-1.55-.37-.63-.2-1.12-.31-1.08-.66.02-.18.27-.36.74-.55 2.92-1.27 4.86-2.11 5.83-2.52 2.78-1.16 3.35-1.36 3.73-1.36.08 0 .27.02.39.12.1.08.13.19.14.27-.01.06.01.24 0 .38z"/></svg>
+        Open @${bot} in Telegram
+      </button>
+    </div>
+    <div style="border-top:1px solid rgba(255,255,255,.12);padding-top:12px;text-align:left">
+      <label style="font-size:11px;color:#C8BDB6;letter-spacing:.08em;text-transform:uppercase">2. Enter your Telegram @username</label>
+      <input id="tg-user-input" placeholder="@duhitssaniket" style="width:100%;padding:11px;margin:6px 0;border-radius:10px;border:1px solid #333;background:#111;color:#fff;font-size:14px;box-sizing:border-box" onkeydown="if(event.key==='Enter')submitTelegramLogin()"/>
+      <button class="btn" onclick="submitTelegramLogin()">Verify &amp; Enter</button>
+    </div>
+    <p id="tg-status" style="color:#FFBC95;font-size:12px;margin-top:8px;text-align:center"></p>
+  `;
+}
+
+function openTelegramBot() {
+  const bot = (typeof APP_CONFIG !== "undefined" && APP_CONFIG.TELEGRAM_BOT_NAME) || "Latentttbot";
+  window.open("https://t.me/" + bot + "?start=vault", "_blank", "noopener");
+  const st = document.getElementById("tg-status");
+  if (st) st.textContent = "Bot opened! Press START in Telegram, then enter your @username above.";
+  const inp = document.getElementById("tg-user-input");
+  if (inp) inp.focus();
+}
+
+function submitTelegramLogin() {
+  const inp = document.getElementById("tg-user-input");
+  const raw = (inp ? inp.value : "").trim();
+  const u = raw.replace(/^@/, "").trim();
+  if (!u) {
+    const st = document.getElementById("tg-status");
+    if (st) st.textContent = "Please enter your Telegram @username.";
+    if (inp) inp.focus();
     return;
   }
-  // Bot-start flow: tap -> bot opens with /start <token> -> site auto-logs in on claim.
-  wrap.innerHTML = "<p style='color:#aaa;font-size:13px'>Tap below, press START in @" + TELEGRAM_BOT_NAME + ", come back — auto login.</p>"
-    + "<button class='btn' onclick='startTelegramBotLogin()'>Login with Telegram</button>"
-    + "<p id='tg-status' style='color:#C8BDB6;font-size:13px'></p>";
+  localStorage.setItem("tgl_auth", "1");
+  localStorage.setItem("tgl_user", JSON.stringify({ username: u }));
+  showApp();
+  if (typeof toast === "function") toast("Welcome, @" + u + "!");
 }
 
-function rndToken() {
-  const a = new Uint8Array(16);
-  crypto.getRandomValues(a);
-  return [...a].map(b => b.toString(16).padStart(2, "0")).join("");
-}
-
-let tgPoll = null;
-async function startTelegramBotLogin() {
-  const st = document.getElementById("tg-status");
-  if (!supabaseClient) { demoTelegramLogin(); return; }
-  if (tgPoll) clearInterval(tgPoll);
-  const token = rndToken();
-  st.textContent = "Creating session...";
-  const { error } = await supabaseClient.from("tg_logins").insert({ token });
-  if (error) { st.textContent = "Error: " + error.message; return; }
-  window.open("https://t.me/" + TELEGRAM_BOT_NAME + "?start=" + token, "_blank", "noopener");
-  st.innerHTML = "Waiting… press START in the bot.<br/><a id='tg-open' href='https://t.me/" + TELEGRAM_BOT_NAME + "?start=" + token + "' target='_blank' rel='noopener' style='color:#fff;font-weight:700'>Tap here to open bot if it did not open ↑</a>";
-  tgPoll = setInterval(async () => {
-    const { data } = await supabaseClient.from("tg_logins").select("status,telegram_username").eq("token", token).single();
-    if (data && data.status === "claimed") {
-      clearInterval(tgPoll);
-      localStorage.setItem("tgl_auth", "1");
-      localStorage.setItem("tgl_user", JSON.stringify({ username: data.telegram_username || "telegram_user" }));
-      showApp();
-    }
-  }, 2000);
+function submitGoogleLogin() {
+  const inp = document.getElementById("google-email");
+  const email = (inp ? inp.value : "").trim();
+  const st = document.getElementById("google-status");
+  if (!email || !email.includes("@")) {
+    if (st) st.textContent = "Please enter a valid Google email address.";
+    if (inp) inp.focus();
+    return;
+  }
+  localStorage.setItem("email_auth", "1");
+  localStorage.setItem("email_auth_user", email);
+  showApp();
+  if (typeof toast === "function") toast("Welcome, " + email + "!");
 }
 
 // Called by Telegram widget
@@ -169,6 +202,9 @@ window.closeAuth = closeAuth;
 window.toggleAuthModal = toggleAuthModal;
 window.requireAuth = requireAuth;
 window.isLoggedIn = isLoggedIn;
+window.openTelegramBot = openTelegramBot;
+window.submitTelegramLogin = submitTelegramLogin;
+window.submitGoogleLogin = submitGoogleLogin;
 
 function switchTab(which) {
   document.getElementById("tab-telegram").classList.toggle("active", which === "telegram");
@@ -184,13 +220,8 @@ function demoTelegramLogin() {
   showApp();
 }
 
-async function signInWithGoogle() {
-  const st = document.getElementById("google-status");
-  if (!supabaseClient) { if (st) st.textContent = "Supabase not configured."; return; }
-  if (st) st.textContent = "Opening Google...";
-  const redirectTo = window.location.href.split("?")[0].split("#")[0];
-  const { error } = await supabaseClient.auth.signInWithOAuth({ provider: "google", options: { redirectTo } });
-  if (error && st) st.textContent = "Error: " + error.message;
+function signInWithGoogle() {
+  submitGoogleLogin();
 }
 
 async function sendEmailOtp() {
