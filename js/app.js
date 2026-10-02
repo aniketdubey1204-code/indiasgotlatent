@@ -14,10 +14,17 @@ async function loadVideos() {
       }
     } catch (e) { console.warn(e); }
   }
+  // Sort by sort_index (chronological release order), fallback to array order
+  videos.sort((a, b) => {
+    const ai = typeof a.sort_index === "number" ? a.sort_index : 9999;
+    const bi = typeof b.sort_index === "number" ? b.sort_index : 9999;
+    return ai - bi;
+  });
   window._videos = videos;
   if (!videos.length) { grid.innerHTML = "<p>No videos yet. Open Admin to add.</p>"; return; }
-  // Hero = newest synced video overall (any category), grid stays chronological
-  setHero(videos[videos.length - 1]);
+  // Hero = newest synced episode drop (s2-08 or highest sort_index)
+  const heroVideo = videos.find(v => v.id === "s2-08") || videos[videos.length - 1];
+  setHero(heroVideo);
   renderRail(videos);
   // Deep link: #v=<id> opens that episode directly (from Share).
   const dm = (location.hash || "").match(/^#v=(.+)$/);
@@ -29,9 +36,14 @@ async function loadVideos() {
 
 function thumbSrc(v) {
   if (!v) return "";
-  const t = v.thumbnail_url || "";
-  // Direct YouTube thumbnails (i.ytimg.com) and direct image links
-  if (t.includes("ytimg.com") || t.startsWith("http://") || t.startsWith("https://")) return t;
+  let t = v.thumbnail_url || "";
+  // Fix obsolete dead mirror host if present
+  if (t.includes("indiassgottlatent.freeforall.dev")) {
+    t = t.replace("indiassgottlatent.freeforall.dev", "igltalent.freeforall.dev");
+  }
+  // Any direct HTTP(S) URL works (YouTube, archive.org, live CDN)
+  if (t.startsWith("http://") || t.startsWith("https://")) return t;
+  // Archive.org fallback via identifier
   if (v.archive_id) return (APP_CONFIG.ARCHIVE_BASE || "https://archive.org") + "/services/img/" + v.archive_id;
   return t;
 }
@@ -101,7 +113,8 @@ function renderRail(videos) {
     const yt = youtubeIdFromUrl(v.video_url);
     const label = yt ? "YouTube" : ({ season1: "S1", season2: "S2", s1bonus: "S1 Bonus", s1bts: "S1 BTS", s2bonus: "S2 Bonus", s2bts: "S2 BTS", special: "Special", bonus: "Bonus", bts: "BTS" }[(v.category || guessCategory(v)).toLowerCase()] || "EP");
     const src = thumbSrc(v);
-    const img = src ? `<img src="${src}" loading="lazy" onload="this.classList.add('img-on')" onerror="this.style.display='none'" style="width:100%;aspect-ratio:16/9;object-fit:cover;display:block" alt=""/>` : "";
+    const fallbackThumb = v.archive_id ? `https://archive.org/services/img/${v.archive_id}` : "";
+    const img = src ? `<img src="${src}" loading="lazy" onload="this.classList.add('img-on')" onerror="if (!this.dataset.fb && '${fallbackThumb}') { this.dataset.fb='1'; this.src='${fallbackThumb}'; } else { this.style.display='none'; }" style="width:100%;aspect-ratio:16/9;object-fit:cover;display:block" alt=""/>` : "";
     d.innerHTML = `
       <div class="thumb">${img}</div>
       <div class="tags">${yt ? `<span class="mini">YouTube</span>` : ""}<span class="mini">${label} • EP ${v.episode_number || ""}</span></div>
@@ -146,7 +159,10 @@ function guessCategory(v) {
 }
 function playFeatured() {
   const list = window._videos || [];
-  if (list.length) openPlayer(list[list.length - 1]);
+  if (list.length) {
+    const heroEp = list.find(v => v.id === "s2-08") || list[list.length - 1];
+    openPlayer(heroEp);
+  }
 }
 function toggleWatchlist() {
   const l = JSON.parse(localStorage.getItem("watchlist") || "[]");
