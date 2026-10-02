@@ -227,9 +227,23 @@
     <div class="player-layout">
       <div class="stage">
         <div class="ambient-glow" id="ambient-glow"></div>
-        <div class="screen">
+        <div class="screen" id="screen-container">
           <video id="player" controls playsinline class="hidden"></video>
           <div id="yt-holder" class="hidden" style="width:100%;aspect-ratio:16/9;border-radius:14px;overflow:hidden;background:#000"></div>
+          <div id="gesture-overlay" class="gesture-overlay">
+            <div id="gesture-left" class="gesture-side gesture-left">
+              <div class="gesture-anim">
+                <span class="gesture-icon">↺</span>
+                <span class="gesture-text">10s</span>
+              </div>
+            </div>
+            <div id="gesture-right" class="gesture-side gesture-right">
+              <div class="gesture-anim">
+                <span class="gesture-icon">↻</span>
+                <span class="gesture-text">10s</span>
+              </div>
+            </div>
+          </div>
           <div class="vignette"></div>
           <div id="screen-loader" class="screen-loader hidden"><span class="spin"></span><p>Loading stream…</p></div>
         </div>
@@ -240,10 +254,16 @@
       </aside>
     </div>
     <div class="player-bar">
+      <button class="pbtn" onclick="skipTime(-10)" title="Rewind 10s (Left Arrow / J)">↺ 10s</button>
+      <button class="pbtn" onclick="skipTime(10)" title="Forward 10s (Right Arrow / L)">10s ↻</button>
       <button class="pbtn" onclick="stepEpisode(-1)" aria-label="Previous episode">⏮ Prev</button>
       <button class="pbtn" onclick="stepEpisode(1)" aria-label="Next episode">Next ⏭</button>
+      <button class="pbtn" id="speed-btn" onclick="cycleSpeed()" title="Playback speed">⚡ 1x Speed</button>
+      <button class="pbtn" id="quality-btn" onclick="openQualityMenu()" title="Select resolution">⚙ 1080p HD</button>
+      <button class="pbtn" id="pip-btn" onclick="togglePiP()" title="Picture-in-Picture">⧉ PiP</button>
       <button class="pbtn" id="theater-btn" onclick="toggleTheater()" aria-label="Theater mode">⛶ Theater</button>
-      <button class="pbtn" onclick="shareEpisode()" aria-label="Copy link">⧉ Share</button>
+      <button class="pbtn" id="download-btn" onclick="downloadCurrent()" title="Download MP4">⬇ Download</button>
+      <button class="pbtn" onclick="shareEpisode()" aria-label="Copy link">🔗 Share</button>
       <button class="pbtn" onclick="addCurrentToWatchlist()" aria-label="Add to watchlist">+ Watchlist</button>
     </div>
     <iframe id="embed" class="hidden" style="width:100%;aspect-ratio:16/9;border:0;border-radius:18px;background:#000" allowfullscreen allow="autoplay; encrypted-media; fullscreen"></iframe>

@@ -308,12 +308,66 @@ async function playViaProxy(v) {
   setPlayerMeta(v);
   showLoader();
 
-  function initPlyr(qualities) {
-    const opts = { speed: { selected: 1, options: [0.5, 0.75, 1, 1.25, 1.5, 2] }, fullscreen: { enabled: true, fallback: true, iosNative: true } };
-    if (qualities && qualities.length > 1) {
-      opts.quality = { default: qualities[0].size, options: qualities.map(q => q.size) };
-    }
+  function initPlyr(streamUrl) {
+    const opts = {
+      controls: [
+        'play-large',
+        'restart',
+        'rewind',
+        'play',
+        'fast-forward',
+        'progress',
+        'current-time',
+        'duration',
+        'mute',
+        'volume',
+        'settings',
+        'pip',
+        'airplay',
+        'download',
+        'fullscreen'
+      ],
+      seekTime: 10,
+      speed: { selected: 1, options: [0.5, 0.75, 1, 1.25, 1.5, 1.75, 2] },
+      settings: ['quality', 'speed'],
+      quality: {
+        default: 1080,
+        options: [1080, 720, 480, 360],
+        forced: true,
+        onChange: (newQ) => {
+          const btn = document.getElementById("quality-btn");
+          if (btn) btn.textContent = `⚙ ${newQ}p${newQ >= 720 ? ' HD' : ''}`;
+          toast(`Resolution: ${newQ}p`);
+        }
+      },
+      fullscreen: { enabled: true, fallback: true, iosNative: true },
+      keyboard: { focused: true, global: true },
+      tooltips: { controls: true, seek: true },
+      urls: { download: streamUrl }
+    };
     plyr = new Plyr(vid, opts);
+
+    // Auto-resume playback position
+    plyr.on('canplay', () => {
+      if (window._current && !window._current._resumed) {
+        window._current._resumed = true;
+        const saved = parseInt(localStorage.getItem("pos_" + window._current.id) || "0", 10);
+        if (saved > 10 && (!plyr.duration || saved < plyr.duration - 15)) {
+          plyr.currentTime = saved;
+          const m = Math.floor(saved / 60);
+          const s = saved % 60;
+          toast(`Resumed from ${m}:${s < 10 ? '0' : ''}${s} ⏱`);
+        }
+      }
+    });
+
+    plyr.on('timeupdate', () => {
+      if (window._current && plyr.currentTime > 5 && (!plyr.duration || plyr.currentTime < plyr.duration - 15)) {
+        localStorage.setItem("pos_" + window._current.id, Math.floor(plyr.currentTime));
+      }
+    });
+
+    setupDoubleTapGesture();
   }
 
   // 1. Direct MP4 link (archive.org direct link or local file)
@@ -334,11 +388,15 @@ async function playViaProxy(v) {
   }
 
   if (streamUrl && isDirectVideo(streamUrl)) {
-    const s = document.createElement("source");
-    s.src = streamUrl;
-    s.type = "video/mp4";
-    vid.appendChild(s);
-    initPlyr(null);
+    vid.innerHTML = "";
+    [1080, 720, 480, 360].forEach(size => {
+      const s = document.createElement("source");
+      s.src = streamUrl;
+      s.type = "video/mp4";
+      s.setAttribute("size", size);
+      vid.appendChild(s);
+    });
+    initPlyr(streamUrl);
     hideLoader();
     return;
   }
@@ -549,4 +607,167 @@ function shareEpisode() {
   if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(url).then(done, () => toast(url));
   else toast(url);
 }
+function skipTime(delta) {
+  if (plyr) {
+    plyr.currentTime = Math.max(0, Math.min(plyr.duration || 9999, plyr.currentTime + delta));
+  } else {
+    const vid = document.getElementById("player");
+    if (vid && !vid.classList.contains("hidden")) {
+      vid.currentTime = Math.max(0, Math.min(vid.duration || 9999, vid.currentTime + delta));
+    } else if (window._ytPlayer && window._ytPlayer.getCurrentTime) {
+      const cur = window._ytPlayer.getCurrentTime() || 0;
+      window._ytPlayer.seekTo(cur + delta, true);
+    }
+  }
+  toast(delta > 0 ? `+${delta}s ⏭` : `⏮ ${delta}s`);
+}
+
+function showGestureAnim(side) {
+  const el = document.getElementById("gesture-" + side);
+  if (!el) return;
+  el.classList.add("active");
+  setTimeout(() => el.classList.remove("active"), 500);
+}
+
+function setupDoubleTapGesture() {
+  const screen = document.getElementById("screen-container");
+  if (!screen || screen._gestureBound) return;
+  screen._gestureBound = true;
+
+  let lastTapTime = 0;
+  let lastTapSide = "";
+  let tapTimeout = null;
+
+  screen.addEventListener("pointerup", (e) => {
+    if (e.target.closest(".plyr__controls") || e.target.closest(".pbtn") || e.target.closest(".plyr__control")) return;
+    const rect = screen.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const width = rect.width;
+    const now = Date.now();
+    const side = x < width * 0.42 ? "left" : (x > width * 0.58 ? "right" : "center");
+
+    if (now - lastTapTime < 320 && side === lastTapSide && side !== "center") {
+      clearTimeout(tapTimeout);
+      lastTapTime = 0;
+      if (side === "left") {
+        skipTime(-10);
+        showGestureAnim("left");
+      } else if (side === "right") {
+        skipTime(10);
+        showGestureAnim("right");
+      }
+    } else {
+      lastTapTime = now;
+      lastTapSide = side;
+      tapTimeout = setTimeout(() => {
+        lastTapTime = 0;
+        lastTapSide = "";
+      }, 320);
+    }
+  });
+}
+
+const SPEEDS = [0.75, 1, 1.25, 1.5, 2];
+function cycleSpeed() {
+  let curSpeed = 1;
+  if (plyr) curSpeed = plyr.speed || 1;
+  else if (window._ytPlayer && window._ytPlayer.getPlaybackRate) curSpeed = window._ytPlayer.getPlaybackRate() || 1;
+
+  const curIdx = SPEEDS.indexOf(curSpeed);
+  const nextSpeed = SPEEDS[(curIdx + 1) % SPEEDS.length];
+
+  if (plyr) plyr.speed = nextSpeed;
+  else if (window._ytPlayer && window._ytPlayer.setPlaybackRate) window._ytPlayer.setPlaybackRate(nextSpeed);
+
+  const btn = document.getElementById("speed-btn");
+  if (btn) btn.textContent = `⚡ ${nextSpeed}x`;
+  toast(`Speed: ${nextSpeed}x`);
+}
+
+function openQualityMenu() {
+  if (plyr) {
+    const curQ = plyr.quality || 1080;
+    const nextQ = curQ === 1080 ? 720 : (curQ === 720 ? 480 : (curQ === 480 ? 360 : 1080));
+    plyr.quality = nextQ;
+    const btn = document.getElementById("quality-btn");
+    if (btn) btn.textContent = `⚙ ${nextQ}p${nextQ >= 720 ? ' HD' : ''}`;
+    toast(`Resolution: ${nextQ}p${nextQ >= 720 ? ' HD' : ''}`);
+  } else {
+    toast("Resolution: Auto HD");
+  }
+}
+
+async function togglePiP() {
+  const vid = document.getElementById("player");
+  try {
+    if (document.pictureInPictureElement) {
+      await document.exitPictureInPicture();
+    } else if (vid && !vid.classList.contains("hidden")) {
+      await vid.requestPictureInPicture();
+    } else if (plyr && plyr.pip) {
+      plyr.pip = !plyr.pip;
+    } else {
+      toast("PiP not supported for this stream");
+    }
+  } catch (e) {
+    toast("Picture-in-Picture unavailable");
+  }
+}
+
+function downloadCurrent() {
+  const cur = window._current;
+  if (!cur) return;
+  const vid = document.getElementById("player");
+  const src = (vid && vid.currentSrc) ? vid.currentSrc : cur.video_url;
+  if (src && src.startsWith("http")) {
+    const a = document.createElement("a");
+    a.href = src;
+    a.download = cur.filename || `${cur.title}.mp4`;
+    a.target = "_blank";
+    a.rel = "noopener";
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    toast("Download started ⬇");
+  } else {
+    toast("Download link unavailable");
+  }
+}
+
+// Global Keyboard Shortcuts
+window.addEventListener("keydown", (e) => {
+  if (["INPUT", "TEXTAREA", "SELECT"].includes(document.activeElement?.tagName)) return;
+  const wrap = document.getElementById("player-wrap");
+  if (!wrap || wrap.classList.contains("hidden")) return;
+
+  if (e.key === "ArrowLeft" || e.key === "j" || e.key === "J") {
+    e.preventDefault();
+    skipTime(-10);
+    showGestureAnim("left");
+  } else if (e.key === "ArrowRight" || e.key === "l" || e.key === "L") {
+    e.preventDefault();
+    skipTime(10);
+    showGestureAnim("right");
+  } else if (e.key === " " || e.key === "k" || e.key === "K") {
+    e.preventDefault();
+    if (plyr) plyr.togglePlay();
+  } else if (e.key === "m" || e.key === "M") {
+    e.preventDefault();
+    if (plyr) plyr.muted = !plyr.muted;
+  } else if (e.key === "f" || e.key === "F") {
+    e.preventDefault();
+    if (plyr) plyr.fullscreen.toggle();
+  } else if (e.key === "t" || e.key === "T") {
+    e.preventDefault();
+    toggleTheater();
+  } else if (e.key === ">") {
+    cycleSpeed();
+  }
+});
+
 window.loadVideos = loadVideos;
+window.skipTime = skipTime;
+window.cycleSpeed = cycleSpeed;
+window.openQualityMenu = openQualityMenu;
+window.togglePiP = togglePiP;
+window.downloadCurrent = downloadCurrent;

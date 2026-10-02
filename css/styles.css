@@ -234,6 +234,19 @@ input:focus,select:focus{outline:none;border-color:var(--cobalt)!important;box-s
 .plyr__menu__container{background:rgba(18,18,24,.97)!important;border:1px solid rgba(255,255,255,.14);border-radius:12px!important}
 .plyr__progress input[type=range]::-webkit-slider-thumb{box-shadow:0 0 12px rgba(38,109,249,.9)}
 
+/* Double-tap gesture overlay (YouTube / Netflix style) */
+.gesture-overlay{position:absolute;inset:0;z-index:15;display:flex;pointer-events:none;overflow:hidden}
+.gesture-side{flex:1;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .18s ease;pointer-events:none}
+.gesture-anim{background:radial-gradient(circle,rgba(38,109,249,.45) 0%,rgba(10,10,14,.75) 85%);border:1px solid rgba(255,255,255,.25);backdrop-filter:blur(10px);border-radius:50%;width:88px;height:88px;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:13px;transform:scale(.75);transition:transform .25s cubic-bezier(.2,.8,.2,1);box-shadow:0 0 35px rgba(38,109,249,.6)}
+.gesture-icon{font-size:24px;line-height:1;margin-bottom:2px}
+.gesture-side.active{opacity:1}
+.gesture-side.active .gesture-anim{transform:scale(1.15)}
+
+/* Theater Mode */
+.player.theater .player-inner{width:98vw!important;max-width:none!important}
+.player.theater .player-layout{grid-template-columns:1fr!important}
+.player.theater .upnext{display:none!important}
+
 @media (max-width:900px){
   .player-layout{grid-template-columns:1fr}
   .upnext{max-height:none}
@@ -244,5 +257,6 @@ input:focus,select:focus{outline:none;border-color:var(--cobalt)!important;box-s
 }
 @media (max-width:680px){
   .player-head h3{font-size:15px}
-  .pbtn{padding:9px 14px;font-size:12px}
+  .pbtn{padding:8px 12px;font-size:11.5px}
+  .gesture-anim{width:76px;height:76px}
 }
