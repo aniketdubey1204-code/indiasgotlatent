@@ -5,7 +5,7 @@ async function loadVideos() {
   grid.innerHTML = Array.from({ length: 8 }, () => `<div class="skel"><div class="sk-thumb"></div><div class="sk-line"></div><div class="sk-line short"></div></div>`).join("");
   let videos = [];
   if (typeof LOCAL_VIDEOS !== "undefined" && LOCAL_VIDEOS.length) {
-    videos = LOCAL_VIDEOS;
+    videos = [...LOCAL_VIDEOS];
   } else {
     try {
       if (typeof supabaseClient !== "undefined" && supabaseClient && APP_CONFIG.SUPABASE_URL && !APP_CONFIG.SUPABASE_URL.includes("YOUR-")) {
@@ -14,6 +14,21 @@ async function loadVideos() {
       }
     } catch (e) { console.warn(e); }
   }
+  // Apply admin local additions & deletions
+  try {
+    const custom = JSON.parse(localStorage.getItem("admin_custom_videos") || "[]");
+    if (custom.length) {
+      custom.forEach(cv => {
+        const existIdx = videos.findIndex(v => v.id === cv.id);
+        if (existIdx >= 0) videos[existIdx] = cv;
+        else videos.push(cv);
+      });
+    }
+    const hidden = JSON.parse(localStorage.getItem("admin_hidden_video_ids") || "[]");
+    if (hidden.length) {
+      videos = videos.filter(v => !hidden.includes(v.id));
+    }
+  } catch (e) {}
   // Sort by sort_index (chronological release order), fallback to array order
   videos.sort((a, b) => {
     const ai = typeof a.sort_index === "number" ? a.sort_index : 9999;

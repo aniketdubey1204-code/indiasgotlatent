@@ -1,12 +1,10 @@
 // In-site admin (only admin sees panel): paste player URL -> auto-fill -> save via secret edge function.
 function openAdmin() {
-  if (!isAdmin()) return alert("Admin only.");
-  const k = sessionStorage.getItem("admin_key") || prompt("Enter Admin Key (set in Supabase Secrets as ADMIN_KEY):");
-  if (!k) return;
-  sessionStorage.setItem("admin_key", k);
+  if (!isAdmin()) return alert("Admin only. Login with admin credentials first.");
   sessionStorage.removeItem("edit_id");
   document.getElementById("admin-wrap").classList.remove("hidden");
   if (typeof syncBodyLock === "function") syncBodyLock();
+  adminTab("add");
 }
 function closeAdmin() {
   document.getElementById("admin-wrap").classList.add("hidden");
@@ -121,84 +119,161 @@ function adminTab(which) {
 
 async function adminDeleteSelected() {
   if (!isAdmin()) { document.getElementById("a-msg").textContent = "Admin only."; return; }
-  const key = sessionStorage.getItem("admin_key") || "";
   const ids = [...document.querySelectorAll("#a-list input[type=checkbox]:checked")].map(c => c.value);
   const msg = document.getElementById("a-msg");
   if (!ids.length) { msg.textContent = "Select at least 1 video."; return; }
-  if (!confirm("Delete " + ids.length + " video(s)?")) return;
-  msg.textContent = "Deleting...";
+  if (!confirm("Hide / Delete " + ids.length + " video(s) from vault?")) return;
+  msg.textContent = "Removing...";
   try {
-    const r = await fetch(APP_CONFIG.SUPABASE_URL + "/functions/v1/admin-delete", {
-      method: "POST",
-      headers: { "Content-Type": "application/json", "apikey": APP_CONFIG.SUPABASE_ANON_KEY, "x-admin-key": key },
-      body: JSON.stringify({ ids })
-    });
-    const j = await r.json();
-    if (!r.ok) { msg.textContent = j.error || ("Delete failed: " + r.status); return; }
-    msg.textContent = "Deleted " + j.deleted + ". Reloading...";
+    if (typeof supabaseClient !== "undefined" && supabaseClient && APP_CONFIG.SUPABASE_URL) {
+      const key = sessionStorage.getItem("admin_key") || "";
+      await fetch(APP_CONFIG.SUPABASE_URL + "/functions/v1/admin-delete", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "apikey": APP_CONFIG.SUPABASE_ANON_KEY, "x-admin-key": key },
+        body: JSON.stringify({ ids })
+      }).catch(e => console.warn(e));
+    }
+    const hidden = JSON.parse(localStorage.getItem("admin_hidden_video_ids") || "[]");
+    ids.forEach(id => { if (!hidden.includes(id)) hidden.push(id); });
+    localStorage.setItem("admin_hidden_video_ids", JSON.stringify(hidden));
+
+    // Also remove from custom videos if present
+    const custom = JSON.parse(localStorage.getItem("admin_custom_videos") || "[]");
+    const updatedCustom = custom.filter(v => !ids.includes(v.id));
+    localStorage.setItem("admin_custom_videos", JSON.stringify(updatedCustom));
+
+    msg.textContent = "Removed " + ids.length + " video(s) from vault.";
     if (window.loadVideos) await window.loadVideos();
     adminLoadList();
   } catch (e) { msg.textContent = "Error: " + e.message; }
 }
 
+function adminResetHidden() {
+  localStorage.removeItem("admin_hidden_video_ids");
+  if (window.loadVideos) window.loadVideos();
+  adminLoadList();
+  const msg = document.getElementById("a-msg");
+  if (msg) msg.textContent = "All hidden videos restored.";
+}
+
 async function adminLoadList() {
   if (!isAdmin()) return;
   const box = document.getElementById("a-list");
-  box.innerHTML = "<p style='color:#aaa'>Loading...</p>";
+  if (!box) return;
+  box.innerHTML = "<p style='color:#aaa'>Loading catalog...</p>";
   try {
-    const { data, error } = await supabaseClient.from("videos").select("id,title,episode_number,video_url,thumbnail_url,description,category").order("episode_number", { ascending: true });
-    if (error) { box.innerHTML = error.message; return; }
-    box.innerHTML = (data || []).map(v =>
-      `<div style="display:flex;gap:8px;align-items:center;font-size:13px;padding:6px 0;border-bottom:1px solid #222"><input type="checkbox" value="${v.id}" style="width:auto"/><span style="flex:1">${escapeHtml(v.title)} (EP ${v.episode_number || ""})</span><button class="btn secondary" style="width:auto;padding:4px 12px;margin:0" onclick='adminEdit(${JSON.stringify(v.id)})'>Edit</button></div>`
-    ).join("") || "<p>No videos</p>";
-  } catch (e) { box.innerHTML = "Error: " + e.message; }
+    let list = [];
+    if (typeof supabaseClient !== "undefined" && supabaseClient) {
+      try {
+        const { data, error } = await supabaseClient.from("videos").select("id,title,episode_number,video_url,thumbnail_url,description,category").order("episode_number", { ascending: true });
+        if (!error && data && data.length) list = data;
+      } catch (e) {}
+    }
+    if (!list.length) {
+      list = (window._videos && window._videos.length) ? window._videos : (typeof LOCAL_VIDEOS !== "undefined" ? LOCAL_VIDEOS : []);
+    }
+    const hidden = JSON.parse(localStorage.getItem("admin_hidden_video_ids") || "[]");
+    const html = (list || []).map(v => {
+      const isHidden = hidden.includes(v.id);
+      return `<div style="display:flex;gap:8px;align-items:center;font-size:13px;padding:8px 0;border-bottom:1px solid #222;${isHidden ? 'opacity:0.4;' : ''}">
+        <input type="checkbox" value="${v.id}" style="width:auto;margin:0 4px"/>
+        <span style="flex:1;line-height:1.3">
+          ${escapeHtml(v.title)} 
+          <span style="color:#FFBC95;font-size:11px">(${v.category || "video"})</span>
+          ${isHidden ? '<span style="color:#ff6b6b;font-weight:700;font-size:11px;margin-left:6px">[HIDDEN]</span>' : ''}
+        </span>
+        <button class="btn secondary" style="width:auto;padding:4px 12px;margin:0" onclick='adminEdit(${JSON.stringify(v.id)})'>Edit</button>
+      </div>`;
+    }).join("");
+
+    const toolbar = hidden.length ? `<div style="padding:6px 0;border-bottom:1px solid #333;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center"><span style="color:#ff6b6b;font-size:12px">${hidden.length} video(s) hidden</span><button class="btn secondary" style="width:auto;padding:3px 10px;font-size:11px;margin:0" onclick="adminResetHidden()">Unhide All</button></div>` : "";
+
+    box.innerHTML = toolbar + (html || "<p>No videos found</p>");
+  } catch (e) {
+    box.innerHTML = "<p style='color:#ff6b6b'>Error: " + escapeHtml(e.message) + "</p>";
+  }
 }
 
 async function adminEdit(id) {
   if (!isAdmin()) return;
   try {
-    const { data, error } = await supabaseClient.from("videos").select("*").eq("id", id).single();
-    if (error) { document.getElementById("a-msg").textContent = error.message; return; }
+    let video = (window._videos || []).find(v => v.id === id);
+    if (!video && typeof LOCAL_VIDEOS !== "undefined") {
+      video = LOCAL_VIDEOS.find(v => v.id === id);
+    }
+    if (!video && typeof supabaseClient !== "undefined" && supabaseClient) {
+      const { data } = await supabaseClient.from("videos").select("*").eq("id", id).single();
+      if (data) video = data;
+    }
+    if (!video) {
+      document.getElementById("a-msg").textContent = "Video not found.";
+      return;
+    }
     sessionStorage.setItem("edit_id", id);
-    document.getElementById("a-url").value = data.video_url || "";
-    document.getElementById("a-title").value = data.title || "";
-    document.getElementById("a-num").value = data.episode_number || 0;
-    document.getElementById("a-thumb").value = data.thumbnail_url || "";
-    document.getElementById("a-desc").value = data.description || "";
-    if (document.getElementById("a-cat")) document.getElementById("a-cat").value = data.category || "bonus";
+    document.getElementById("a-url").value = video.video_url || "";
+    document.getElementById("a-title").value = video.title || "";
+    document.getElementById("a-num").value = video.episode_number || 0;
+    document.getElementById("a-thumb").value = video.thumbnail_url || (video.localImage ? `/assets/thumbs/${video.localImage}` : "");
+    document.getElementById("a-desc").value = video.description || "";
+    if (document.getElementById("a-cat")) document.getElementById("a-cat").value = video.category || "season1";
     adminTab("add");
-    document.getElementById("a-msg").textContent = "Editing: " + data.title;
+    document.getElementById("a-msg").textContent = "Editing: " + video.title;
   } catch (e) { document.getElementById("a-msg").textContent = "Error: " + e.message; }
 }
 
 async function adminSave() {
   if (!isAdmin()) { document.getElementById("a-msg").textContent = "Admin only."; return; }
   const msg = document.getElementById("a-msg");
-  const key = sessionStorage.getItem("admin_key") || "";
-  if (!key) { msg.textContent = "Enter Admin Key first (reopen Admin)."; return; }
-  const body = {
-    id: sessionStorage.getItem("edit_id") || undefined,
-    title: document.getElementById("a-title").value.trim(),
-    episode_number: parseInt(document.getElementById("a-num").value || "0", 10) || 0,
-    video_url: document.getElementById("a-url").value.trim(),
-    thumbnail_url: document.getElementById("a-thumb").value.trim(),
-    description: document.getElementById("a-desc").value.trim(),
-    category: (document.getElementById("a-cat") || {}).value || "bonus"
+  const editId = sessionStorage.getItem("edit_id");
+  const title = document.getElementById("a-title").value.trim();
+  const video_url = document.getElementById("a-url").value.trim();
+  const episode_number = parseInt(document.getElementById("a-num").value || "0", 10) || 0;
+  const thumbnail_url = document.getElementById("a-thumb").value.trim();
+  const description = document.getElementById("a-desc").value.trim();
+  const category = (document.getElementById("a-cat") || {}).value || "s1bonus";
+
+  if (!title || !video_url) { msg.textContent = "Title + URL required. Click Fetch Details first."; return; }
+  msg.textContent = "Saving to vault...";
+
+  const newVid = {
+    id: editId || ("custom-" + Date.now().toString(36)),
+    title,
+    episode_number,
+    video_url,
+    thumbnail_url,
+    description,
+    category,
+    sort_index: Date.now()
   };
-  if (!body.title || !body.video_url) { msg.textContent = "Title + URL required. Click Fetch Details first."; return; }
-  msg.textContent = "Saving...";
-  try {
-    const r = await fetch(APP_CONFIG.SUPABASE_URL + "/functions/v1/admin-save", {
+
+  if (typeof supabaseClient !== "undefined" && supabaseClient && APP_CONFIG.SUPABASE_URL) {
+    const key = sessionStorage.getItem("admin_key") || "";
+    await fetch(APP_CONFIG.SUPABASE_URL + "/functions/v1/admin-save", {
       method: "POST",
       headers: { "Content-Type": "application/json", "apikey": APP_CONFIG.SUPABASE_ANON_KEY, "x-admin-key": key },
-      body: JSON.stringify(body)
-    });
-    const j = await r.json();
-    if (!r.ok) { msg.textContent = j.error || ("Save failed: " + r.status); return; }
-    msg.textContent = sessionStorage.getItem("edit_id") ? "Updated. Reloading grid..." : "Saved. Reloading grid...";
-    sessionStorage.removeItem("edit_id");
-    document.getElementById("a-url").value = "";
-    if (window.loadVideos) await window.loadVideos();
-    setTimeout(closeAdmin, 800);
-  } catch (e) { msg.textContent = "Error: " + e.message; }
+      body: JSON.stringify(newVid)
+    }).catch(e => console.warn(e));
+  }
+
+  const custom = JSON.parse(localStorage.getItem("admin_custom_videos") || "[]");
+  const idx = custom.findIndex(v => v.id === newVid.id);
+  if (idx >= 0) custom[idx] = newVid;
+  else custom.unshift(newVid);
+  localStorage.setItem("admin_custom_videos", JSON.stringify(custom));
+
+  msg.textContent = editId ? "Updated in vault! Reloading..." : "Saved to vault! Reloading...";
+  sessionStorage.removeItem("edit_id");
+  document.getElementById("a-url").value = "";
+  if (window.loadVideos) await window.loadVideos();
+  setTimeout(closeAdmin, 800);
 }
+
+window.openAdmin = openAdmin;
+window.closeAdmin = closeAdmin;
+window.adminTab = adminTab;
+window.adminFetchMeta = adminFetchMeta;
+window.adminDeleteSelected = adminDeleteSelected;
+window.adminLoadList = adminLoadList;
+window.adminEdit = adminEdit;
+window.adminSave = adminSave;
+window.adminResetHidden = adminResetHidden;
