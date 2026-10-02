@@ -50,8 +50,8 @@ jobs:
 
       - name: Run Auto-Sync Pipeline
         env:
-          IA_ACCESS_KEY_ID: ${{ secrets.IA_ACCESS_KEY_ID || 'EXPs0qKXe2s8HtOH' }}
-          IA_SECRET_ACCESS_KEY: ${{ secrets.IA_SECRET_ACCESS_KEY || '96xCWf8keeEFOtFj' }}
+          IA_ACCESS_KEY_ID: ${{ secrets.IA_ACCESS_KEY_ID }}
+          IA_SECRET_ACCESS_KEY: ${{ secrets.IA_SECRET_ACCESS_KEY }}
           CLEANUP_AFTER_UPLOAD: 'true'
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |

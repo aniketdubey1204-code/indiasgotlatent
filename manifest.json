@@ -1,0 +1,19 @@
+{
+  "name": "IGL Fan Vault — India's Got Latent",
+  "short_name": "IGL Vault",
+  "description": "Watch every India's Got Latent episode free — Season 1, Season 2, bonus, BTS & specials.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0C0C0E",
+  "theme_color": "#0C0C0E",
+  "orientation": "any",
+  "icons": [
+    {
+      "src": "/assets/brand.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["entertainment", "video"]
+}

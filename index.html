@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="hi">
 <head>
 <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
 <title>India's Got Latent — Watch All Episodes Free | Season 1, Season 2, Bonus & BTS</title>
@@ -11,6 +11,7 @@
 <link rel="canonical" href="https://indiasgotlatent-opal.vercel.app/"/>
 <link rel="icon" type="image/svg+xml" href="assets/brand.svg"/>
 <link rel="apple-touch-icon" href="assets/brand.svg"/>
+<link rel="manifest" href="manifest.json"/>
 
 <!-- Open Graph -->
 <meta property="og:type" content="website"/>
@@ -130,12 +131,12 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link rel="stylesheet" href="css/styles.css"/>
 <link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css"/>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="https://cdn.plyr.io/3.7.8/plyr.js"></script>
-<script src="js/config.js"></script>
-<script src="js/videos.js"></script>
+<script defer src="https://cdn.plyr.io/3.7.8/plyr.js"></script>
+<script defer src="js/config.js"></script>
+<script defer src="js/videos.js"></script>
 </head>
 <body>
+<a href="#rail" class="skip-link">Skip to content</a>
 <div class="ambient"></div>
 
 <nav class="nav-dock">
@@ -145,6 +146,7 @@
   <a href="#rail" class="nav-link" onclick="filterRail('Season 2',this);return false">Season 2</a>
   <a href="#rail" class="nav-link" onclick="filterRail('Bonus',this);return false">Bonus & BTS</a>
   <a href="#" class="nav-link" onclick="openInfo();return false">Info</a>
+  <a href="#" class="nav-link" id="nav-auth-btn" onclick="toggleAuthModal();return false">Login</a>
   <span class="search-glow" role="button" aria-label="Search" onclick="document.getElementById('rail').scrollIntoView({behavior:'smooth'});setTimeout(()=>document.getElementById('rail-search').focus(),400)">⌕</span>
   <button class="menu-btn" id="menu-btn" aria-label="Menu" onclick="toggleMenu(event)">☰</button>
   <div class="menu-panel hidden" id="menu-panel">
@@ -153,36 +155,38 @@
     <a href="#rail" onclick="filterRail('Season 2',this);return false">Season 2</a>
     <a href="#rail" onclick="filterRail('Bonus',this);return false">Bonus & BTS</a>
     <a href="#" onclick="openInfo();return false">Info</a>
+    <a href="#" id="menu-auth-btn" onclick="toggleAuthModal();return false">Login</a>
   </div>
 </nav>
 
 <!-- Auth gate -->
-<div id="auth-overlay" class="overlay">
-  <div class="modal">
+<div id="auth-overlay" class="overlay hidden">
+  <div class="modal" style="position:relative">
+    <button class="close" onclick="closeAuth()" aria-label="Close login">×</button>
     <div class="kicker">Members Vault</div>
     <h2 style="font-family:'Syne';margin:8px 0">Login to Watch</h2>
-    <p style="color:#C8BDB6;font-size:14px">Authentication required to enter</p>
+    <p style="color:#C8BDB6;font-size:14px">Authentication required to stream episodes</p>
     <div class="tabs">
       <button id="tab-telegram" class="active" onclick="switchTab('telegram')">Telegram</button>
       <button id="tab-google" onclick="switchTab('google')">Google</button>
     </div>
     <div id="pane-telegram">
       <div id="telegram-widget"></div>
-      <p style="color:#666;font-size:12px">1-click login with Telegram</p>
+      <p style="color:#999;font-size:12px">1-click login with Telegram</p>
     </div>
     <div id="pane-google" class="hidden">
       <button class="btn" onclick="signInWithGoogle()" style="display:flex;align-items:center;justify-content:center;gap:10px;background:#fff;color:#111">
         <svg width="18" height="18" viewBox="0 0 48 48"><path fill="#FFC107" d="M43.6 20.1H42V20H24v8h11.3C33.7 32.7 29.2 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.9 1.2 8 3l5.7-5.7C34.3 6.1 29.4 4 24 4 13 4 4 13 4 24s9 20 20 20 20-9 20-20c0-1.3-.1-2.6-.4-3.9z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.9 1.2 8 3l5.7-5.7C34.3 6.1 29.4 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35.1 26.7 36 24 36c-5.2 0-9.6-3.3-11.3-8l-6.5 5C9.5 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.1H42V20H24v8h11.3c-.8 2.2-2.2 4.2-4.1 5.6l6.2 5.2C36.9 39.2 44 34 44 24c0-1.3-.1-2.6-.4-3.9z"/></svg>
         Continue with Google
       </button>
-      <p style="color:#666;font-size:12px;margin-top:8px">1-tap login, no password needed</p>
+      <p style="color:#999;font-size:12px;margin-top:8px">1-tap login, no password needed</p>
       <p id="google-status" style="color:#C8BDB6;font-size:13px"></p>
     </div>
   </div>
 </div>
 
 <!-- Main app -->
-<div id="app" class="hidden">
+<main id="app">
   <section class="hero" id="hero">
     <div class="hero-bg" id="hero-bg"></div>
     <div class="hero-glow"></div>
@@ -211,12 +215,45 @@
   <section class="rail" id="rail">
     <h2>India's Got Latent — All Episodes</h2>
     <p style="color:#C8BDB6;font-size:13px;margin:-8px 0 14px">Unofficial community fan archive. Not affiliated with Samay Raina. Streams load from public third-party links.</p>
-    <div id="video-grid" class="grid"></div>
+    <div id="video-grid" class="grid">
+      <div class="skel"><div class="sk-thumb"></div><div class="sk-line"></div><div class="sk-line short"></div></div>
+      <div class="skel"><div class="sk-thumb"></div><div class="sk-line"></div><div class="sk-line short"></div></div>
+      <div class="skel"><div class="sk-thumb"></div><div class="sk-line"></div><div class="sk-line short"></div></div>
+      <div class="skel"><div class="sk-thumb"></div><div class="sk-line"></div><div class="sk-line short"></div></div>
+      <div class="skel"><div class="sk-thumb"></div><div class="sk-line"></div><div class="sk-line short"></div></div>
+      <div class="skel"><div class="sk-thumb"></div><div class="sk-line"></div><div class="sk-line short"></div></div>
+    </div>
   </section>
-</div>
+</main>
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <span class="brand">IGL ◈ FAN VAULT</span>
+      <p>Free, non-commercial fan archive for India's Got Latent episodes by Samay Raina.</p>
+    </div>
+    <div class="footer-links">
+      <div class="footer-col">
+        <h4>Browse</h4>
+        <a href="#" onclick="filterRail('Season 1');return false">Season 1</a>
+        <a href="#" onclick="filterRail('Season 2');return false">Season 2</a>
+        <a href="#" onclick="filterRail('Bonus');return false">Bonus &amp; BTS</a>
+      </div>
+      <div class="footer-col">
+        <h4>Legal</h4>
+        <a href="#" onclick="openInfo();infoTab('about');return false">About Us</a>
+        <a href="#" onclick="openInfo();infoTab('dmca');return false">DMCA Policy</a>
+        <a href="#" onclick="openInfo();infoTab('contact');return false">Contact</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2026 IGL Fan Vault. Not affiliated with Samay Raina. For educational &amp; archival purposes only.</p>
+    </div>
+  </div>
+</footer>
 
 <!-- Player HUD -->
-<div id="player-wrap" class="player hidden">
+<div id="player-wrap" class="player hidden" role="dialog" aria-modal="true" aria-label="Video player">
   <div class="player-inner" id="player-box">
     <button class="close" onclick="closePlayer()" aria-label="Close player">×</button>
     <div class="player-head">

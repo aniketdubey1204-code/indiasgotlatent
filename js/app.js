@@ -25,12 +25,16 @@ async function loadVideos() {
   // Hero = newest synced episode drop (s2-08 or highest sort_index)
   const heroVideo = videos.find(v => v.id === "s2-08") || videos[videos.length - 1];
   setHero(heroVideo);
+  renderContinueWatching(videos);
   renderRail(videos);
-  // Deep link: #v=<id> opens that episode directly (from Share).
+  // Deep link: ?ep=<id> or #v=<id> opens that episode directly (from Sitemap / Google / Share)
+  const urlParams = new URLSearchParams(location.search);
+  const epParam = urlParams.get("ep") || urlParams.get("v");
   const dm = (location.hash || "").match(/^#v=(.+)$/);
-  if (dm) {
-    const f = videos.find(x => String(x.id) === dm[1] || x.video_url === decodeURIComponent(dm[1]));
-    if (f) { history.replaceState(null, "", location.pathname); openPlayer(f); }
+  const targetId = epParam || (dm ? dm[1] : null);
+  if (targetId) {
+    const f = videos.find(x => String(x.id) === targetId || String(x.dataId) === targetId || x.video_url === decodeURIComponent(targetId));
+    if (f) { openPlayer(f); }
   }
 }
 
@@ -148,9 +152,11 @@ function renderRail(videos) {
     const locFb = v.localImage ? `/assets/thumbs/${v.localImage}` : (v.archive_id ? `https://archive.org/services/img/${v.archive_id}` : "");
     const fallbackThumb = ytHq || locFb;
     const img = src ? `<img src="${src}" loading="lazy" onload="this.classList.add('img-on')" onerror="if (!this.dataset.fb && '${fallbackThumb}') { this.dataset.fb='1'; this.src='${fallbackThumb}'; } else { this.style.display='none'; }" style="width:100%;aspect-ratio:16/9;object-fit:cover;display:block" alt=""/>` : "";
+    const durText = v.duration || "";
     d.innerHTML = `
       <div class="thumb">${img}</div>
       <div class="tags"><span class="mini">${badge}</span></div>
+      ${durText ? `<span class="dur">${durText}</span>` : ""}
       <div class="shade"></div>
       <div class="play-ov"><span>▶</span></div>
       <div class="cmeta"><h3>${escapeHtml(v.title)}</h3><p>${escapeHtml((v.description || "").slice(0, 90))}</p></div>`;
@@ -300,7 +306,11 @@ function infoTab(which) {
 }
 
 async function openPlayer(v) {
+  if (typeof requireAuth === "function" && !requireAuth()) return;
   window._current = v;
+  if (v && v.id) {
+    try { history.replaceState(null, "", "?ep=" + v.id); } catch (e) {}
+  }
   playerSetup(v);
   // Direct YouTube links play in-site via YouTube player (fallback button if blocked).
   const directYt = youtubeIdFromUrl(v.video_url);
@@ -453,6 +463,9 @@ function closePlayer() {
   if (frame) frame.removeAttribute("src");
   document.getElementById("player-wrap").classList.add("hidden");
   syncBodyLock();
+  if (location.search.includes("ep=")) {
+    try { history.replaceState(null, "", location.pathname); } catch (e) {}
+  }
 }
 
 /* ---------- global UI system: toast, mobile menu, modal lock/esc/backdrop ---------- */
@@ -631,7 +644,7 @@ function addCurrentToWatchlist() {
 function shareEpisode() {
   const f = window._current;
   if (!f) return;
-  const url = location.origin + location.pathname + "#v=" + (f.id || encodeURIComponent(f.video_url));
+  const url = location.origin + location.pathname + "?ep=" + (f.id || encodeURIComponent(f.video_url));
   const done = () => toast("Link copied — share it");
   if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(url).then(done, () => toast(url));
   else toast(url);
@@ -793,6 +806,54 @@ window.addEventListener("keydown", (e) => {
     cycleSpeed();
   }
 });
+
+/* ---------- Continue Watching ---------- */
+function renderContinueWatching(videos) {
+  let container = document.getElementById("continue-section");
+  // Build list of partially-watched episodes
+  const watched = [];
+  videos.forEach(v => {
+    const key = "pos_" + (v.id || v.video_url);
+    const saved = parseFloat(localStorage.getItem(key) || "0");
+    if (saved > 30) { // at least 30 seconds watched
+      watched.push({ video: v, position: saved });
+    }
+  });
+  if (!watched.length) {
+    if (container) container.remove();
+    return;
+  }
+  // Sort by most recently watched (higher position = more likely recent)
+  watched.sort((a, b) => b.position - a.position);
+  const top = watched.slice(0, 8);
+
+  if (!container) {
+    container = document.createElement("div");
+    container.id = "continue-section";
+    container.className = "continue-section";
+    const filtersEl = document.querySelector(".filters");
+    if (filtersEl) filtersEl.parentNode.insertBefore(container, filtersEl.nextSibling);
+    else document.getElementById("app")?.appendChild(container);
+  }
+  container.innerHTML = `<h3>▶ Continue Watching</h3><div class="continue-row">${top.map(w => {
+    const v = w.video;
+    const pct = v.duration ? Math.min(95, Math.round((w.position / parseDuration(v.duration)) * 100)) : 50;
+    const resumeTime = fmtTime(w.position);
+    return `<div class="continue-card" onclick="openPlayer(window._videos.find(x=>x.id==='${v.id}'))" title="Resume from ${resumeTime}">
+      <img src="${thumbSrc(v)}" loading="lazy" onerror="this.style.visibility='hidden'" alt=""/>
+      <div class="c-info"><h4>${escapeHtml(v.title)}</h4><div class="c-prog"><span style="width:${pct}%"></span></div></div>
+    </div>`;
+  }).join("")}</div>`;
+}
+
+function parseDuration(str) {
+  if (!str) return 3600;
+  const m = str.match(/(\d+)h\s*(\d+)m\s*(\d+)s/);
+  if (m) return parseInt(m[1])*3600 + parseInt(m[2])*60 + parseInt(m[3]);
+  const m2 = str.match(/(\d+)m\s*(\d+)s/);
+  if (m2) return parseInt(m2[1])*60 + parseInt(m2[2]);
+  return 3600;
+}
 
 window.loadVideos = loadVideos;
 window.skipTime = skipTime;

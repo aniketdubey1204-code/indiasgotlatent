@@ -12,20 +12,46 @@ const appEl = () => document.getElementById("app");
 
 function showApp() {
   authOverlay().classList.add("hidden");
-  appEl().classList.remove("hidden");
   const f = document.getElementById("dock-footer");
   if (f) f.classList.remove("hidden");
-  if (window.loadVideos) window.loadVideos();
+  if (window.loadVideos && !window._videos) window.loadVideos();
   if (window.updateAdminUI) window.updateAdminUI();
 }
 function showAuth() {
   authOverlay().classList.remove("hidden");
-  appEl().classList.add("hidden");
   const f = document.getElementById("dock-footer");
   if (f) f.classList.add("hidden");
+  mountTelegramWidget();
+}
+function isLoggedIn() {
+  return localStorage.getItem("tgl_auth") === "1" || localStorage.getItem("email_auth") === "1";
+}
+function requireAuth() {
+  if (isLoggedIn()) return true;
+  showAuth();
+  return false;
+}
+
+function closeAuth() {
+  const o = authOverlay();
+  if (o) o.classList.add("hidden");
+}
+function toggleAuthModal() {
+  if (isLoggedIn()) {
+    openInfo();
+    return;
+  }
+  const o = authOverlay();
+  if (o) {
+    if (o.classList.contains("hidden")) showAuth();
+    else closeAuth();
+  }
 }
 
 async function initAuth() {
+  // Always load videos so full catalog is immediately visible to visitors & search crawlers
+  if (window.loadVideos && !window._videos) window.loadVideos();
+
   // 0. Magic-link callback (?code=...)? Exchange for session.
   if (supabaseClient) {
     try {
@@ -37,16 +63,18 @@ async function initAuth() {
         window.history.replaceState({}, "", url.toString());
       }
       const { data } = await supabaseClient.auth.getSession();
-      if (data.session) {
+      if (data && data.session) {
         if (data.session.user?.email) { localStorage.setItem("email_auth", "1"); localStorage.setItem("email_auth_user", data.session.user.email); }
         showApp(); return;
       }
     } catch (e) { console.warn(e); }
   }
-  // 2. Local flags (demo + Telegram)?
-  if (localStorage.getItem("tgl_auth") === "1" || localStorage.getItem("email_auth") === "1") { showApp(); return; }
-  showAuth();
-  mountTelegramWidget();
+  // 1. Check local session
+  if (isLoggedIn()) {
+    showApp();
+  } else {
+    updateAdminUI();
+  }
 }
 
 function mountTelegramWidget() {
@@ -125,8 +153,18 @@ function isAdmin() {
 function updateAdminUI() {
   const b = document.getElementById("admin-btn");
   if (b) b.classList.toggle("hidden", !isAdmin());
+  const u = getCurrentUser();
+  const navBtn = document.getElementById("nav-auth-btn");
+  const menuBtn = document.getElementById("menu-auth-btn");
+  const label = u ? (u.username ? "@" + u.username : "Account") : "Login";
+  if (navBtn) navBtn.textContent = label;
+  if (menuBtn) menuBtn.textContent = label;
 }
 window.updateAdminUI = updateAdminUI;
+window.closeAuth = closeAuth;
+window.toggleAuthModal = toggleAuthModal;
+window.requireAuth = requireAuth;
+window.isLoggedIn = isLoggedIn;
 
 function switchTab(which) {
   document.getElementById("tab-telegram").classList.toggle("active", which === "telegram");
