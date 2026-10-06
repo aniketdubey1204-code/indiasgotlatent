@@ -39,9 +39,9 @@ ARCHIVE_URLS_FILE = SCRIPTS_DIR / "archive_urls.json"
 OKCDN_CACHE_FILE  = SCRIPTS_DIR / "okcdn_cached.json"
 VIDEOS_JS_FILE    = JS_DIR / "videos.js"
 
-SITE          = "https://igltalent.freeforall.dev"
+SITE          = os.environ.get("SOURCE_SITE", "https://igl-8wky.freeforall.dev")
 OKCDN_JSON    = f"{SITE}/okcdn.json"
-OKCDN_WORKER  = "https://okcdn.baapall2.workers.dev"
+OKCDN_WORKER  = os.environ.get("OKCDN_WORKER", "https://okcdn.moivies.workers.dev")
 
 # Clean up local video after upload? True in GitHub Actions to save runner disk space
 CLEANUP_AFTER_UPLOAD = os.environ.get(
@@ -49,10 +49,16 @@ CLEANUP_AFTER_UPLOAD = os.environ.get(
     "true" if os.environ.get("GITHUB_ACTIONS") else "false"
 ).lower() == "true"
 
-# SSL context (okcdn CDN has self-signed cert)
+# SSL context (okcdn CDN and source site have self-signed / mismatched certs)
 ssl_ctx = ssl.create_default_context()
 ssl_ctx.check_hostname = False
 ssl_ctx.verify_mode = ssl.CERT_NONE
+
+# Globally override default HTTPS context so all urllib calls bypass certificate verification
+try:
+    ssl._create_default_https_context = ssl._create_unverified_context
+except Exception:
+    pass
 
 HEADERS = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0 Safari/537.36",
@@ -111,14 +117,67 @@ def save_json(path, data):
 # Step 1 — Fetch okcdn.json
 # ──────────────────────────────────────────────
 
+def resolve_active_site():
+    global SITE, OKCDN_JSON, HEADERS
+    candidates = [
+        SITE,
+        "https://igl-8wky.freeforall.dev",
+        "https://indiassgetlentp.freeforall.dev",
+    ]
+    # 1. Try candidate endpoints directly
+    for candidate in candidates:
+        try:
+            req = urllib.request.Request(f"{candidate}/okcdn.json", headers=HEADERS)
+            with urllib.request.urlopen(req, timeout=10, context=ssl_ctx) as resp:
+                if resp.status == 200:
+                    body = resp.read().decode("utf-8", errors="ignore")
+                    data = json.loads(body)
+                    if isinstance(data, list) and len(data) > 0:
+                        SITE = candidate
+                        OKCDN_JSON = f"{SITE}/okcdn.json"
+                        HEADERS["Referer"] = SITE + "/"
+                        HEADERS["Origin"] = SITE
+                        return data
+        except Exception:
+            pass
+
+    # 2. Try following redirect from https://gdls.me/instaiglreel
+    try:
+        req = urllib.request.Request("https://gdls.me/instaiglreel", headers=HEADERS)
+        with urllib.request.urlopen(req, timeout=10, context=ssl_ctx) as resp:
+            final_url = resp.geturl()
+            parsed = urllib.parse.urlparse(final_url)
+            redirected_site = f"{parsed.scheme}://{parsed.netloc}"
+            req2 = urllib.request.Request(f"{redirected_site}/okcdn.json", headers=HEADERS)
+            with urllib.request.urlopen(req2, timeout=10, context=ssl_ctx) as resp2:
+                data = json.loads(resp2.read().decode("utf-8", errors="ignore"))
+                if isinstance(data, list) and len(data) > 0:
+                    SITE = redirected_site
+                    OKCDN_JSON = f"{SITE}/okcdn.json"
+                    HEADERS["Referer"] = SITE + "/"
+                    HEADERS["Origin"] = SITE
+                    return data
+    except Exception:
+        pass
+
+    return None
+
 def fetch_episodes():
-    log("FETCH", OKCDN_JSON)
-    req = urllib.request.Request(OKCDN_JSON, headers=HEADERS)
-    with urllib.request.urlopen(req, timeout=30) as resp:
-        data = json.loads(resp.read().decode())
-    save_json(OKCDN_CACHE_FILE, data)
-    log("INFO", f"{len(data)} episodes found on source site")
-    return data
+    log("FETCH", f"Searching for active source endpoint (default {SITE})...")
+    data = resolve_active_site()
+    if data:
+        save_json(OKCDN_CACHE_FILE, data)
+        log("INFO", f"{len(data)} episodes found on live source site ({SITE})")
+        return data
+
+    log("WARN", f"Remote source could not be reached. Falling back to local cache: {OKCDN_CACHE_FILE}")
+    cached = load_json(OKCDN_CACHE_FILE)
+    if cached and isinstance(cached, list):
+        log("INFO", f"Loaded {len(cached)} episodes from local cache")
+        return cached
+
+    log("ERROR", "No episodes available from source or cache.")
+    return []
 
 # ──────────────────────────────────────────────
 # Step 2 — Detect new episodes
@@ -153,24 +212,40 @@ def safe_filename(title, data_id):
     return f"{name} [{data_id}].mp4"
 
 def resolve_okcdn_url(ep_id):
-    try:
-        req = urllib.request.Request(f"{OKCDN_WORKER}/?id={ep_id}", headers=HEADERS)
-        with urllib.request.urlopen(req, timeout=30) as resp:
-            data = json.loads(resp.read().decode())
-        streams = data.get("streams", [])
-        if streams:
-            def q(s):
-                t = s.get("type", "0").lower().replace("p", "")
-                if t == "2k": return 2160
-                if t == "4k": return 4320
-                try: return int(t)
-                except: return 0
-            best = max(streams, key=q)
-            return best.get("url")
-        return data.get("url") or data.get("stream_url") or data.get("download_url")
-    except Exception as e:
-        log("WARN", f"CDN resolve failed for {ep_id}: {e}")
-        return None
+    workers = [
+        OKCDN_WORKER,
+        "https://okcdn.moivies.workers.dev",
+        "https://okcdn.baapall2.workers.dev"
+    ]
+    seen = set()
+    unique_workers = [w for w in workers if not (w in seen or seen.add(w))]
+    
+    for worker in unique_workers:
+        try:
+            req = urllib.request.Request(f"{worker}/?id={ep_id}", headers={
+                "User-Agent": HEADERS["User-Agent"],
+                "Referer": SITE + "/",
+                "Origin": SITE,
+                "Accept": "application/json"
+            })
+            with urllib.request.urlopen(req, timeout=30, context=ssl_ctx) as resp:
+                data = json.loads(resp.read().decode())
+            streams = data.get("streams", [])
+            if streams:
+                def q(s):
+                    t = s.get("type", "0").lower().replace("p", "")
+                    if t == "2k": return 2160
+                    if t == "4k": return 4320
+                    try: return int(t)
+                    except: return 0
+                best = max(streams, key=q)
+                return best.get("url")
+            url = data.get("url") or data.get("stream_url") or data.get("download_url")
+            if url:
+                return url
+        except Exception as e:
+            log("WARN", f"CDN resolve via {worker} failed for {ep_id}: {e}")
+    return None
 
 def download_file(url, dest):
     log("DL", f"{dest.name} from CDN")
@@ -444,6 +519,15 @@ def rebuild_catalog(episodes):
 
     VIDEOS_JS_FILE.write_text(js, encoding="utf-8")
     log("OK", f"videos.js written — {len(catalog)} episodes in true chronological order")
+    
+    try:
+        seo_script = SCRIPTS_DIR / "generate_seo_pages.py"
+        if seo_script.exists():
+            subprocess.run([sys.executable, str(seo_script)], cwd=BASE_DIR, check=True)
+            log("OK", "Regenerated SEO pages and sitemap")
+    except Exception as e:
+        log("WARN", f"SEO regeneration skipped: {e}")
+
     return catalog
 
 def ensure_thumbnail(ep):
@@ -457,13 +541,13 @@ def ensure_thumbnail(ep):
         thumbs_dir.mkdir(parents=True, exist_ok=True)
         dest = thumbs_dir / loc
         if not dest.exists() or dest.stat().st_size == 0:
-            url = f"https://igltalent.freeforall.dev/img/{loc}"
+            url = f"{SITE}/img/{loc}"
             try:
                 req = urllib.request.Request(url, headers={
                     "User-Agent": HEADERS["User-Agent"],
                     "Referer": SITE + "/"
                 })
-                with urllib.request.urlopen(req, timeout=15) as res:
+                with urllib.request.urlopen(req, timeout=15, context=ssl_ctx) as res:
                     dest.write_bytes(res.read())
                 log("THUMB", f"Saved high-res thumbnail: {loc} ({dest.stat().st_size / 1024:.1f} KB)")
             except Exception as e:
@@ -483,7 +567,13 @@ def git_push(new_titles):
     subprocess.run(["git", "config", "user.email", "github-actions[bot]@users.noreply.github.com"], cwd=BASE_DIR)
 
     log("GIT", "Staging files...")
-    subprocess.run(["git", "add", "js/videos.js", "scripts/archive_urls.json", "scripts/okcdn_cached.json", "assets/thumbs/"], cwd=BASE_DIR)
+    files_to_stage = [
+        "js/videos.js", "scripts/archive_urls.json", "scripts/okcdn_cached.json",
+        "episodes/", "sitemap.xml", "index.html"
+    ]
+    if (BASE_DIR / "assets" / "thumbs").exists():
+        files_to_stage.append("assets/thumbs/")
+    subprocess.run(["git", "add"] + files_to_stage, cwd=BASE_DIR)
 
     msg = f"auto-sync: add {len(new_titles)} new episode(s) — {', '.join(new_titles[:3])}"
     if len(new_titles) > 3:
@@ -497,11 +587,19 @@ def git_push(new_titles):
         log("GIT", "Nothing new to commit")
         return
 
-    log("GIT", f"Commit: {result.stdout.strip()}")
-    push = subprocess.run(
-        ["git", "push", "origin", "main"],
-        cwd=BASE_DIR, capture_output=True, text=True
-    )
+    github_token = os.environ.get("GITHUB_TOKEN")
+    repo = os.environ.get("GITHUB_REPOSITORY")
+    if github_token and repo:
+        push_target = f"https://x-access-token:{github_token}@github.com/{repo}.git"
+        push = subprocess.run(
+            ["git", "push", push_target, "HEAD:main"],
+            cwd=BASE_DIR, capture_output=True, text=True
+        )
+    else:
+        push = subprocess.run(
+            ["git", "push", "origin", "main"],
+            cwd=BASE_DIR, capture_output=True, text=True
+        )
     if push.returncode == 0:
         log("GIT", "Pushed successfully! Vercel redeploy triggered.")
     else:
