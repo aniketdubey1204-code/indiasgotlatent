@@ -1,5 +1,29 @@
 [
   {
+    "title": "INDIA’S GOT LATENT S2 EP9 ft. Raftaar, Balraj Ghai, Sahil Kale",
+    "id": "6af9c4955d30a00d59e0d97b",
+    "dataId": "s2-09-yt",
+    "season": "s2",
+    "duration": "50m",
+    "type": "okcdn",
+    "youtubeId": "CswOUBuokjo",
+    "thumbnail": "https://img.youtube.com/vi/CswOUBuokjo/mqdefault.jpg",
+    "localImage": "CswOUBuokjo.webp",
+    "description": ""
+  },
+  {
+    "title": "INDIA’S GOT LATENT S2 EP9 Ft. Huma Qureshi, Krushna Abhishek, Aashish Solanki, Balraj Ghai",
+    "id": "6af71a2ef8ad2a174208fde1",
+    "dataId": "s2-09",
+    "season": "s2",
+    "duration": "50m",
+    "type": "okcdn",
+    "youtubeId": "GTxMSPqtbRc",
+    "thumbnail": "https://i.ytimg.com/vi/GTxMSPqtbRc/maxresdefault.jpg",
+    "localImage": "GTxMSPqtbRc.webp",
+    "description": "INDIA’S GOT LATENT S2 EP9 Ft. Huma Qureshi, Krushna Abhishek, Aashish Solanki, Balraj Ghai"
+  },
+  {
     "title": "INDIA’S GOT LATENT S2 Bonus EP 4 ft. Ayushmann Khurrana, Suhani Shah, Kullu, Rajat Sood",
     "id": "6ab8f388c14cb415cd377a11",
     "dataId": "s2-08",

@@ -708,7 +708,13 @@ function playerSetup(v) {
         toast("Resumed from " + fmtTime(saved) + " ⏱");
       }
     };
-    vid.onerror = () => hideLoader();
+    vid.onerror = () => {
+      hideLoader();
+      if (v && v.youtubeId) {
+        destroyPlyr();
+        playYouTubeInSite(v.youtubeId, v.title, v);
+      }
+    };
   }
   if (posTimer) clearInterval(posTimer);
   posTimer = setInterval(() => {

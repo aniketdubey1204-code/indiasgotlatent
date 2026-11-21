@@ -77,20 +77,25 @@ FORCE    = "--force"   in sys.argv
 
 def ensure_ia_config():
     """Ensure ia CLI has S3 credentials from env or fallback"""
-    access = os.environ.get("IA_ACCESS_KEY_ID", "EXPs0qKXe2s8HtOH")
-    secret = os.environ.get("IA_SECRET_ACCESS_KEY", "96xCWf8keeEFOtFj")
+    access = (os.environ.get("IA_ACCESS_KEY_ID") or "").strip()
+    secret = (os.environ.get("IA_SECRET_ACCESS_KEY") or "").strip()
+    if not access:
+        access = "EXPs0qKXe2s8HtOH"
+    if not secret:
+        secret = "96xCWf8keeEFOtFj"
+
     os.environ["IA_ACCESS_KEY_ID"] = access
     os.environ["IA_SECRET_ACCESS_KEY"] = secret
 
-    # Write ~/.config/internetarchive/ia.ini if missing
+    # Write ~/.config/internetarchive/ia.ini (always overwrite with valid credentials)
     try:
         cfg_dir = Path.home() / ".config" / "internetarchive"
+        cfg_dir.mkdir(parents=True, exist_ok=True)
         cfg_file = cfg_dir / "ia.ini"
-        if not cfg_file.exists():
-            cfg_dir.mkdir(parents=True, exist_ok=True)
-            cfg_file.write_text(f"[s3]\naccess = {access}\nsecret = {secret}\n", encoding="utf-8")
-    except Exception:
-        pass
+        cfg_file.write_text(f"[s3]\naccess = {access}\nsecret = {secret}\n", encoding="utf-8")
+        log("AUTH", f"Archive.org credentials configured (key: {access[:4]}***)")
+    except Exception as e:
+        log("WARN", f"Could not write ia.ini: {e}")
 
 # ──────────────────────────────────────────────
 # Helpers
@@ -342,19 +347,28 @@ def make_identifier(data_id):
 def upload_to_archive(filepath, title, data_id):
     identifier = make_identifier(data_id)
     log("UPLOAD", f"{filepath.name} → {identifier}")
-    log("INFO", f"  Size: {filepath.stat().st_size / (1024**3):.2f} GB")
 
     if DRY_RUN:
         log("DRY", f"Would upload as {identifier}")
         return f"https://archive.org/details/{identifier}"
 
+    if not filepath.exists():
+        log("ERROR", f"File not found on disk: {filepath}")
+        return None
+
+    size_gb = filepath.stat().st_size / (1024**3)
+    log("INFO", f"  Size: {size_gb:.2f} GB")
+
+    clean_title = re.sub(r'[\r\n\t]+', ' ', title).replace('"', "'").strip()
+    clean_desc = f"India's Got Latent — {clean_title} (Fan Archive)"
+
     cmd = [
         "ia", "upload", identifier, str(filepath),
         "-R", "3", "-s", "10",
-        "--metadata", f"title:{title}",
+        "--metadata", f"title:{clean_title}",
         "--metadata", "collection:opensource_movies",
         "--metadata", "mediatype:movies",
-        "--metadata", f"description:India's Got Latent — {title} (Fan Archive)",
+        "--metadata", f"description:{clean_desc}",
         "--metadata", "creator:India's Got Latent",
         "--metadata", "subject:India's Got Latent; Comedy; Reality; Talent",
         "--metadata", "licenseurl:https://creativecommons.org/licenses/by/4.0/",
@@ -366,13 +380,13 @@ def upload_to_archive(filepath, title, data_id):
             log("OK", url)
             return url
         err = (result.stderr or result.stdout or "Unknown").strip()
-        log("ERROR", err[:300])
+        log("ERROR", f"Upload failed (exit code {result.returncode}):\n{err[-1200:]}")
         return None
     except subprocess.TimeoutExpired:
-        log("ERROR", "Upload timeout")
+        log("ERROR", "Upload timeout after 2 hours")
         return None
     except Exception as e:
-        log("ERROR", str(e))
+        log("ERROR", f"Upload exception: {e}")
         return None
 
 # ──────────────────────────────────────────────
@@ -423,7 +437,9 @@ CANONICAL_EPISODES = [
     ('s2-06-rakhi', 'season2', 6, 214),
     ('s2-03-bonus', 's2bonus', 4, 215),
     ('s2-07', 'season2', 7, 216),
-    ('s2-08', 'season2', 8, 217),  # Latest Drop!
+    ('s2-08', 'season2', 8, 217),
+    ('s2-09', 'season2', 9, 218),
+    ('s2-09-yt', 'season2', 9, 219),
 
     # Specials
     ('special-01', 'special', 1, 301),
@@ -488,9 +504,23 @@ def rebuild_catalog(episodes):
         if did in canon_map:
             _, category, ep_num, sort_idx = canon_map[did]
         else:
-            category = "season2" if ep.get("season") == "s2" else "season1"
-            ep_num = 99
-            sort_idx = 250
+            m_s2 = re.search(r's2-(?:ep-?)?(\d+)', did.lower())
+            if m_s2:
+                category = "season2"
+                ep_num = int(m_s2.group(1))
+                sort_idx = 217 + ep_num
+            elif "bonus" in did.lower():
+                category = "s2bonus" if "s2" in did.lower() else "s1bonus"
+                ep_num = 99
+                sort_idx = 250
+            elif "bts" in did.lower():
+                category = "s2bts"
+                ep_num = 99
+                sort_idx = 260
+            else:
+                category = "season2" if ep.get("season") == "s2" else "season1"
+                ep_num = 99
+                sort_idx = 299
 
         catalog.append({
             "id":            did,
@@ -657,8 +687,9 @@ def main():
         # 4. Upload to Archive.org
         archive_url = upload_to_archive(filepath, title, data_id)
         if archive_url:
-            archive_urls[filepath.name] = archive_url
-            save_json(ARCHIVE_URLS_FILE, archive_urls)
+            if not DRY_RUN:
+                archive_urls[filepath.name] = archive_url
+                save_json(ARCHIVE_URLS_FILE, archive_urls)
             added_titles.append(title)
             ok += 1
 
@@ -689,6 +720,10 @@ def main():
     print(f"  Added:  {ok}")
     print(f"  Failed: {fail}")
     print(f"{'='*60}")
+
+    if fail > 0 and ok == 0:
+        log("ERROR", f"Sync failed: {fail} episode(s) failed to sync.")
+        sys.exit(1)
 
 
 if __name__ == "__main__":

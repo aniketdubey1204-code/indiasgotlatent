@@ -515,6 +515,32 @@
     </video:video>
   </url>
   <url>
+    <loc>https://indiasgotlatent-opal.vercel.app/episodes/s2-09.html</loc>
+    <lastmod>2026-10-02</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+    <video:video>
+      <video:thumbnail_loc>https://i.ytimg.com/vi/GTxMSPqtbRc/maxresdefault.jpg</video:thumbnail_loc>
+      <video:title>INDIA’S GOT LATENT S2 EP9 Ft. Huma Qureshi, Krushna Abhishek, Aashish Solanki, Balraj Ghai</video:title>
+      <video:description>INDIA’S GOT LATENT S2 EP9 Ft. Huma Qureshi, Krushna Abhishek, Aashish Solanki, Balraj Ghai</video:description>
+      <video:player_loc allow_embed="yes">https://www.youtube-nocookie.com/embed/GTxMSPqtbRc</video:player_loc>
+      <video:duration>3000</video:duration>
+    </video:video>
+  </url>
+  <url>
+    <loc>https://indiasgotlatent-opal.vercel.app/episodes/s2-09-yt.html</loc>
+    <lastmod>2026-10-02</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+    <video:video>
+      <video:thumbnail_loc>https://i.ytimg.com/vi/CswOUBuokjo/maxresdefault.jpg</video:thumbnail_loc>
+      <video:title>INDIA’S GOT LATENT S2 EP9 ft. Raftaar, Balraj Ghai, Sahil Kale</video:title>
+      <video:description>Watch India&#x27;s Got Latent INDIA’S GOT LATENT S2 EP9 ft. Raftaar, Balraj Ghai, Sahil Kale free on IGL Fan Vault.</video:description>
+      <video:player_loc allow_embed="yes">https://www.youtube-nocookie.com/embed/CswOUBuokjo</video:player_loc>
+      <video:duration>3000</video:duration>
+    </video:video>
+  </url>
+  <url>
     <loc>https://indiasgotlatent-opal.vercel.app/episodes/special-01.html</loc>
     <lastmod>2026-10-02</lastmod>
     <changefreq>weekly</changefreq>

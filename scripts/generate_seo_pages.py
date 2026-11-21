@@ -404,7 +404,7 @@ sitemap_xml.append('</urlset>')
 with open("sitemap.xml", "w", encoding="utf-8") as f_sm:
     f_sm.write("\n".join(sitemap_xml) + "\n")
 
-print("Updated sitemap.xml with 42 self-canonical episode landing pages.")
+print(f"Updated sitemap.xml with {len(videos)} self-canonical episode landing pages.")
 
 # Pre-render crawlable cards directly into index.html
 prerendered_cards = []
@@ -437,6 +437,6 @@ if m_grid:
     new_idx = idx_content[:m_grid.start(2)] + "\n" + cards_block + "\n    " + idx_content[m_grid.end(2):]
     with open("index.html", "w", encoding="utf-8") as f_out:
         f_out.write(new_idx)
-    print("Pre-rendered 42 crawlable episode cards into index.html.")
+    print(f"Pre-rendered {len(videos)} crawlable episode cards into index.html.")
 else:
     print("Warning: Could not locate #video-grid in index.html for card pre-rendering.")
