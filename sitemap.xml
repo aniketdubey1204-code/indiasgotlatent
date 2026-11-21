@@ -312,10 +312,10 @@
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
     <video:video>
-      <video:thumbnail_loc>https://indiasgotlatent-opal.vercel.app/assets/thumbs/4z062p.webp</video:thumbnail_loc>
+      <video:thumbnail_loc>https://i.ytimg.com/vi/DlIKbE46pUk/maxresdefault.jpg</video:thumbnail_loc>
       <video:title>BTS 01 | ft. Alia Bhatt, Sharvari, Ashish Solanki</video:title>
       <video:description>Behind the scenes featuring Alia Bhatt, Sharvari, and Ashish Solanki.</video:description>
-      <video:content_loc>https://archive.org/download/igl-s2-bts-01/BTS%2001%20ft.%20Alia%20Bhatt%20Sharvari%20Ashish%20Solanki%20%5Bs2-bts-01%5D.mp4</video:content_loc>
+      <video:player_loc allow_embed="yes">https://www.youtube-nocookie.com/embed/DlIKbE46pUk</video:player_loc>
       <video:duration>1055</video:duration>
     </video:video>
   </url>
@@ -468,10 +468,10 @@
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
     <video:video>
-      <video:thumbnail_loc>https://indiasgotlatent-opal.vercel.app/assets/thumbs/6a9d7adc5882d566ebfc00e6.webp</video:thumbnail_loc>
+      <video:thumbnail_loc>https://i.ytimg.com/vi/zbIr24Tes7E/maxresdefault.jpg</video:thumbnail_loc>
       <video:title>INDIA&#x27;S GOT LATENT S2 EP6 ft. Rakhi Sawant, Ashneer Grover, Kushagra Srivastava</video:title>
       <video:description>Season 2 Episode 06 ft. Rakhi Sawant, Ashneer Grover, Kushagra Srivastava.</video:description>
-      <video:content_loc>https://archive.org/download/igl-s2-06-rakhi/INDIAS%20GOT%20LATENT%20S2%20EP6%20ft.%20Rakhi%20Sawant%20Ashneer%20Grover%20Kushagra%20Srivastava%20%5Bs2-06-rakhi%5D.mp4</video:content_loc>
+      <video:player_loc allow_embed="yes">https://www.youtube-nocookie.com/embed/zbIr24Tes7E</video:player_loc>
       <video:duration>3146</video:duration>
     </video:video>
   </url>
@@ -572,10 +572,10 @@
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
     <video:video>
-      <video:thumbnail_loc>https://indiasgotlatent-opal.vercel.app/assets/thumbs/dna7vi.webp</video:thumbnail_loc>
+      <video:thumbnail_loc>https://i.ytimg.com/vi/JCz-6QVMid4/maxresdefault.jpg</video:thumbnail_loc>
       <video:title>Talk Show Segment 01 | ft. Samay Raina, BeerBiceps</video:title>
       <video:description>The Great Indian Kapil Show — Season 4 Episode 14.</video:description>
-      <video:content_loc>https://archive.org/download/igl-kapil-01/Talk%20Show%20Segment%2001%20ft.%20Samay%20Raina%20BeerBiceps%20%5Bkapil-01%5D.mp4</video:content_loc>
+      <video:player_loc allow_embed="yes">https://www.youtube-nocookie.com/embed/JCz-6QVMid4</video:player_loc>
       <video:duration>2700</video:duration>
     </video:video>
   </url>

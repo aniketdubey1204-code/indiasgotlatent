@@ -270,7 +270,7 @@ for i, v in enumerate(videos):
 
 <main class="ep-hero">
   <div class="ep-stage">
-    {f'<iframe src="https://www.youtube-nocookie.com/embed/{v["youtubeId"]}?autoplay=1&rel=0" style="width:100%;height:100%;border:0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>' if v.get("youtubeId") else f'<video id="player" controls playsinline poster="{thumb}" style="width:100%;height:100%"><source src="{stream_url}" type="video/mp4"/></video>'}
+    {f'<iframe src="https://www.youtube-nocookie.com/embed/{v["youtubeId"]}?autoplay=1&rel=0" style="width:100%;height:100%;border:0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>' if v.get("youtubeId") else f'<video id="player" controls playsinline preload="auto" poster="{thumb}" style="width:100%;height:100%"><source src="{stream_url}" type="video/mp4"/></video>'}
   </div>
 
   <div class="ep-details">

@@ -402,11 +402,11 @@ const LOCAL_VIDEOS = [
     "episode_number": 1,
     "sort_index": 202,
     "duration": "0h 17m 35s",
-    "thumbnail_url": "/assets/thumbs/4z062p.webp",
+    "thumbnail_url": "https://i.ytimg.com/vi/DlIKbE46pUk/maxresdefault.jpg",
     "video_url": "https://archive.org/download/igl-s2-bts-01/BTS%2001%20ft.%20Alia%20Bhatt%20Sharvari%20Ashish%20Solanki%20%5Bs2-bts-01%5D.mp4",
     "archive_url": "https://archive.org/details/igl-s2-bts-01",
     "filename": "BTS 01 ft. Alia Bhatt Sharvari Ashish Solanki [s2-bts-01].mp4",
-    "youtubeId": null,
+    "youtubeId": "DlIKbE46pUk",
     "localImage": "4z062p.webp"
   },
   {
@@ -606,11 +606,11 @@ const LOCAL_VIDEOS = [
     "episode_number": 6,
     "sort_index": 214,
     "duration": "0h 52m 26s",
-    "thumbnail_url": "/assets/thumbs/6a9d7adc5882d566ebfc00e6.webp",
+    "thumbnail_url": "https://i.ytimg.com/vi/zbIr24Tes7E/maxresdefault.jpg",
     "video_url": "https://archive.org/download/igl-s2-06-rakhi/INDIAS%20GOT%20LATENT%20S2%20EP6%20ft.%20Rakhi%20Sawant%20Ashneer%20Grover%20Kushagra%20Srivastava%20%5Bs2-06-rakhi%5D.mp4",
     "archive_url": "https://archive.org/details/igl-s2-06-rakhi",
     "filename": "INDIAS GOT LATENT S2 EP6 ft. Rakhi Sawant Ashneer Grover Kushagra Srivastava [s2-06-rakhi].mp4",
-    "youtubeId": null,
+    "youtubeId": "zbIr24Tes7E",
     "localImage": "6a9d7adc5882d566ebfc00e6.webp"
   },
   {
@@ -742,11 +742,11 @@ const LOCAL_VIDEOS = [
     "episode_number": 3,
     "sort_index": 303,
     "duration": "",
-    "thumbnail_url": "/assets/thumbs/dna7vi.webp",
+    "thumbnail_url": "https://i.ytimg.com/vi/JCz-6QVMid4/maxresdefault.jpg",
     "video_url": "https://archive.org/download/igl-kapil-01/Talk%20Show%20Segment%2001%20ft.%20Samay%20Raina%20BeerBiceps%20%5Bkapil-01%5D.mp4",
     "archive_url": "https://archive.org/details/igl-kapil-01",
     "filename": "Talk Show Segment 01 ft. Samay Raina BeerBiceps [kapil-01].mp4",
-    "youtubeId": null,
+    "youtubeId": "JCz-6QVMid4",
     "localImage": "dna7vi.webp"
   }
 ];

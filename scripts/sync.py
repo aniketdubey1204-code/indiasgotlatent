@@ -447,8 +447,15 @@ CANONICAL_EPISODES = [
     ('kapil-01', 'special', 3, 303),
 ]
 
+KNOWN_YOUTUBE_IDS = {
+    "s2-bts-01": "DlIKbE46pUk",
+    "s2-06-rakhi": "zbIr24Tes7E",
+    "kapil-01": "JCz-6QVMid4",
+}
+
 def resolve_thumbnail(ep, ident):
-    yt = ep.get("youtubeId")
+    did = ep.get("dataId") or ep.get("id") or ""
+    yt = ep.get("youtubeId") or KNOWN_YOUTUBE_IDS.get(did)
     loc = ep.get("localImage", "")
     loc_stem = loc.replace(".webp", "").strip() if loc.endswith(".webp") else ""
     resolved_yt = yt or (loc_stem if len(loc_stem) == 11 else None)

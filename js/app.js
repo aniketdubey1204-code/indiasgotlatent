@@ -37,8 +37,8 @@ async function loadVideos() {
   });
   window._videos = videos;
   if (!videos.length) { grid.innerHTML = "<p>No videos yet. Open Admin to add.</p>"; return; }
-  // Hero = newest synced episode drop (s2-08 or highest sort_index)
-  const heroVideo = videos.find(v => v.id === "s2-08") || videos[videos.length - 1];
+  // Hero = newest synced episode drop (s2-09 or highest sort_index)
+  const heroVideo = videos.find(v => v.id === "s2-09") || videos.find(v => v.id === "s2-08") || videos[videos.length - 1];
   setHero(heroVideo);
   try { renderContinueWatching(videos); } catch (e) { console.warn("continue-watching:", e); }
   renderRail(videos);
@@ -433,6 +433,20 @@ async function openPlayer(v) {
     try { history.replaceState(null, "", "?ep=" + v.id); } catch (e) {}
   }
   playerSetup(v);
+
+  // User preference: if user switched to fast stream before, remember it
+  let preferredSource = "archive";
+  try { preferredSource = localStorage.getItem("preferred_stream_source") || "archive"; } catch (e) {}
+  const fastId = v.youtubeId || v.yt_mirror_id || (v.video_url ? youtubeIdFromUrl(v.video_url) : null);
+
+  if (preferredSource === "fast" && fastId) {
+    document.getElementById("player-wrap").classList.remove("hidden");
+    syncBodyLock();
+    setPlayerMeta(v);
+    await playYouTubeInSite(fastId, v.title, v);
+    return;
+  }
+
   // Direct YouTube links play in-site via YouTube player (fallback button if blocked).
   const directYt = youtubeIdFromUrl(v.video_url);
   if (directYt) {
@@ -528,11 +542,53 @@ async function playViaProxy(v) {
       }
     });
 
+    let bufferCheckTimer = null;
+    let bufferToastTimer = null;
+
     plyr.on('waiting', () => {
       showLoader();
+      if (bufferCheckTimer) clearTimeout(bufferCheckTimer);
+      if (bufferToastTimer) clearTimeout(bufferToastTimer);
+
+      // Prompt fast stream if archive buffering exceeds 6 seconds
+      bufferToastTimer = setTimeout(() => {
+        const cur = window._current;
+        const hasFast = cur && (cur.youtubeId || cur.yt_mirror_id);
+        if (hasFast) {
+          toast("Buffering slow? Click ⚡ Fast Stream for instant 0s playback");
+        }
+      }, 6000);
+
+      // Anti-stutter buffer guard: ensure at least 2.5s ahead is buffered before resuming
+      const checkBuffer = () => {
+        const vidEl = document.getElementById("player");
+        if (!vidEl || !vidEl.buffered || vidEl.buffered.length === 0) return;
+        const curTime = vidEl.currentTime;
+        let ahead = 0;
+        for (let i = 0; i < vidEl.buffered.length; i++) {
+          if (vidEl.buffered.start(i) <= curTime && vidEl.buffered.end(i) > curTime) {
+            ahead = vidEl.buffered.end(i) - curTime;
+            break;
+          }
+        }
+        if (ahead >= 2.5 || vidEl.readyState >= 4) {
+          if (bufferToastTimer) { clearTimeout(bufferToastTimer); bufferToastTimer = null; }
+          hideLoader();
+        } else {
+          bufferCheckTimer = setTimeout(checkBuffer, 400);
+        }
+      };
+      bufferCheckTimer = setTimeout(checkBuffer, 400);
+    });
+
+    plyr.on('canplaythrough', () => {
+      if (bufferCheckTimer) clearTimeout(bufferCheckTimer);
+      if (bufferToastTimer) clearTimeout(bufferToastTimer);
+      hideLoader();
     });
 
     plyr.on('playing', () => {
+      if (bufferToastTimer) clearTimeout(bufferToastTimer);
       hideLoader();
     });
 
@@ -721,9 +777,11 @@ function playerSetup(v) {
     };
     vid.onerror = () => {
       hideLoader();
-      if (v && v.youtubeId) {
+      const yt = v && (v.youtubeId || v.yt_mirror_id);
+      if (yt) {
+        toast("Archive stream unreachable. Switched to high-speed stream!");
         destroyPlyr();
-        playYouTubeInSite(v.youtubeId, v.title, v);
+        playYouTubeInSite(yt, v.title, v);
       }
     };
   }
@@ -1089,15 +1147,17 @@ async function toggleStreamSource() {
   setSavedPos(v, currentPos);
 
   if (isCurrentlyYT) {
+    try { localStorage.setItem("preferred_stream_source", "archive"); } catch (e) {}
     toast("Switching to Archive.org Fan Archive stream...");
     await playViaProxy(v);
   } else {
     const ytId = v.youtubeId || v.yt_mirror_id || (v.video_url ? youtubeIdFromUrl(v.video_url) : null);
     if (ytId) {
-      toast("Switching to High-Speed CDN Stream (0s buffer)...");
+      try { localStorage.setItem("preferred_stream_source", "fast"); } catch (e) {}
+      toast("Switching to High-Speed Stream (0s buffer)...");
       await playYouTubeInSite(ytId, v.title, v);
     } else {
-      toast("Alternative CDN stream not available for this episode");
+      toast("This episode is exclusive to the Fan Vault archive.");
     }
   }
   updateSourceToggleBtn();
@@ -1106,10 +1166,23 @@ async function toggleStreamSource() {
 function updateSourceToggleBtn() {
   const btn = document.getElementById("source-toggle-btn");
   if (!btn) return;
+  const v = window._current;
   const ytHolder = document.getElementById("yt-holder");
   const isYT = ytHolder && !ytHolder.classList.contains("hidden");
-  btn.textContent = isYT ? "🏛 Archive.org Stream" : "⚡ Fast Stream";
-  btn.title = isYT ? "Switch to Archive.org permanent fan archive" : "Switch to high-speed stream for zero buffering";
+  const fastId = v && (v.youtubeId || v.yt_mirror_id || (v.video_url ? youtubeIdFromUrl(v.video_url) : null));
+
+  btn.classList.remove("vault-only");
+  if (isYT) {
+    btn.textContent = "🏛 Archive.org Stream";
+    btn.title = "Switch to permanent Archive.org Fan Archive stream";
+  } else if (fastId) {
+    btn.textContent = "⚡ Fast Stream (0s Buffer)";
+    btn.title = "Switch to high-speed stream for zero buffering";
+  } else {
+    btn.textContent = "🏛 Fan Vault Exclusive";
+    btn.title = "This classic episode is exclusive to the Fan Archive";
+    btn.classList.add("vault-only");
+  }
 }
 
 window.toggleStreamSource = toggleStreamSource;
