@@ -361,6 +361,7 @@ async function playYouTubeInSite(videoId, title, v) {
   const holder = document.getElementById("yt-holder");
   holder.classList.remove("hidden"); holder.innerHTML = "";
   document.getElementById("player-title").textContent = title;
+  if (typeof updateSourceToggleBtn === "function") updateSourceToggleBtn();
   const oldFb = document.getElementById("yt-fallback");
   if (oldFb) oldFb.remove();
   await ensureYTApi();
@@ -461,11 +462,13 @@ async function playViaProxy(v) {
   const oldFb = document.getElementById("yt-fallback");
   if (oldFb) oldFb.remove();
   vid.innerHTML = ""; vid.removeAttribute("src"); vid.load();
+  vid.preload = "auto";
   frame.removeAttribute("src"); frame.classList.add("hidden");
   vid.classList.remove("hidden");
   vid.poster = thumbSrc(v) || "";
   document.getElementById("player-title").textContent = v.title;
   setPlayerMeta(v);
+  if (typeof updateSourceToggleBtn === "function") updateSourceToggleBtn();
   showLoader();
 
   function initPlyr(streamUrl) {
@@ -523,6 +526,14 @@ async function playViaProxy(v) {
       if (window._current && plyr.currentTime > 5 && (!plyr.duration || plyr.currentTime < plyr.duration - 15)) {
         setSavedPos(window._current, plyr.currentTime);
       }
+    });
+
+    plyr.on('waiting', () => {
+      showLoader();
+    });
+
+    plyr.on('playing', () => {
+      hideLoader();
     });
 
     setupDoubleTapGesture();
@@ -1061,6 +1072,48 @@ function openPlayerById(id) {
   const f = (window._videos || []).find(x => x.id === id);
   if (f) openPlayer(f);
 }
+
+async function toggleStreamSource() {
+  const v = window._current;
+  if (!v) return;
+  const vid = document.getElementById("player");
+  const ytHolder = document.getElementById("yt-holder");
+  const isCurrentlyYT = ytHolder && !ytHolder.classList.contains("hidden");
+
+  let currentPos = 0;
+  if (isCurrentlyYT && window._ytPlayer && window._ytPlayer.getCurrentTime) {
+    try { currentPos = window._ytPlayer.getCurrentTime(); } catch (e) {}
+  } else if (vid && vid.currentTime) {
+    currentPos = vid.currentTime;
+  }
+  setSavedPos(v, currentPos);
+
+  if (isCurrentlyYT) {
+    toast("Switching to Archive.org Fan Archive stream...");
+    await playViaProxy(v);
+  } else {
+    const ytId = v.youtubeId || v.yt_mirror_id || (v.video_url ? youtubeIdFromUrl(v.video_url) : null);
+    if (ytId) {
+      toast("Switching to High-Speed CDN Stream (0s buffer)...");
+      await playYouTubeInSite(ytId, v.title, v);
+    } else {
+      toast("Alternative CDN stream not available for this episode");
+    }
+  }
+  updateSourceToggleBtn();
+}
+
+function updateSourceToggleBtn() {
+  const btn = document.getElementById("source-toggle-btn");
+  if (!btn) return;
+  const ytHolder = document.getElementById("yt-holder");
+  const isYT = ytHolder && !ytHolder.classList.contains("hidden");
+  btn.textContent = isYT ? "🏛 Archive.org Stream" : "⚡ Fast Stream";
+  btn.title = isYT ? "Switch to Archive.org permanent fan archive" : "Switch to high-speed stream for zero buffering";
+}
+
+window.toggleStreamSource = toggleStreamSource;
+window.updateSourceToggleBtn = updateSourceToggleBtn;
 
 window.loadVideos = loadVideos;
 window.skipTime = skipTime;

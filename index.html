@@ -615,7 +615,7 @@ Th</p></div>
       <div class="stage">
         <div class="ambient-glow" id="ambient-glow"></div>
         <div class="screen" id="screen-container">
-          <video id="player" controls playsinline class="hidden"></video>
+          <video id="player" controls playsinline preload="auto" class="hidden"></video>
           <div id="yt-holder" class="hidden" style="width:100%;aspect-ratio:16/9;border-radius:14px;overflow:hidden;background:#000"></div>
           <div id="gesture-overlay" class="gesture-overlay">
             <div id="gesture-left" class="gesture-side gesture-left">
@@ -647,6 +647,7 @@ Th</p></div>
       <button class="pbtn" onclick="stepEpisode(1)" aria-label="Next episode">Next ⏭</button>
       <button class="pbtn" id="speed-btn" onclick="cycleSpeed()" title="Playback speed">⚡ 1x Speed</button>
       <button class="pbtn" id="quality-btn" onclick="openQualityMenu()" title="Select resolution">⚙ 1080p HD</button>
+      <button class="pbtn" id="source-toggle-btn" onclick="toggleStreamSource()" title="Switch Stream Source">⚡ Fast Stream</button>
       <button class="pbtn" id="pip-btn" onclick="togglePiP()" title="Picture-in-Picture">⧉ PiP</button>
       <button class="pbtn" id="theater-btn" onclick="toggleTheater()" aria-label="Theater mode">⛶ Theater</button>
       <button class="pbtn" id="download-btn" onclick="downloadCurrent()" title="Download MP4">⬇ Download</button>
